@@ -24,8 +24,8 @@ services:
   restart: always
   container_name: db
   environment:
-   MYSQL_DATABASE: infinityde
-   MYSQL_USER: infinityuser
+   MYSQL_DATABASE: pwrlift
+   MYSQL_USER: pwrliftuser
    MYSQL_PASSWORD: gfwERT23^!a
    MYSQL_ROOT_PASSWORD: ytEwfdsA!
   ports:
