@@ -1,0 +1,21 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}{% endblock %}</title>
+    <meta name="keywords" content="какие-то ключи, потом напишем">
+    <meta name="description" content="какая-то фраза описание, потом...">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="shortcut icon" type="image/png" href="{% static 'img/favicon32.ico' %}">
+</head>
+<body>
+{% include 'inc/_header.html' %}
+<div class="block_content">
+    {% block content %}{% endblock %}
+</div>
+{% include 'inc/_footer.html' %}
+<script src="{% static 'js/script.js' %}"></script>
+</body>
+</html>

@@ -1,0 +1,5 @@
+/venv/
+.idea/
+/code/pwrlft/settings.py
+/code/pwrlft/settingsprod.py
+/config/prod.env

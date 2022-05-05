@@ -1,0 +1,62 @@
+version: '3.3'
+services:
+ django:
+  restart: always
+  container_name: django
+  volumes:
+   - ../code:/code
+   - ../collect_static:/collect_static
+   - ../media:/media
+   - ./sock:/sock
+  build:
+   context: .
+   dockerfile: dockerfiles/docker_django.conf
+  command: uwsgi --ini /etc/uwsgi.ini
+  links:
+   - db
+  ports:
+   - "8001:8001"
+   - "8000:8000"
+  depends_on:
+   - db
+ db:
+  image: mysql:5.7
+  restart: always
+  container_name: db
+  env_file:
+   - prod.env
+  ports:
+   - "3306:3306"
+  volumes:
+   - ../db/initdb:/docker-entrypoint-initdb.d
+   - ../db/workdb:/var/lib/mysql
+ phpmyadmin:
+  image: phpmyadmin/phpmyadmin
+  container_name: phpmyadmin
+  links:
+   - db
+  environment:
+   PMA_ARBITARY: 1
+   PMA_HOST: db
+   PMA_PORT: 3306
+  restart: always
+  ports:
+   - "8081:80"
+  depends_on:
+   - db
+ nginx:
+  restart: always
+  container_name: nginx
+  volumes:
+   - ./sock:/sock
+   - ../collect_static:/collect_static
+   - ../media:/media
+  build:
+   context: .
+   dockerfile: dockerfiles/docker_nginx.conf
+  depends_on:
+   - django
+  ports:
+   - "80:80"
+   - "443:443"
+  entrypoint: "/bin/sh -c 'while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g \"daemon off;\"'"
