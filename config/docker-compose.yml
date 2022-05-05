@@ -50,7 +50,7 @@ services:
   volumes:
    - ./sock:/sock
    - ../collect_static:/collect_static
-   - ../media:/media
+   - ../media:/media_static
   build:
    context: .
    dockerfile: dockerfiles/docker_nginx.conf
