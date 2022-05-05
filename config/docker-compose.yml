@@ -23,11 +23,8 @@ services:
   image: mysql:5.7
   restart: always
   container_name: db
-  environment:
-   MYSQL_DATABASE: pwrlift
-   MYSQL_USER: pwrliftuser
-   MYSQL_PASSWORD: gfwERT23^!a
-   MYSQL_ROOT_PASSWORD: ytEwfdsA!
+  env_file:
+   - prod.env
   ports:
    - "3306:3306"
   volumes:
