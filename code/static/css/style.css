@@ -217,6 +217,7 @@ a, div {
         display: none;
         flex-direction: column;
         z-index: 2;
+        overflow-y: scroll;
     }
     .visible_body {
         /*opacity: 1;*/
