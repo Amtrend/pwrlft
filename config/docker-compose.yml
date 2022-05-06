@@ -70,4 +70,4 @@ services:
    - ./data/certbot/conf:/etc/letsencrypt
    - ./data/certbot/www:/var/www/certbot
   # command: certonly --webroot --webroot-path=/var/www/certbot --email sale@amtrend.ru --agree-tos --no-eff-email -d powerlifting-kirov.ru --dry-run -v
-  command: certonly --webroot --webroot-path=/var/www/certbot --email sale@amtrend.ru --agree-tos --no-eff-email -d powerlifting-kirov.ru -v
+  # command: certonly --webroot --webroot-path=/var/www/certbot --email sale@amtrend.ru --agree-tos --no-eff-email -d powerlifting-kirov.ru -v
