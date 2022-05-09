@@ -838,6 +838,7 @@ a, div {
     color: #FFFFFF;
     padding: 10px 20px;
     border-radius: 10px;
+    -webkit-appearance: none;
 }
 
 .competition_entry-form_btn:hover {
