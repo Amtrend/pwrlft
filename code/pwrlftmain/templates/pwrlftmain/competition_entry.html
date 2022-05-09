@@ -1,0 +1,150 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Форма заявки на {{ cur_competition.title }}{% endblock %}
+{% block content %}
+    <section id="competition_entry">
+        <div class="competition_entry">
+            <p class="competition_entry-title">{{ cur_competition.title }}</p>
+            <p class="competition_entry-content">{{ cur_competition.content|linebreaksbr }}</p>
+            <p class="competition_entry-form_title">Заявка на участие в соревнованиях</p>
+            <p class="competition_entry-form_subtitle">(поля, помеченные <sup>*</sup>, обязательны для заполнения)</p>
+            <form action="{% url 'competition_entry' cur_competition.competition_slug %}" method="post" id="competition_entry-form" class="competition_entry-form">
+                {% csrf_token %}
+                <div class="competition_entry-form_gender">
+                    <p class="competition_entry-form_gender-title">Пол <sup>*</sup></p>
+                    <div class="competition_entry-form_gender-block">
+                        <input type="radio" class="competition_entry-form_gender-input" id="competition_entry-form_gender-male" name="competition_entry-form_gender" value="competition_entry-form_gender-male" checked>
+                        <label for="competition_entry-form_gender-male" class="competition_entry-form_gender-label">Мужской</label>
+                        <input type="radio" class="competition_entry-form_gender-input competition_entry-form_gender-input-fem" id="competition_entry-form_gender-female" name="competition_entry-form_gender" value="competition_entry-form_gender-female">
+                        <label for="competition_entry-form_gender-female" class="competition_entry-form_gender-label">Женский</label>
+                    </div>
+                </div>
+                <div class="competition_entry-form_sur">
+                    <label for="competition_entry-form_sur-input" class="competition_entry-form_sur-label">Фамилия <sup>*</sup></label>
+                    <input type="text" class="competition_entry-form_sur-input" id="competition_entry-form_sur-input" name="competition_entry-form_sur-input" placeholder="Иванов">
+                </div>
+                <div class="competition_entry-form_sur">
+                    <label for="competition_entry-form_name-input" class="competition_entry-form_sur-label">Имя <sup>*</sup></label>
+                    <input type="text" class="competition_entry-form_sur-input" id="competition_entry-form_name-input" name="competition_entry-form_name-input" placeholder="Иван">
+                </div>
+                <div class="competition_entry-form_sur">
+                    <label for="competition_entry-form_patr-input" class="competition_entry-form_sur-label">Отчество <sup>*</sup></label>
+                    <input type="text" class="competition_entry-form_sur-input" id="competition_entry-form_patr-input" name="competition_entry-form_patr-input" placeholder="Иванович">
+                </div>
+                <div class="competition_entry-form_sur">
+                    <label for="competition_entry-form_birthday-input" class="competition_entry-form_sur-label">Дата рождения <sup>*</sup></label>
+                    <input type="date" class="competition_entry-form_birthday-input" id="competition_entry-form_birthday-input" name="competition_entry-form_birthday-input">
+                </div>
+                <div class="competition_entry-form_sur">
+                    <label for="competition_entry-form_wcat-m" id="competition_entry-form_wcat-m-label" class="competition_entry-form_sur-label">Весовая категория <sup>*</sup></label>
+                    <select name="competition_entry-form_wcat" class="competition_entry-form_wcat" id="competition_entry-form_wcat-m">
+                        <option value="53">53</option>
+                        <option value="59">59</option>
+                        <option value="66">66</option>
+                        <option value="74">74</option>
+                        <option value="83">83</option>
+                        <option value="93">93</option>
+                        <option value="105">105</option>
+                        <option value="120">120</option>
+                        <option value="120+">120+</option>
+                    </select>
+                    <label for="competition_entry-form_wcat-f" id="competition_entry-form_wcat-f-label" class="competition_entry-form_sur-label">Весовая категория <sup>*</sup></label>
+                    <select name="competition_entry-form_wcat" class="competition_entry-form_wcat" id="competition_entry-form_wcat-f">
+                        <option value="43">43</option>
+                        <option value="47">47</option>
+                        <option value="52">52</option>
+                        <option value="57">57</option>
+                        <option value="63">63</option>
+                        <option value="69">69</option>
+                        <option value="76">76</option>
+                        <option value="84">84</option>
+                        <option value="84+">84+</option>
+                    </select>
+                </div>
+                <div class="competition_entry-form_sur">
+                    <label for="competition_entry-form_sp-cat" class="competition_entry-form_sur-label">Спортивный разряд</label>
+                    <select name="competition_entry-form_sp-cat" class="competition_entry-form_wcat" id="competition_entry-form_sp-cat">
+                        <option value="Без разряда" selected>Без разряда</option>
+                        <option value="47">47</option>
+                        <option value="III юношеский">III юношеский</option>
+                        <option value="II юношеский">II юношеский</option>
+                        <option value="I юношеский">I юношеский</option>
+                        <option value="III взрослый">III взрослый</option>
+                        <option value="II взрослый">II взрослый</option>
+                        <option value="I взрослый">I взрослый</option>
+                        <option value="КМС">КМС</option>
+                        <option value="МС">МС</option>
+                        <option value="МСМК">МСМК</option>
+                    </select>
+                </div>
+                <div class="competition_entry-form_sur">
+                    <p class="competition_entry-form_sur-label">Спортивная дисциплина <sup>*</sup></p>
+                    <div class="competition_entry-form_sp-t_block">
+                        {% for st in cur_competition.sport_types.all %}
+                            <div class="competition_entry-form_sp-t_block_chck">
+                                <input type="checkbox" name="competition_entry-form_sp-t_chckbx" class="competition_entry-form_sp-t_chckbx" id="competition_entry-form_sp-t_chckbx-{{ st.id }}" value="{{ st.title }}">
+                                <label for="competition_entry-form_sp-t_chckbx-{{ st.id }}" class="competition_entry-form_sur-label competition_entry-form_sur-label-chck">{{ st.title }}</label>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                <div class="competition_entry-form_sur competition_entry-form_sur-pwlekip">
+                    <label for="competition_entry-form_pwlekip-input" class="competition_entry-form_sur-label">Лучший результат в троеборье (экип.)</label>
+                    <input type="number" class="competition_entry-form_sur-input" id="competition_entry-form_pwlekip-input" name="competition_entry-form_pwlekip-input" min="0" step="0.01" max="9999" placeholder="0.00">
+                </div>
+                <div class="competition_entry-form_sur competition_entry-form_sur-pwlclass">
+                    <label for="competition_entry-form_pwlclass-input" class="competition_entry-form_sur-label">Лучший результат в троеборье классическом</label>
+                    <input type="number" class="competition_entry-form_sur-input" id="competition_entry-form_pwlclass-input" name="competition_entry-form_pwlclass-input" min="0" step="0.01" max="9999" placeholder="0.00">
+                </div>
+                <div class="competition_entry-form_sur competition_entry-form_sur-bpekip">
+                    <label for="competition_entry-form_bpekip-input" class="competition_entry-form_sur-label">Лучший результат в жиме лёжа (экип.)</label>
+                    <input type="number" class="competition_entry-form_sur-input" id="competition_entry-form_bpekip-input" name="competition_entry-form_bpekip-input" min="0" step="0.01" max="999" placeholder="0.00">
+                </div>
+                <div class="competition_entry-form_sur competition_entry-form_sur-bp">
+                    <label for="competition_entry-form_bp-input" class="competition_entry-form_sur-label">Лучший результат в жиме лёжа (без экип.)</label>
+                    <input type="number" class="competition_entry-form_sur-input" id="competition_entry-form_bp-input" name="competition_entry-form_bp-input" min="0" step="0.01" max="999" placeholder="0.00">
+                </div>
+                <div class="competition_entry-form_sur">
+                    <label for="competition_entry-form_sur-trn-input" class="competition_entry-form_sur-label">Фамилия тренера</label>
+                    <input type="text" class="competition_entry-form_sur-input" id="competition_entry-form_sur-trn-input" name="competition_entry-form_sur-trn-input" placeholder="Иванов">
+                </div>
+                <div class="competition_entry-form_sur">
+                    <label for="competition_entry-form_name-trn-input" class="competition_entry-form_sur-label">Имя тренера</label>
+                    <input type="text" class="competition_entry-form_sur-input" id="competition_entry-form_name-trn-input" name="competition_entry-form_name-trn-input" placeholder="Иван">
+                </div>
+                <div class="competition_entry-form_sur">
+                    <label for="competition_entry-form_patr-trn-input" class="competition_entry-form_sur-label">Отчество тренера</label>
+                    <input type="text" class="competition_entry-form_sur-input" id="competition_entry-form_patr-trn-input" name="competition_entry-form_patr-trn-input" placeholder="Иванович">
+                </div>
+                <div class="competition_entry-form_sur">
+                    <label for="competition_entry-form_club-input" class="competition_entry-form_sur-label">Название спортивного клуба</label>
+                    <input type="text" class="competition_entry-form_sur-input" id="competition_entry-form_club-input" name="competition_entry-form_club-input" placeholder="ВЯТСШОР">
+                </div>
+                <div class="competition_entry-form_sur">
+                    <label for="competition_entry-form_phone-input" class="competition_entry-form_sur-label">Номер телефона</label>
+                    <input type="tel" class="competition_entry-form_sur-input" id="competition_entry-form_phone-input" name="competition_entry-form_phone-input" placeholder="89991234567">
+                </div>
+                <div class="competition_entry-form_sur">
+                    <label for="competition_entry-form_mail-input" class="competition_entry-form_sur-label">Адрес эл.почты</label>
+                    <input type="email" class="competition_entry-form_sur-input" id="competition_entry-form_mail-input" name="competition_entry-form_mail-input" placeholder="myemail@mail.ru">
+                </div>
+                <div class="competition_entry-form_send">
+                    <input type="submit" id="competition_entry-form_btn" name="competition_entry-form_btn" class="competition_entry-form_btn" value="Отправить">
+                    <div class="competition_entry-form_agree-block">
+                        <input type="checkbox" class="competition_entry-form_agree-chck" id="competition_entry-form_agree-chckbx" name="competition_entry-form_agree-chckbx" checked>
+                        <label for="competition_entry-form_agree-chckbx" class="competition_entry-form_agree-label">Отправляя форму, Вы даёте согласие на обработку персональных данных и соглашаетесь с
+                            <a href="{% url 'privacy' %}" target="_blank" class="competition_entry-form_agree-label_unlink">политикой конфиденциальности</a> <sup>*</sup></label>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="competition_form_modal" id="competition_form_modal">
+            <div class="competition_form_modal-content">
+                <span class="competition_form_modal-close" id="competition_form_modal-close">&times;</span>
+                <p class="competition_form_modal-text" id="competition_form_modal-text">Благодарим Вас за заявку, <span id="competition_form_modal-fio"></span>. Желаем Вам удачного выступления, до встречи на соревнованиях!<br>
+                Список зарегистрированных участников можно посмотреть <a href="{% url 'competition_list' cur_competition.competition_slug  %}" target="_blank" class="competition_entry-form_agree-label_unlink">тут</a></p>
+            </div>
+        </div>
+    </section>
+
+{% endblock %}
