@@ -33,6 +33,9 @@ class Competitions(models.Model):
     def get_absolute_url_protocol(self):
         return reverse('competition_protocol', args=[self.competition_slug])
 
+    def get_absolute_url(self):
+        return reverse('competition_entry', args=[self.competition_slug])
+
     def __str__(self):
         return self.title
 

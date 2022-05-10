@@ -1,6 +1,14 @@
 from .views import *
 from django.urls import path
 from django.views.generic import RedirectView, TemplateView
+from .sitemap import StaticSitemap, CompetitionsSitemap
+from django.contrib.sitemaps.views import sitemap
+
+
+sitemaps = {
+    'static': StaticSitemap,
+    'competitions': CompetitionsSitemap,
+}
 
 
 urlpatterns = [
@@ -13,5 +21,6 @@ urlpatterns = [
     path('competitions/<slug:competition_slug>/competition_protocol/', competition_protocol_page, name='competition_protocol'),
     path('news/', news_page, name='news'),
     path('robots.txt', TemplateView.as_view(template_name='robots.txt', content_type='text/plain')),
+    path('sitemap.xml', sitemap, {'sitemaps': sitemaps}, name='django.contrib.sitemaps.views.sitemap'),
     path('favicon.ico', RedirectView.as_view(url='collect_static/img/favicon32.ico'), name='favicon'),
 ]
