@@ -101,6 +101,8 @@ ready(() => {
                 if (this.value === "Троеборье классическое") {
                     if (this.checked) {
                         blockBestPL.style.display = 'flex';
+                        document.querySelector('input[value="Жим лёжа (без экип.)"]').checked = true;
+                        blockBestBP.style.display = 'flex';
                     } else {
                         blockBestPL.style.display = 'none';
                     }
@@ -108,6 +110,8 @@ ready(() => {
                 if (this.value === "Троеборье (экип.)") {
                     if (this.checked) {
                         blockBestPLEkip.style.display = 'flex';
+                        document.querySelector('input[value="Жим лёжа (экип.)"]').checked = true;
+                        blockBestBPEkip.style.display = 'flex';
                     } else {
                         blockBestPLEkip.style.display = 'none';
                     }
