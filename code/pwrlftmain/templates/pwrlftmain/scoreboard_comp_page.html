@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Табло для спортсменов{% endblock %}
+{% block content %}
+    <div class="mass_scoreboard" id="mass_scoreboard_comp">
+        <table class="mass_scoreboard-table">
+            <tr class="mass_scoreboard-table-title">
+                <th>спортсмен</th><th>вес спортсмена</th><th>присед 1 подход</th><th>присед 2 подход</th><th>присед 3 подход</th>
+                <th>жим 1 подход</th><th>жим 2 подход</th><th>жим 3 подход</th>
+                <th>тяга 1 подход</th><th>тяга 2 подход</th><th>тяга 3 подход</th>
+                <th>присед итог</th><th>жим итог</th><th>тяга итог</th><th>сумма итог</th>
+            </tr>
+        </table>
+    </div>
+    <form action="{% url 'scoreboard_comp_page' cur_competition.competition_slug %}" method="post" id="score-comp-form" class="score-form">
+        {% csrf_token %}
+        <input type="submit" name="score-form_btn" id="score-comp-form_btn">
+    </form>
+{% endblock %}

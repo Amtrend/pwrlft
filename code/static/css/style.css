@@ -50,6 +50,12 @@ a, div {
     font-weight: 700;
 }
 
+@font-face {
+    font-family: "Orbitron";
+    src: url("../fonts/Orbitron-Regular.ttf") format('truetype');
+    /*font-weight: 400;*/
+}
+
 .block_content {
     min-height: calc(100vh - 142px);
 }
@@ -1129,3 +1135,274 @@ a, div {
         line-height: 18px;
     }
 }
+
+
+/* ========== SECRETARY_PAGE ========== */
+
+
+.form-secretary_stream-btn {
+    display: none;
+}
+
+.form-secretary_stream-select {
+    margin: 15px;
+}
+
+.form-secretary_stream-select {
+    background-color: #092942;
+    font-family: Montserrat, sans-serif;
+    font-weight: 500;
+    font-size: 14px;
+    line-height: 18px;
+    color: #FFFFFF;
+    padding: 10px 20px;
+    border-radius: 10px;
+}
+
+.form-secretary_stream-select > option {
+    background-color: #FFFFFF;
+    color: #092942;
+}
+
+.form-secretary_stream-select:hover {
+    cursor: pointer;
+}
+
+.title_descr-stream {
+    margin-left: 15px;
+    margin-bottom: 10px;
+}
+
+.secretary-competitors-protocols_table {
+    margin: 0 auto;
+    background-color: #FFFFFF;
+    border-collapse: collapse;
+}
+
+.secretary-competitors-protocols_table > tbody > tr > th {
+    border: 1px solid #FFFFFF;
+}
+
+.secretary-competitors-protocols_table > tbody > tr > td {
+    border: 1px solid #092942;
+    text-align: center;
+}
+
+.secretary-competitors-protocols_table-title {
+    background-color: #092942;
+    text-align: center;
+    color: #FFFFFF;
+}
+
+.secretary-page_counter-sports-type {
+    display: none;
+}
+
+.secr-page_fio-span, .secr-page_fio-span-bp, .secr-page_fio-span-ek, .secr-page_fio-span-bpek {
+    cursor: pointer;
+}
+
+.secr-page_fio-span:hover, .secr-page_fio-span-bp:hover, .secr-page_fio-span-ek:hover, .secr-page_fio-span-bpek:hover {
+    color: #5373a1;
+}
+
+.row-form_buttons {
+    display: flex;
+    flex-direction: column;
+}
+
+.secr-page_form-btn {
+    padding: 3px 15px;
+    border-radius: 5px;
+    background-color: #092942;
+    border: none;
+    color: white;
+}
+
+.secr-page_form-btn:hover {
+    background-color: #5373a1;
+    cursor: pointer;
+}
+
+.row-buttons {
+    border: none!important;
+}
+
+.margin-form-btn {
+    margin-top: 5px;
+}
+
+.secr-page_chckbx {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    border-radius: 4px;
+    border: 1px solid #092942;
+    width: 18px;
+    height: 19px;
+    cursor: pointer;
+    position: relative;
+    font-weight: 700;
+}
+
+.secr-page_chckbx::before {
+    content: "🗸";
+    color: #092942!important;
+    font-size: 18px;
+    position: absolute;
+    right: 50%;
+    bottom: 50%;
+    transform: translate(50%, 50%);
+    opacity: 0;
+    transition: .1s ease-in;
+}
+
+.secr-page_chckbx:checked::before {
+    opacity: 1;
+}
+
+.secr-page_chckbx-label:hover {
+    cursor: pointer;
+}
+
+.secr-page_chckbx-block {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.secr-page_chckbx-label {
+    font-family: Montserrat, sans-serif;
+    font-size: 9px;
+    line-height: 14px;
+}
+
+.secretary-competitors-protocols_table-tr-form {
+    display: none;
+}
+
+.secr-page_input-numb {
+    font-family: Montserrat, sans-serif;
+    font-size: 14px;
+    line-height: 16px;
+    font-weight: 500;
+}
+
+
+/* ========== SCOREBOARD_PAGE ========== */
+
+
+.score-form {
+    display: none;
+}
+
+.ind_scoreboard {
+    height: 100vh;
+    width: 100vw;
+    background-color: black;
+    position: absolute;
+    top: 0;
+    left: 0;
+    /*display: flex;*/
+    display: none;
+    flex-direction: column;
+    /*padding: calc(20px + 1vw);*/
+    /*padding: 30px;*/
+    justify-content: space-between;
+}
+
+.ind_scoreboard-wcat_score {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: 2vw;
+}
+
+.ind_scoreboard-wcat_score-text {
+    font-family: Montserrat, sans-serif;
+    color: #FFFFFF;
+    font-weight: 500;
+    font-size: calc(16px + 2vw);
+}
+
+.ind_scoreboard-wcat_score-text-score {
+    border: 5px solid white;
+    border-radius: 50%;
+    background-color: red;
+    width: 7vw;
+    height: 7vw;
+    margin-right: 6vw;
+}
+
+.ind_scoreboard-wcat_score-text-score-block {
+    display: flex;
+    flex-direction: row;
+}
+
+.ind_scoreboard-fi {
+    font-family: Montserrat, sans-serif;
+    color: #fcfc9e;
+    font-weight: 600;
+    font-size: calc(16px + 4vw);
+    margin-top: calc(20px + 3vw);
+    text-align: center;
+}
+
+.ind_scoreboard-type-weight {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: center;
+    /*margin-top: calc(20px + 3vw);*/
+    padding: 2vw;
+}
+
+.ind_scoreboard-type-weight_type {
+    font-family: Montserrat, sans-serif;
+    color: #FFFFFF;
+    font-weight: 500;
+    font-size: calc(16px + 2vw);
+}
+
+.ind_scoreboard-type-weight_weight {
+    font-family: Montserrat, sans-serif;
+    color: #fcfc9e;
+    font-weight: 700;
+    font-size: calc(16px + 6vw);
+}
+
+.timer-scoreboard {
+    font-family: Orbitron, sans-serif;
+    color: #fcfc9e;
+    /*font-weight: 400;*/
+    font-size: calc(16px + 8vw);
+    text-align: center;
+    margin-top: auto;
+    padding: 2vw;
+}
+
+.mass_scoreboard-table {
+    margin: 0 auto;
+    background-color: #FFFFFF;
+    border-collapse: collapse;
+    width: 100%;
+    font-family: Montserrat, sans-serif;
+    font-size: calc(20px + 0.1vw);
+}
+
+.mass_scoreboard-table > tbody > tr > th {
+    border: 1px solid #FFFFFF;
+}
+
+.mass_scoreboard-table > tbody > tr > td {
+    border: 1px solid #092942;
+    text-align: center;
+}
+
+.mass_scoreboard-table-title {
+    background-color: #092942;
+    text-align: center;
+    color: #FFFFFF;
+}
+

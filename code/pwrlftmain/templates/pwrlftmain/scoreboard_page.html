@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Табло текущего участника{% endblock %}
+{% block content %}
+    <div class="ind_scoreboard" id="ind_scoreboard">
+        <div class="ind_scoreboard-wcat_score">
+            <p class="ind_scoreboard-wcat_score-text">Весовая категория: <span id="ind_scoreboard-wcat_score-text"></span> кг</p>
+            <div class="ind_scoreboard-wcat_score-text-score-block">
+                <div class="ind_scoreboard-wcat_score-text-score" id="ind_scoreboard-wcat_score-text-score-1"></div>
+                <div class="ind_scoreboard-wcat_score-text-score" id="ind_scoreboard-wcat_score-text-score-2"></div>
+                <div class="ind_scoreboard-wcat_score-text-score" id="ind_scoreboard-wcat_score-text-score-3"></div>
+            </div>
+        </div>
+        <p class="ind_scoreboard-fi"><span id="ind_scoreboard-fi"></span></p>
+        <div class="ind_scoreboard-type-weight">
+            <p class="ind_scoreboard-type-weight_type"><span id="ind_scoreboard-type-action"></span></p>
+            <p class="ind_scoreboard-type-weight_type"><span id="ind_scoreboard-order-att"></span></p>
+            <p class="ind_scoreboard-type-weight_weight"><span id="ind_scoreboard-action-weight"></span> кг</p>
+        </div>
+        <p class="timer-scoreboard" id="timer">01:00</p>
+    </div>
+    <div class="mass_scoreboard" id="mass_scoreboard">
+        <table class="mass_scoreboard-table">
+            <tr class="mass_scoreboard-table-title">
+                <th>спортсмен</th><th>вес спортсмена</th><th>присед 1 подход</th><th>присед 2 подход</th><th>присед 3 подход</th>
+                <th>жим 1 подход</th><th>жим 2 подход</th><th>жим 3 подход</th>
+                <th>тяга 1 подход</th><th>тяга 2 подход</th><th>тяга 3 подход</th>
+                <th>присед итог</th><th>жим итог</th><th>тяга итог</th><th>сумма итог</th>
+            </tr>
+        </table>
+    </div>
+    <form action="{% url 'scoreboard_page' cur_competition.competition_slug %}" method="post" id="score-form" class="score-form">
+        {% csrf_token %}
+        <input type="submit" name="score-form_btn" id="score-form_btn">
+    </form>
+{% endblock %}

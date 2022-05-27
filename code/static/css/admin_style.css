@@ -1,0 +1,144 @@
+/* ========== ALL ========== */
+
+
+@font-face {
+    font-family: "Montserrat";
+    src: url("../fonts/Montserrat-Light.ttf") format('ttf');
+    font-weight: 300;
+}
+
+@font-face {
+    font-family: "Montserrat";
+    src: url("../fonts/Montserrat-Medium.ttf") format('ttf');
+    font-weight: 500;
+}
+
+@font-face {
+    font-family: "Montserrat";
+    src: url("../fonts/Montserrat-Bold.ttf") format('ttf');
+    font-weight: 700;
+}
+
+body {
+    width: 100%;
+    font-family: Montserrat, sans-serif;
+    font-size: 15px;
+    font-weight: 500;
+    --header-color: white;
+}
+
+.site-name {
+    text-align: center;
+}
+
+.site-name_link:hover {
+    color: #FDED85!important;
+}
+
+
+#header {
+    background-color: #23395D;
+}
+
+#branding h1 a {
+    color: white !important;
+}
+
+#branding h1 a:hover {
+    color: #FDED85!important;
+}
+
+#user-tools {
+    color: white !important;
+}
+
+#user-tools a:hover {
+    color: #FDED85!important;
+}
+
+input[type=submit], button[type=submit] {
+    background-color: #23395D!important;
+    color: white!important;
+}
+
+input[type=submit]:hover, button[type=submit]:hover {
+    background-color: #A27D29!important;
+}
+
+input[type=submit]:active, button[type=submit]:active {
+    background: #FDED85!important;
+}
+
+.breadcrumbs {
+    background-color: #23395D!important;
+}
+
+.module > table > caption {
+    background-color: #23395D!important;
+}
+
+#nav-sidebar .current-model {
+    background-color: #f8f8f8!important;
+}
+
+#changelist-filter > h2 {
+    background-color: #23395D;
+}
+
+#toolbar form input[type="submit"] {
+    color: white;
+}
+
+.colM > form > p > code {
+    font-size: 14px;
+}
+
+.colM > form > fieldset > div > input[type=file] {
+    font-size: 14px;
+}
+
+table[class=import-preview] > tbody > tr[class=update] {
+    background-color: white;
+}
+
+table[class=import-preview] > tbody > tr[class=update],  table[class=import-preview] > tbody > tr[class=new]{
+    background-color: white;
+}
+
+table[class=import-preview] > tbody > tr[class=new] > td > ins {
+    background: white!important;
+    text-decoration: none;
+}
+
+.module > h2 {
+    background-color: #23395D!important;
+}
+
+input[type=checkbox] {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    border-radius: 4px;
+    border: 1px solid #d6d6cd;
+    width: 18px;
+    height: 19px;
+    cursor: pointer;
+    position: relative;
+    font-weight: 700;
+}
+
+input[type=checkbox]::before {
+    content: "🗸";
+    color: #23395D!important;
+    font-size: 18px;
+    position: absolute;
+    right: 50%;
+    bottom: 50%;
+    transform: translate(50%, 50%);
+    opacity: 0;
+    transition: .1s ease-in;
+}
+
+input[type=checkbox]:checked::before {
+    opacity: 1;
+}

@@ -1,0 +1,21 @@
+{% extends "admin/base.html" %}
+
+{% load static %}
+
+    {% block title %}Administrative section | {% if subtitle %}{{ subtitle }}{% endif %} | {{ title }}{% endblock %}
+
+{% block extrahead %}
+    <link rel="shortcut icon" type="image/png" href="{% static 'img/favicon32.ico' %}">
+    <link rel="stylesheet" href="{% static 'css/admin_style.css' %}">
+    <script src="{% static 'js/admin_script.js' %}"></script>
+{% endblock %}
+
+{% block branding %}
+    <h1 id="site-name"><a href="{% url 'admin:index' %}" class="site-name_link">Administrative section powerlifting-kirov site</a></h1>
+{% endblock %}
+
+{% block nav-global %}{% endblock %}
+
+{% block footer %}
+
+{% endblock %}
