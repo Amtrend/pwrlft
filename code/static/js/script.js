@@ -329,15 +329,15 @@ ready(() => {
             }
         });
     }
-    let screenWidth = window.innerWidth;
-    let competitorsTable = document.querySelectorAll('.competitors_list_table-tbody');
-    if (competitorsTable) {
-        if (screenWidth > 1000) {
-            for (let i = 0; i < competitorsTable.length; i ++) {
-                competitorsTable[i].style.marginLeft = ((screenWidth - Number(getComputedStyle(competitorsTable[i]).width.split('p')[0])) / 2) - 40 + 'px';
-            }
-        }
-    }
+    // let screenWidth = window.innerWidth;
+    // let competitorsTable = document.querySelectorAll('.competitors_list_table-tbody');
+    // if (competitorsTable) {
+    //     if (screenWidth > 1000) {
+    //         for (let i = 0; i < competitorsTable.length; i ++) {
+    //             competitorsTable[i].style.marginLeft = ((screenWidth - Number(getComputedStyle(competitorsTable[i]).width.split('p')[0])) / 2) - 40 + 'px';
+    //         }
+    //     }
+    // }
     let secretaryPageSelectStreams = document.getElementById('form-secretary_stream-select');
     if (secretaryPageSelectStreams) {
         secretaryPageSelectStreams.addEventListener("change", function (e) {

@@ -169,46 +169,46 @@ def competition_protocol_page(request, competition_slug):
                 if comppclmwc not in competitiors_pwlclass_m_wcat:
                     competitiors_pwlclass_m_wcat.append(comppclmwc)
             competitiors_pwlclass_f = competitors.filter(competitor__sports_type__title="Троеборье классическое", competitor__gender="Женский").order_by("-best_sum_res")
-            competitiors_pwlclass_f_wcat_st = competitiors_pwlclass_m.values_list("competitor__weight_cat", flat=True)
+            competitiors_pwlclass_f_wcat_st = competitiors_pwlclass_f.values_list("competitor__weight_cat", flat=True)
             competitiors_pwlclass_f_wcat = []
             for comppclfwc in competitiors_pwlclass_f_wcat_st:
                 if comppclfwc not in competitiors_pwlclass_f_wcat:
                     competitiors_pwlclass_f_wcat.append(comppclfwc)
         if sp_type.title == "Троеборье (экип.)":
             competitiors_pwlekip_m = competitors.filter(competitor__sports_type__title="Троеборье (экип.)", competitor__gender="Мужской").order_by("-best_sum_res_ek")
-            competitiors_pwlekip_m_wcat_st = competitiors_pwlclass_m.values_list("competitor__weight_cat", flat=True)
+            competitiors_pwlekip_m_wcat_st = competitiors_pwlekip_m.values_list("competitor__weight_cat", flat=True)
             competitiors_pwlekip_m_wcat = []
             for comppekmwc in competitiors_pwlekip_m_wcat_st:
                 if comppekmwc not in competitiors_pwlekip_m_wcat:
                     competitiors_pwlekip_m_wcat.append(comppekmwc)
             competitiors_pwlekip_f = competitors.filter(competitor__sports_type__title="Троеборье (экип.)", competitor__gender="Женский").order_by("-best_sum_res_ek")
-            competitiors_pwlekip_f_wcat_st = competitiors_pwlclass_m.values_list("competitor__weight_cat", flat=True)
+            competitiors_pwlekip_f_wcat_st = competitiors_pwlekip_f.values_list("competitor__weight_cat", flat=True)
             competitiors_pwlekip_f_wcat = []
             for comppekfwc in competitiors_pwlekip_f_wcat_st:
                 if comppekfwc not in competitiors_pwlekip_f_wcat:
                     competitiors_pwlekip_f_wcat.append(comppekfwc)
         if sp_type.title == "Жим лёжа (экип.)":
             competitiors_bpekip_m = competitors.filter(competitor__sports_type__title="Жим лёжа (экип.)", competitor__gender="Мужской").order_by("-best_bpress_res_ek")
-            competitiors_bpekip_m_wcat_st = competitiors_pwlclass_m.values_list("competitor__weight_cat", flat=True)
+            competitiors_bpekip_m_wcat_st = competitiors_bpekip_m.values_list("competitor__weight_cat", flat=True)
             competitiors_bpekip_m_wcat = []
             for combpekmwc in competitiors_bpekip_m_wcat_st:
                 if combpekmwc not in competitiors_bpekip_m_wcat:
                     competitiors_bpekip_m_wcat.append(combpekmwc)
             competitiors_bpekip_f = competitors.filter(competitor__sports_type__title="Жим лёжа (экип.)", competitor__gender="Женский").order_by("-best_bpress_res_ek")
-            competitiors_bpekip_f_wcat_st = competitiors_pwlclass_m.values_list("competitor__weight_cat", flat=True)
+            competitiors_bpekip_f_wcat_st = competitiors_bpekip_f.values_list("competitor__weight_cat", flat=True)
             competitiors_bpekip_f_wcat = []
             for combpekfwc in competitiors_bpekip_f_wcat_st:
                 if combpekfwc not in competitiors_bpekip_f_wcat:
                     competitiors_bpekip_f_wcat.append(combpekfwc)
         if sp_type.title == "Жим лёжа (без экип.)":
             competitiors_bp_m = competitors.filter(competitor__sports_type__title="Жим лёжа (без экип.)", competitor__gender="Мужской").order_by("-best_bpress_res")
-            competitiors_bp_m_wcat_st = competitiors_pwlclass_m.values_list("competitor__weight_cat", flat=True)
+            competitiors_bp_m_wcat_st = competitiors_bp_m.values_list("competitor__weight_cat", flat=True)
             competitiors_bp_m_wcat = []
             for combpclmwc in competitiors_bp_m_wcat_st:
                 if combpclmwc not in competitiors_bp_m_wcat:
                     competitiors_bp_m_wcat.append(combpclmwc)
             competitiors_bp_f = competitors.filter(competitor__sports_type__title="Жим лёжа (без экип.)", competitor__gender="Женский").order_by("-best_bpress_res")
-            competitiors_bp_f_wcat_st = competitiors_pwlclass_m.values_list("competitor__weight_cat", flat=True)
+            competitiors_bp_f_wcat_st = competitiors_bp_f.values_list("competitor__weight_cat", flat=True)
             competitiors_bp_f_wcat = []
             for combpclfwc in competitiors_bp_f_wcat_st:
                 if combpclfwc not in competitiors_bp_f_wcat:
