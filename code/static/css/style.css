@@ -1394,7 +1394,9 @@ a, div {
     border-collapse: collapse;
     width: 100%;
     font-family: Montserrat, sans-serif;
-    font-size: calc(20px + 0.1vw);
+    /*font-size: calc(20px + 0.1vw);*/
+    /*max-height: 100vh!important;*/
+    /*height: 100vh!important;*/
 }
 
 .mass_scoreboard-table > tbody > tr > th {

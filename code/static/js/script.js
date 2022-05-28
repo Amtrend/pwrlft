@@ -1311,6 +1311,16 @@ ready(() => {
                                     }
                                 }
                             }
+                            // console.log("got");
+                            // // massTable.style.height = "100vh";
+                            // console.log(getComputedStyle(massTable).fontSize)
+                            // function missFz() {
+                            //     // console.log(getComputedStyle(massTable).fontSize)
+                            //     // massTable.style.fontSize = parseFloat(getComputedStyle(massTable).fontSize) - 1 + "px"
+                            //     // console.log(getComputedStyle(massTable).fontSize)
+                            //     massTable.style.height = "100vh"
+                            // }
+                            // window.onresize = missFz()
                         }
                     }
 
