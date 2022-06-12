@@ -11,10 +11,11 @@
                         <br>
                         ({% for st in comp.sport_types.all %}{% if st == comp.sport_types.all.last %}{{ st.title|lower }}{% else %}{{ st.title|lower }}, {% endif %}{% endfor %})
                     </p>
-                    {% now 'j F Y' as today_str %}
-                    <a href="{{ comp.get_absolute_url_entry }}" target="_blank"><input type="button" class="competition_block-btn" name="competition_block-btn_register" value="Подать заявку" {% if today_str >= comp.start_date|date:"j F Y" %}disabled{% endif %}></a>
+{#                    {% now 'j F Y' as today_str %}#}
+                    {% now 'Y-m-d' as today_str %}
+                    <a href="{{ comp.get_absolute_url_entry }}" target="_blank"><input type="button" class="competition_block-btn" name="competition_block-btn_register" value="Подать заявку" {% if today_str >= comp.start_date|date:"Y-m-d" %}disabled{% endif %}></a>
                     <a href="{{ comp.get_absolute_url_list }}" target="_blank"><input type="button" class="competition_block-btn" name="competition_block-btn_list" value="Список участников"></a>
-                    <a href="{{ comp.get_absolute_url_protocol }}" target="_blank"><input type="button" class="competition_block-btn" name="competition_block-btn_protocol" value="Протокол соревнований" {% if today_str <= comp.start_date|date:"j F Y" %}disabled{% endif %}></a>
+                    <a href="{{ comp.get_absolute_url_protocol }}" target="_blank"><input type="button" class="competition_block-btn" name="competition_block-btn_protocol" value="Протокол соревнований" {% if today_str <= comp.start_date|date:"Y-m-d" %}disabled{% endif %}></a>
                 </div>
             {% endfor %}
         </div>

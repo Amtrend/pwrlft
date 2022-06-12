@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from .models import *
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 from django.template.loader import render_to_string
 from django.core.mail import send_mail
 from pwrlft.settings import EMAIL_HOST_USER
@@ -8,6 +8,8 @@ from django.contrib.auth.decorators import login_required
 from django.db.models import F, Q
 from django.core import serializers
 # from django.contrib.gis.serializers.geojson import Serializer
+from openpyxl import Workbook
+from openpyxl.writer.excel import save_virtual_workbook
 
 
 def main_page(request):
@@ -1837,3 +1839,15 @@ def scoreboard_comp_page(request, competition_slug):
         return JsonResponse({"cur_flow_competitors_json": cur_flow_competitors_json, }, status=200)
 
     return render(request, 'pwrlftmain/scoreboard_comp_page.html', response_data)
+
+
+# def create_excel_protocol(request, competition_slug):
+#     cur_competition = Competitions.objects.get(competition_slug=competition_slug)
+#     wb = Workbook()
+#     sheet = wb.active
+#     sheet['A1'] = 'Hello'
+#     sheet['A2'] = 'Alex'
+#     sheet['A3'] = cur_competition.title
+#     response = HttpResponse(save_virtual_workbook(wb), content_type='application/vnd.ms-excel')
+#     response['Content-Disposition'] = 'attachment; filename="test_book.xlsx"'
+#     return response
