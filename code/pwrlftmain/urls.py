@@ -28,5 +28,5 @@ urlpatterns = [
     path('competitions/<slug:competition_slug>/secretary_page/', secretary_page, name='secretary_page'),
     path('competitions/<slug:competition_slug>/scoreboard_page/', scoreboard_page, name='scoreboard_page'),
     path('competitions/<slug:competition_slug>/scoreboard_comp_page/', scoreboard_comp_page, name='scoreboard_comp_page'),
-    # path('competitions/<slug:competition_slug>/protocol_excel/', create_excel_protocol, name='competition_protocol_excel'),
+    path('competitions/<slug:competition_slug>/protocol_excel/', create_excel_protocol, name='competition_protocol_excel'),
 ]

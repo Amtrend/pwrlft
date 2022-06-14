@@ -8,8 +8,9 @@ from django.contrib.auth.decorators import login_required
 from django.db.models import F, Q
 from django.core import serializers
 # from django.contrib.gis.serializers.geojson import Serializer
-# from openpyxl import Workbook
-# from openpyxl.writer.excel import save_virtual_workbook
+from openpyxl import Workbook
+from openpyxl.writer.excel import save_virtual_workbook
+from openpyxl.styles import Border, Font, Alignment, Side
 
 
 def main_page(request):
@@ -1841,13 +1842,585 @@ def scoreboard_comp_page(request, competition_slug):
     return render(request, 'pwrlftmain/scoreboard_comp_page.html', response_data)
 
 
-# def create_excel_protocol(request, competition_slug):
-#     cur_competition = Competitions.objects.get(competition_slug=competition_slug)
-#     wb = Workbook()
-#     sheet = wb.active
-#     sheet['A1'] = 'Hello'
-#     sheet['A2'] = 'Alex'
-#     sheet['A3'] = cur_competition.title
-#     response = HttpResponse(save_virtual_workbook(wb), content_type='application/vnd.ms-excel')
-#     response['Content-Disposition'] = 'attachment; filename="test_book.xlsx"'
-#     return response
+def create_excel_protocol(request, competition_slug):
+    cur_competition = Competitions.objects.get(competition_slug=competition_slug)
+    competitors = CompetitionProtocols.objects.filter(competitor__comp_title_id=cur_competition.id)
+    competitiors_pwlclass_m = ""
+    competitiors_pwlclass_f = ""
+    competitiors_pwlekip_m = ""
+    competitiors_pwlekip_f = ""
+    competitiors_bpekip_m = ""
+    competitiors_bpekip_f = ""
+    competitiors_bp_m = ""
+    competitiors_bp_f = ""
+    competitiors_pwlclass_m_wcat = ""
+    competitiors_pwlclass_f_wcat = ""
+    competitiors_pwlekip_m_wcat = ""
+    competitiors_pwlekip_f_wcat = ""
+    competitiors_bpekip_m_wcat = ""
+    competitiors_bpekip_f_wcat = ""
+    competitiors_bp_m_wcat = ""
+    competitiors_bp_f_wcat = ""
+    for sp_type in cur_competition.sport_types.all():
+        if sp_type.title == "Троеборье классическое":
+            competitiors_pwlclass_m = competitors.filter(competitor__sports_type__title="Троеборье классическое",
+                                                         competitor__gender="Мужской").order_by("-best_sum_res",
+                                                                                                "competitor_weight")
+            competitiors_pwlclass_m_wcat_st = competitiors_pwlclass_m.values_list("competitor__weight_cat", flat=True)
+            competitiors_pwlclass_m_wcat = []
+            for comppclmwc in competitiors_pwlclass_m_wcat_st:
+                if comppclmwc not in competitiors_pwlclass_m_wcat:
+                    competitiors_pwlclass_m_wcat.append(comppclmwc)
+            competitiors_pwlclass_f = competitors.filter(competitor__sports_type__title="Троеборье классическое",
+                                                         competitor__gender="Женский").order_by("-best_sum_res",
+                                                                                                "competitor_weight")
+            competitiors_pwlclass_f_wcat_st = competitiors_pwlclass_f.values_list("competitor__weight_cat", flat=True)
+            competitiors_pwlclass_f_wcat = []
+            for comppclfwc in competitiors_pwlclass_f_wcat_st:
+                if comppclfwc not in competitiors_pwlclass_f_wcat:
+                    competitiors_pwlclass_f_wcat.append(comppclfwc)
+        if sp_type.title == "Троеборье (экип.)":
+            competitiors_pwlekip_m = competitors.filter(competitor__sports_type__title="Троеборье (экип.)",
+                                                        competitor__gender="Мужской").order_by("-best_sum_res_ek",
+                                                                                               "competitor_weight")
+            competitiors_pwlekip_m_wcat_st = competitiors_pwlekip_m.values_list("competitor__weight_cat", flat=True)
+            competitiors_pwlekip_m_wcat = []
+            for comppekmwc in competitiors_pwlekip_m_wcat_st:
+                if comppekmwc not in competitiors_pwlekip_m_wcat:
+                    competitiors_pwlekip_m_wcat.append(comppekmwc)
+            competitiors_pwlekip_f = competitors.filter(competitor__sports_type__title="Троеборье (экип.)",
+                                                        competitor__gender="Женский").order_by("-best_sum_res_ek",
+                                                                                               "competitor_weight")
+            competitiors_pwlekip_f_wcat_st = competitiors_pwlekip_f.values_list("competitor__weight_cat", flat=True)
+            competitiors_pwlekip_f_wcat = []
+            for comppekfwc in competitiors_pwlekip_f_wcat_st:
+                if comppekfwc not in competitiors_pwlekip_f_wcat:
+                    competitiors_pwlekip_f_wcat.append(comppekfwc)
+        if sp_type.title == "Жим лёжа (экип.)":
+            competitiors_bpekip_m = competitors.filter(competitor__sports_type__title="Жим лёжа (экип.)",
+                                                       competitor__gender="Мужской").order_by("-best_bpress_res_ek",
+                                                                                              "competitor_weight")
+            competitiors_bpekip_m_wcat_st = competitiors_bpekip_m.values_list("competitor__weight_cat", flat=True)
+            competitiors_bpekip_m_wcat = []
+            for combpekmwc in competitiors_bpekip_m_wcat_st:
+                if combpekmwc not in competitiors_bpekip_m_wcat:
+                    competitiors_bpekip_m_wcat.append(combpekmwc)
+            competitiors_bpekip_f = competitors.filter(competitor__sports_type__title="Жим лёжа (экип.)",
+                                                       competitor__gender="Женский").order_by("-best_bpress_res_ek",
+                                                                                              "competitor_weight")
+            competitiors_bpekip_f_wcat_st = competitiors_bpekip_f.values_list("competitor__weight_cat", flat=True)
+            competitiors_bpekip_f_wcat = []
+            for combpekfwc in competitiors_bpekip_f_wcat_st:
+                if combpekfwc not in competitiors_bpekip_f_wcat:
+                    competitiors_bpekip_f_wcat.append(combpekfwc)
+        if sp_type.title == "Жим лёжа (без экип.)":
+            competitiors_bp_m = competitors.filter(competitor__sports_type__title="Жим лёжа (без экип.)",
+                                                   competitor__gender="Мужской").order_by("-best_bpress_res",
+                                                                                          "competitor_weight")
+            competitiors_bp_m_wcat_st = competitiors_bp_m.values_list("competitor__weight_cat", flat=True)
+            competitiors_bp_m_wcat = []
+            for combpclmwc in competitiors_bp_m_wcat_st:
+                if combpclmwc not in competitiors_bp_m_wcat:
+                    competitiors_bp_m_wcat.append(combpclmwc)
+            competitiors_bp_f = competitors.filter(competitor__sports_type__title="Жим лёжа (без экип.)",
+                                                   competitor__gender="Женский").order_by("-best_bpress_res",
+                                                                                          "competitor_weight")
+            competitiors_bp_f_wcat_st = competitiors_bp_f.values_list("competitor__weight_cat", flat=True)
+            competitiors_bp_f_wcat = []
+            for combpclfwc in competitiors_bp_f_wcat_st:
+                if combpclfwc not in competitiors_bp_f_wcat:
+                    competitiors_bp_f_wcat.append(combpclfwc)
+    wb = Workbook()
+    font_title = Font(bold=True, color='000000', name='Arial', size=14)
+    font_sub_title = Font(bold=True, color='000000', name='Arial', size=12)
+    font_title_table = Font(bold=True, color='000000', name='Arial', size=10)
+    font_table_text = Font(bold=False, color='000000', name='Arial', size=10)
+    alignment_center = Alignment(horizontal='center', vertical='center')
+    thins = Side(border_style='thin', color='000000')
+    border = Border(top=thins, bottom=thins, left=thins, right=thins)
+    def create_sheet_pl_cl(wbook, name_disc, name_disc_full, wcats, competitors_wcats, font_title, font_sub_title, font_title_table, font_table_text, alignment_center, border, cur_competition_title, competitors_pl):
+        wbook.create_sheet(name_disc)
+        ws = wbook[name_disc]
+        ws.insert_rows(1)
+        ws.merge_cells('A2:H2')
+        title_sheet = ws['A2']
+        title_sheet.value = cur_competition_title
+        title_sheet.font = font_title
+        title_sheet.alignment = alignment_center
+        ws.merge_cells('A3:H3')
+        sub_title_sheet = ws['A3']
+        sub_title_sheet.value = name_disc_full
+        sub_title_sheet.font = font_sub_title
+        sub_title_sheet.alignment = alignment_center
+        ws.insert_rows(4)
+        start_counter = 5
+        for wc in wcats:
+            if wc in competitors_wcats:
+                ws.merge_cells(f'A{start_counter}:H{start_counter}')
+                title_table = ws[f'A{start_counter}']
+                title_table.value = f'Весовая категория {wc} кг'
+                title_table.font = font_sub_title
+                title_table.alignment = alignment_center
+                start_counter += 1
+                table_title_place = ws[f'A{start_counter}']
+                table_title_place.value = 'место №'
+                table_title_place.font = font_title_table
+                table_title_place.border = border
+                table_title_place.alignment = alignment_center
+                table_title_fio = ws[f'B{start_counter}']
+                table_title_fio.value = 'фио'
+                table_title_fio.font = font_title_table
+                table_title_fio.border = border
+                table_title_fio.alignment = alignment_center
+                table_title_birthday = ws[f'C{start_counter}']
+                table_title_birthday.value = 'дата рождения'
+                table_title_birthday.font = font_title_table
+                table_title_birthday.border = border
+                table_title_birthday.alignment = alignment_center
+                table_title_weight = ws[f'D{start_counter}']
+                table_title_weight.value = 'вес'
+                table_title_weight.font = font_title_table
+                table_title_weight.border = border
+                table_title_weight.alignment = alignment_center
+                table_title_squat = ws[f'E{start_counter}']
+                table_title_squat.value = 'присед'
+                table_title_squat.font = font_title_table
+                table_title_squat.border = border
+                table_title_squat.alignment = alignment_center
+                table_title_bpress = ws[f'F{start_counter}']
+                table_title_bpress.value = 'жим'
+                table_title_bpress.font = font_title_table
+                table_title_bpress.border = border
+                table_title_bpress.alignment = alignment_center
+                table_title_dlift = ws[f'G{start_counter}']
+                table_title_dlift.value = 'тяга'
+                table_title_dlift.font = font_title_table
+                table_title_dlift.border = border
+                table_title_dlift.alignment = alignment_center
+                table_title_total = ws[f'H{start_counter}']
+                table_title_total.value = 'сумма'
+                table_title_total.font = font_title_table
+                table_title_total.border = border
+                table_title_total.alignment = alignment_center
+                start_counter += 1
+                start_place_counter = 0
+                for comp in competitors_pl:
+                    if comp.competitor.weight_cat == wc:
+                        start_place_counter += 1
+                        table_cell_place = ws[f'A{start_counter}']
+                        table_cell_place.value = start_place_counter
+                        table_cell_place.font = font_table_text
+                        table_cell_place.border = border
+                        table_cell_fio = ws[f'B{start_counter}']
+                        table_cell_fio.value = f"{comp.competitor.surname_comp} {comp.competitor.name_comp} {comp.competitor.patronymic_comp}"
+                        table_cell_fio.font = font_table_text
+                        table_cell_fio.border = border
+                        table_cell_birthday = ws[f'C{start_counter}']
+                        table_cell_birthday.number_format = 'DD.MM.YYYY'
+                        table_cell_birthday.value = comp.competitor.birthday
+                        table_cell_birthday.font = font_table_text
+                        table_cell_birthday.border = border
+                        table_cell_weight = ws[f'D{start_counter}']
+                        table_cell_weight.value = comp.competitor_weight
+                        table_cell_weight.font = font_table_text
+                        table_cell_weight.border = border
+                        table_cell_squat = ws[f'E{start_counter}']
+                        table_cell_squat.value = comp.best_squat_res
+                        table_cell_squat.font = font_table_text
+                        table_cell_squat.border = border
+                        table_cell_bpress = ws[f'F{start_counter}']
+                        table_cell_bpress.value = comp.best_bpress_res
+                        table_cell_bpress.font = font_table_text
+                        table_cell_bpress.border = border
+                        table_cell_dlift = ws[f'G{start_counter}']
+                        table_cell_dlift.value = comp.best_dlift_res
+                        table_cell_dlift.font = font_table_text
+                        table_cell_dlift.border = border
+                        table_cell_total = ws[f'H{start_counter}']
+                        table_cell_total.value = comp.best_sum_res
+                        table_cell_total.font = font_table_text
+                        table_cell_total.border = border
+                        start_counter += 1
+                ws.merge_cells(f'A{start_counter}:H{start_counter}')
+                ws[f'A{start_counter}'] = ''
+                start_counter += 1
+        dims = {}
+        dims1 = {}
+        for row in ws.rows:
+            for cell in row:
+                if cell.coordinate[0] == 'B' and cell.value:
+                    dims[cell.column] = max((dims.get(cell.column, 0), len(str(cell.value))))
+                if cell.coordinate[0] == 'C' and cell.value:
+                    dims1[cell.column] = max((dims1.get(cell.column, 0), len(str(cell.value))))
+        for col, value in dims.items():
+            ws.column_dimensions['B'].width = value + 1
+        for col, value in dims1.items():
+            ws.column_dimensions['C'].width = value + 2
+        return "Done"
+    def create_sheet_pl(wbook, name_disc, name_disc_full, wcats, competitors_wcats, font_title, font_sub_title, font_title_table, font_table_text, alignment_center, border, cur_competition_title, competitors_pl):
+        wbook.create_sheet(name_disc)
+        ws = wbook[name_disc]
+        ws.insert_rows(1)
+        ws.merge_cells('A2:H2')
+        title_sheet = ws['A2']
+        title_sheet.value = cur_competition_title
+        title_sheet.font = font_title
+        title_sheet.alignment = alignment_center
+        ws.merge_cells('A3:H3')
+        sub_title_sheet = ws['A3']
+        sub_title_sheet.value = name_disc_full
+        sub_title_sheet.font = font_sub_title
+        sub_title_sheet.alignment = alignment_center
+        ws.insert_rows(4)
+        start_counter = 5
+        for wc in wcats:
+            if wc in competitors_wcats:
+                ws.merge_cells(f'A{start_counter}:H{start_counter}')
+                title_table = ws[f'A{start_counter}']
+                title_table.value = f'Весовая категория {wc} кг'
+                title_table.font = font_sub_title
+                title_table.alignment = alignment_center
+                start_counter += 1
+                table_title_place = ws[f'A{start_counter}']
+                table_title_place.value = 'место №'
+                table_title_place.font = font_title_table
+                table_title_place.border = border
+                table_title_place.alignment = alignment_center
+                table_title_fio = ws[f'B{start_counter}']
+                table_title_fio.value = 'фио'
+                table_title_fio.font = font_title_table
+                table_title_fio.border = border
+                table_title_fio.alignment = alignment_center
+                table_title_birthday = ws[f'C{start_counter}']
+                table_title_birthday.value = 'дата рождения'
+                table_title_birthday.font = font_title_table
+                table_title_birthday.border = border
+                table_title_birthday.alignment = alignment_center
+                table_title_weight = ws[f'D{start_counter}']
+                table_title_weight.value = 'вес'
+                table_title_weight.font = font_title_table
+                table_title_weight.border = border
+                table_title_weight.alignment = alignment_center
+                table_title_squat = ws[f'E{start_counter}']
+                table_title_squat.value = 'присед'
+                table_title_squat.font = font_title_table
+                table_title_squat.border = border
+                table_title_squat.alignment = alignment_center
+                table_title_bpress = ws[f'F{start_counter}']
+                table_title_bpress.value = 'жим'
+                table_title_bpress.font = font_title_table
+                table_title_bpress.border = border
+                table_title_bpress.alignment = alignment_center
+                table_title_dlift = ws[f'G{start_counter}']
+                table_title_dlift.value = 'тяга'
+                table_title_dlift.font = font_title_table
+                table_title_dlift.border = border
+                table_title_dlift.alignment = alignment_center
+                table_title_total = ws[f'H{start_counter}']
+                table_title_total.value = 'сумма'
+                table_title_total.font = font_title_table
+                table_title_total.border = border
+                table_title_total.alignment = alignment_center
+                start_counter += 1
+                start_place_counter = 0
+                for comp in competitors_pl:
+                    if comp.competitor.weight_cat == wc:
+                        start_place_counter += 1
+                        table_cell_place = ws[f'A{start_counter}']
+                        table_cell_place.value = start_place_counter
+                        table_cell_place.font = font_table_text
+                        table_cell_place.border = border
+                        table_cell_fio = ws[f'B{start_counter}']
+                        table_cell_fio.value = f"{comp.competitor.surname_comp} {comp.competitor.name_comp} {comp.competitor.patronymic_comp}"
+                        table_cell_fio.font = font_table_text
+                        table_cell_fio.border = border
+                        table_cell_birthday = ws[f'C{start_counter}']
+                        table_cell_birthday.number_format = 'DD.MM.YYYY'
+                        table_cell_birthday.value = comp.competitor.birthday
+                        table_cell_birthday.font = font_table_text
+                        table_cell_birthday.border = border
+                        table_cell_weight = ws[f'D{start_counter}']
+                        table_cell_weight.value = comp.competitor_weight
+                        table_cell_weight.font = font_table_text
+                        table_cell_weight.border = border
+                        table_cell_squat = ws[f'E{start_counter}']
+                        table_cell_squat.value = comp.best_squat_res_ek
+                        table_cell_squat.font = font_table_text
+                        table_cell_squat.border = border
+                        table_cell_bpress = ws[f'F{start_counter}']
+                        table_cell_bpress.value = comp.best_bpress_res_ek
+                        table_cell_bpress.font = font_table_text
+                        table_cell_bpress.border = border
+                        table_cell_dlift = ws[f'G{start_counter}']
+                        table_cell_dlift.value = comp.best_dlift_res_ek
+                        table_cell_dlift.font = font_table_text
+                        table_cell_dlift.border = border
+                        table_cell_total = ws[f'H{start_counter}']
+                        table_cell_total.value = comp.best_sum_res_ek
+                        table_cell_total.font = font_table_text
+                        table_cell_total.border = border
+                        start_counter += 1
+                ws.merge_cells(f'A{start_counter}:H{start_counter}')
+                ws[f'A{start_counter}'] = ''
+                start_counter += 1
+        dims = {}
+        dims1 = {}
+        for row in ws.rows:
+            for cell in row:
+                if cell.coordinate[0] == 'B' and cell.value:
+                    dims[cell.column] = max((dims.get(cell.column, 0), len(str(cell.value))))
+                if cell.coordinate[0] == 'C' and cell.value:
+                    dims1[cell.column] = max((dims1.get(cell.column, 0), len(str(cell.value))))
+        for col, value in dims.items():
+            ws.column_dimensions['B'].width = value + 1
+        for col, value in dims1.items():
+            ws.column_dimensions['C'].width = value + 2
+        return "Done"
+    def create_sheet_bp(wbook, name_disc, name_disc_full, wcats, competitors_wcats, font_title, font_sub_title, font_title_table, font_table_text, alignment_center, border, cur_competition_title, competitors_pl):
+        wbook.create_sheet(name_disc)
+        ws = wbook[name_disc]
+        ws.insert_rows(1)
+        ws.merge_cells('A2:E2')
+        title_sheet = ws['A2']
+        title_sheet.value = cur_competition_title
+        title_sheet.font = font_title
+        title_sheet.alignment = alignment_center
+        ws.merge_cells('A3:E3')
+        sub_title_sheet = ws['A3']
+        sub_title_sheet.value = name_disc_full
+        sub_title_sheet.font = font_sub_title
+        sub_title_sheet.alignment = alignment_center
+        ws.insert_rows(4)
+        start_counter = 5
+        for wc in wcats:
+            if wc in competitors_wcats:
+                ws.merge_cells(f'A{start_counter}:E{start_counter}')
+                title_table = ws[f'A{start_counter}']
+                title_table.value = f'Весовая категория {wc} кг'
+                title_table.font = font_sub_title
+                title_table.alignment = alignment_center
+                start_counter += 1
+                table_title_place = ws[f'A{start_counter}']
+                table_title_place.value = 'место №'
+                table_title_place.font = font_title_table
+                table_title_place.border = border
+                table_title_place.alignment = alignment_center
+                table_title_fio = ws[f'B{start_counter}']
+                table_title_fio.value = 'фио'
+                table_title_fio.font = font_title_table
+                table_title_fio.border = border
+                table_title_fio.alignment = alignment_center
+                table_title_birthday = ws[f'C{start_counter}']
+                table_title_birthday.value = 'дата рождения'
+                table_title_birthday.font = font_title_table
+                table_title_birthday.border = border
+                table_title_birthday.alignment = alignment_center
+                table_title_weight = ws[f'D{start_counter}']
+                table_title_weight.value = 'вес'
+                table_title_weight.font = font_title_table
+                table_title_weight.border = border
+                table_title_weight.alignment = alignment_center
+                table_title_bpress = ws[f'E{start_counter}']
+                table_title_bpress.value = 'жим'
+                table_title_bpress.font = font_title_table
+                table_title_bpress.border = border
+                table_title_bpress.alignment = alignment_center
+                start_counter += 1
+                start_place_counter = 0
+                for comp in competitors_pl:
+                    if comp.competitor.weight_cat == wc:
+                        start_place_counter += 1
+                        table_cell_place = ws[f'A{start_counter}']
+                        table_cell_place.value = start_place_counter
+                        table_cell_place.font = font_table_text
+                        table_cell_place.border = border
+                        table_cell_fio = ws[f'B{start_counter}']
+                        table_cell_fio.value = f"{comp.competitor.surname_comp} {comp.competitor.name_comp} {comp.competitor.patronymic_comp}"
+                        table_cell_fio.font = font_table_text
+                        table_cell_fio.border = border
+                        table_cell_birthday = ws[f'C{start_counter}']
+                        table_cell_birthday.number_format = 'DD.MM.YYYY'
+                        table_cell_birthday.value = comp.competitor.birthday
+                        table_cell_birthday.font = font_table_text
+                        table_cell_birthday.border = border
+                        table_cell_weight = ws[f'D{start_counter}']
+                        table_cell_weight.value = comp.competitor_weight
+                        table_cell_weight.font = font_table_text
+                        table_cell_weight.border = border
+                        table_cell_bpress = ws[f'E{start_counter}']
+                        table_cell_bpress.value = comp.best_bpress_res_ek
+                        table_cell_bpress.font = font_table_text
+                        table_cell_bpress.border = border
+                        start_counter += 1
+                ws.merge_cells(f'A{start_counter}:E{start_counter}')
+                ws[f'A{start_counter}'] = ''
+                start_counter += 1
+        dims = {}
+        dims1 = {}
+        for row in ws.rows:
+            for cell in row:
+                if cell.coordinate[0] == 'B' and cell.value:
+                    dims[cell.column] = max((dims.get(cell.column, 0), len(str(cell.value))))
+                if cell.coordinate[0] == 'C' and cell.value:
+                    dims1[cell.column] = max((dims1.get(cell.column, 0), len(str(cell.value))))
+        for col, value in dims.items():
+            ws.column_dimensions['B'].width = value + 1
+        for col, value in dims1.items():
+            ws.column_dimensions['C'].width = value + 2
+        return "Done"
+    def create_sheet_bp_cl(wbook, name_disc, name_disc_full, wcats, competitors_wcats, font_title, font_sub_title, font_title_table, font_table_text, alignment_center, border, cur_competition_title, competitors_pl):
+        wbook.create_sheet(name_disc)
+        ws = wbook[name_disc]
+        ws.insert_rows(1)
+        ws.merge_cells('A2:E2')
+        title_sheet = ws['A2']
+        title_sheet.value = cur_competition_title
+        title_sheet.font = font_title
+        title_sheet.alignment = alignment_center
+        ws.merge_cells('A3:E3')
+        sub_title_sheet = ws['A3']
+        sub_title_sheet.value = name_disc_full
+        sub_title_sheet.font = font_sub_title
+        sub_title_sheet.alignment = alignment_center
+        ws.insert_rows(4)
+        start_counter = 5
+        for wc in wcats:
+            if wc in competitors_wcats:
+                ws.merge_cells(f'A{start_counter}:E{start_counter}')
+                title_table = ws[f'A{start_counter}']
+                title_table.value = f'Весовая категория {wc} кг'
+                title_table.font = font_sub_title
+                title_table.alignment = alignment_center
+                start_counter += 1
+                table_title_place = ws[f'A{start_counter}']
+                table_title_place.value = 'место №'
+                table_title_place.font = font_title_table
+                table_title_place.border = border
+                table_title_place.alignment = alignment_center
+                table_title_fio = ws[f'B{start_counter}']
+                table_title_fio.value = 'фио'
+                table_title_fio.font = font_title_table
+                table_title_fio.border = border
+                table_title_fio.alignment = alignment_center
+                table_title_birthday = ws[f'C{start_counter}']
+                table_title_birthday.value = 'дата рождения'
+                table_title_birthday.font = font_title_table
+                table_title_birthday.border = border
+                table_title_birthday.alignment = alignment_center
+                table_title_weight = ws[f'D{start_counter}']
+                table_title_weight.value = 'вес'
+                table_title_weight.font = font_title_table
+                table_title_weight.border = border
+                table_title_weight.alignment = alignment_center
+                table_title_bpress = ws[f'E{start_counter}']
+                table_title_bpress.value = 'жим'
+                table_title_bpress.font = font_title_table
+                table_title_bpress.border = border
+                table_title_bpress.alignment = alignment_center
+                start_counter += 1
+                start_place_counter = 0
+                for comp in competitors_pl:
+                    if comp.competitor.weight_cat == wc:
+                        start_place_counter += 1
+                        table_cell_place = ws[f'A{start_counter}']
+                        table_cell_place.value = start_place_counter
+                        table_cell_place.font = font_table_text
+                        table_cell_place.border = border
+                        table_cell_fio = ws[f'B{start_counter}']
+                        table_cell_fio.value = f"{comp.competitor.surname_comp} {comp.competitor.name_comp} {comp.competitor.patronymic_comp}"
+                        table_cell_fio.font = font_table_text
+                        table_cell_fio.border = border
+                        table_cell_birthday = ws[f'C{start_counter}']
+                        table_cell_birthday.number_format = 'DD.MM.YYYY'
+                        table_cell_birthday.value = comp.competitor.birthday
+                        table_cell_birthday.font = font_table_text
+                        table_cell_birthday.border = border
+                        table_cell_weight = ws[f'D{start_counter}']
+                        table_cell_weight.value = comp.competitor_weight
+                        table_cell_weight.font = font_table_text
+                        table_cell_weight.border = border
+                        table_cell_bpress = ws[f'E{start_counter}']
+                        table_cell_bpress.value = comp.best_bpress_res
+                        table_cell_bpress.font = font_table_text
+                        table_cell_bpress.border = border
+                        start_counter += 1
+                ws.merge_cells(f'A{start_counter}:E{start_counter}')
+                ws[f'A{start_counter}'] = ''
+                start_counter += 1
+        dims = {}
+        dims1 = {}
+        for row in ws.rows:
+            for cell in row:
+                if cell.coordinate[0] == 'B' and cell.value:
+                    dims[cell.column] = max((dims.get(cell.column, 0), len(str(cell.value))))
+                if cell.coordinate[0] == 'C' and cell.value:
+                    dims1[cell.column] = max((dims1.get(cell.column, 0), len(str(cell.value))))
+        for col, value in dims.items():
+            ws.column_dimensions['B'].width = value + 1
+        for col, value in dims1.items():
+            ws.column_dimensions['C'].width = value + 2
+        return "Done"
+    if competitiors_pwlclass_m:
+        create_sheet_pl_cl(wbook=wb, name_disc='пауэрлифтинг класс муж', name_disc_full='Пауэрлифтинг классический (муж)', wcats=['53', '59', '66', '74', '83', '93', '105', '120', '120+'],
+                     competitors_wcats=competitiors_pwlclass_m_wcat, font_title=font_title, font_sub_title=font_sub_title, font_title_table=font_title_table, font_table_text=font_table_text,
+                     alignment_center=alignment_center, border=border, cur_competition_title=cur_competition.title, competitors_pl=competitiors_pwlclass_m)
+    if competitiors_pwlclass_f:
+        create_sheet_pl_cl(wbook=wb, name_disc='пауэрлифтинг класс жен', name_disc_full='Пауэрлифтинг классический (жен)',
+                     wcats=['43', '47', '52', '57', '63', '69', '76', '84', '84+'],
+                     competitors_wcats=competitiors_pwlclass_f_wcat, font_title=font_title,
+                     font_sub_title=font_sub_title, font_title_table=font_title_table, font_table_text=font_table_text,
+                     alignment_center=alignment_center, border=border, cur_competition_title=cur_competition.title,
+                     competitors_pl=competitiors_pwlclass_f)
+    if competitiors_pwlekip_m:
+        create_sheet_pl(wbook=wb, name_disc='пауэрлифтинг муж', name_disc_full='Пауэрлифтинг (муж)',
+                        wcats=['53', '59', '66', '74', '83', '93', '105', '120', '120+'],
+                        competitors_wcats=competitiors_pwlekip_m_wcat, font_title=font_title,
+                        font_sub_title=font_sub_title, font_title_table=font_title_table,
+                        font_table_text=font_table_text,
+                        alignment_center=alignment_center, border=border, cur_competition_title=cur_competition.title,
+                        competitors_pl=competitiors_pwlekip_m)
+    if competitiors_pwlekip_f:
+        create_sheet_pl(wbook=wb, name_disc='пауэрлифтинг жен', name_disc_full='Пауэрлифтинг (жен)',
+                        wcats=['43', '47', '52', '57', '63', '69', '76', '84', '84+'],
+                        competitors_wcats=competitiors_pwlekip_f_wcat, font_title=font_title,
+                        font_sub_title=font_sub_title, font_title_table=font_title_table,
+                        font_table_text=font_table_text,
+                        alignment_center=alignment_center, border=border, cur_competition_title=cur_competition.title,
+                        competitors_pl=competitiors_pwlekip_f)
+    if competitiors_bpekip_m:
+        create_sheet_bp(wbook=wb, name_disc='жим муж', name_disc_full='Жим (муж)',
+                        wcats=['53', '59', '66', '74', '83', '93', '105', '120', '120+'],
+                        competitors_wcats=competitiors_bpekip_m_wcat, font_title=font_title,
+                        font_sub_title=font_sub_title, font_title_table=font_title_table,
+                        font_table_text=font_table_text,
+                        alignment_center=alignment_center, border=border, cur_competition_title=cur_competition.title,
+                        competitors_pl=competitiors_bpekip_m)
+    if competitiors_bpekip_f:
+        create_sheet_bp(wbook=wb, name_disc='жим жен', name_disc_full='Жим (жен)',
+                        wcats=['43', '47', '52', '57', '63', '69', '76', '84', '84+'],
+                        competitors_wcats=competitiors_bpekip_f_wcat, font_title=font_title,
+                        font_sub_title=font_sub_title, font_title_table=font_title_table,
+                        font_table_text=font_table_text,
+                        alignment_center=alignment_center, border=border, cur_competition_title=cur_competition.title,
+                        competitors_pl=competitiors_bpekip_f)
+    if competitiors_bp_m:
+        create_sheet_bp_cl(wbook=wb, name_disc='жим класс муж', name_disc_full='Жим классический (муж)',
+                        wcats=['53', '59', '66', '74', '83', '93', '105', '120', '120+'],
+                        competitors_wcats=competitiors_bp_m_wcat, font_title=font_title,
+                        font_sub_title=font_sub_title, font_title_table=font_title_table,
+                        font_table_text=font_table_text,
+                        alignment_center=alignment_center, border=border, cur_competition_title=cur_competition.title,
+                        competitors_pl=competitiors_bp_m)
+    if competitiors_bp_f:
+        create_sheet_bp_cl(wbook=wb, name_disc='жим класс жен', name_disc_full='Жим классический (жен)',
+                           wcats=['43', '47', '52', '57', '63', '69', '76', '84', '84+'],
+                           competitors_wcats=competitiors_bp_f_wcat, font_title=font_title,
+                           font_sub_title=font_sub_title, font_title_table=font_title_table,
+                           font_table_text=font_table_text,
+                           alignment_center=alignment_center, border=border,
+                           cur_competition_title=cur_competition.title,
+                           competitors_pl=competitiors_bp_f)
+    wb.remove_sheet(wb['Sheet'])
+    response = HttpResponse(save_virtual_workbook(wb), content_type='application/vnd.ms-excel')
+    response['Content-Disposition'] = f'attachment; filename="{cur_competition.competition_slug}_protocol.xlsx"'
+    return response

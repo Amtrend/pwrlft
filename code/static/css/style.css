@@ -1414,3 +1414,56 @@ a, div {
     color: #FFFFFF;
 }
 
+
+/* ========== COMPETITION_PROTOCOL ========== */
+
+
+.competition_protocol-dwnld-btn {
+    background-color: #092942;
+    font-family: Montserrat, sans-serif;
+    font-weight: 500;
+    font-size: 14px;
+    line-height: 18px;
+    color: #FFFFFF;
+    padding: 10px 20px;
+    border-radius: 10px;
+    -webkit-appearance: none;
+}
+
+.competition_protocol-dwnld-btn:hover {
+    background-color: #A27D29;
+    border-color: #A27D29;
+    cursor: pointer;
+}
+
+.competition_protocol-dwnld-btn:disabled {
+    background-color: #828282;
+}
+
+.competition_protocol-dwnld-btn:disabled:hover {
+    border-color: #828282;
+    cursor: unset;
+}
+
+.competition_protocol-dwnld-block {
+    display: flex;
+    flex-direction: row;
+    justify-content: end;
+    margin-left: 40px;
+    margin-right: 40px;
+    margin-bottom: 40px;
+}
+
+@media (max-width: 1000px) {
+    .competition_protocol-dwnld-btn {
+        font-size: 12px;
+        line-height: 16px;
+        padding: 5px 10px;
+        border-radius: 8px;
+    }
+    .competition_protocol-dwnld-block {
+        margin-left: 20px;
+        margin-right: 20px;
+        margin-bottom: 20px;
+    }
+}
