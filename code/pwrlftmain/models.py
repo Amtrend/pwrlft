@@ -1,6 +1,7 @@
 from django.db import models
 from django.urls import reverse
 from decimal import Decimal
+from operator import itemgetter
 
 
 class SportType(models.Model):
@@ -221,70 +222,140 @@ class CompetitionProtocols(models.Model):
     updated_at = models.DateTimeField(auto_now=True, verbose_name='Дата изменении')
 
     def save(self, *args, **kwargs):
-        if self.first_attempt_squat_res and self.first_attempt_squat_off in ['2', '3']:
-            self.best_squat_res = self.first_attempt_squat_res
-        if self.second_attempt_squat_res and self.second_attempt_squat_off in ['2', '3'] and self.second_attempt_squat_res > self.first_attempt_squat_res:
-            self.best_squat_res = self.second_attempt_squat_res
-        if self.third_attempt_squat_res and self.third_attempt_squat_off in ['2', '3'] and self.third_attempt_squat_res > self.first_attempt_squat_res and self.third_attempt_squat_res > self.second_attempt_squat_res:
-            self.best_squat_res = self.third_attempt_squat_res
-        if self.first_attempt_bpress_res and self.first_attempt_bpress_off in ['2', '3']:
-            self.best_bpress_res = self.first_attempt_bpress_res
-        if self.second_attempt_bpress_res and self.second_attempt_bpress_off in ['2', '3'] and self.second_attempt_bpress_res > self.first_attempt_bpress_res:
-            self.best_bpress_res = self.second_attempt_bpress_res
-        if self.third_attempt_bpress_res and self.third_attempt_bpress_off in ['2', '3'] and self.third_attempt_bpress_res > self.first_attempt_bpress_res and self.third_attempt_bpress_res > self.second_attempt_bpress_res:
-            self.best_bpress_res = self.third_attempt_bpress_res
-        if self.first_attempt_dlift_res and self.first_attempt_dlift_off in ['2', '3']:
-            self.best_dlift_res = self.first_attempt_dlift_res
-        if self.second_attempt_dlift_res and self.second_attempt_dlift_off in ['2', '3'] and self.second_attempt_dlift_res > self.first_attempt_dlift_res:
-            self.best_dlift_res = self.second_attempt_dlift_res
-        if self.third_attempt_dlift_res and self.third_attempt_dlift_off in ['2', '3'] and self.third_attempt_dlift_res > self.first_attempt_dlift_res and self.third_attempt_dlift_res > self.second_attempt_dlift_res:
-            self.best_dlift_res = self.third_attempt_dlift_res
-        if self.best_squat_res and not self.best_bpress_res and not self.best_dlift_res:
-            self.best_sum_res = self.best_squat_res
-        if self.best_bpress_res and not self.best_squat_res and not self.best_dlift_res:
-            self.best_sum_res = self.best_bpress_res
-        if self.best_dlift_res and not self.best_squat_res and not self.best_bpress_res:
-            self.best_sum_res = self.best_dlift_res
-        if self.best_squat_res and self.best_bpress_res and not self.best_dlift_res:
-            self.best_sum_res = Decimal(self.best_squat_res) + Decimal(self.best_bpress_res)
-        if self.best_squat_res and self.best_dlift_res and not self.best_bpress_res:
-            self.best_sum_res = Decimal(self.best_squat_res) + Decimal(self.best_dlift_res)
-        if self.best_bpress_res and self.best_dlift_res and not self.best_squat_res:
-            self.best_sum_res = Decimal(self.best_bpress_res) + Decimal(self.best_dlift_res)
-        if self.best_squat_res and self.best_bpress_res and self.best_dlift_res:
-            self.best_sum_res = Decimal(self.best_squat_res) + Decimal(self.best_bpress_res) + Decimal(self.best_dlift_res)
-        if self.first_attempt_squat_res_ek and self.first_attempt_squat_off_ek in ['2', '3']:
-            self.best_squat_res_ek = self.first_attempt_squat_res_ek
-        if self.second_attempt_squat_res_ek and self.second_attempt_squat_off_ek in ['2', '3'] and self.second_attempt_squat_res_ek > self.first_attempt_squat_res_ek:
-            self.best_squat_res_ek = self.second_attempt_squat_res_ek
-        if self.third_attempt_squat_res_ek and self.third_attempt_squat_off_ek in ['2', '3'] and self.third_attempt_squat_res_ek > self.first_attempt_squat_res_ek and self.third_attempt_squat_res_ek > self.second_attempt_squat_res_ek:
-            self.best_squat_res_ek = self.third_attempt_squat_res_ek
-        if self.first_attempt_bpress_res_ek and self.first_attempt_bpress_off_ek in ['2', '3']:
-            self.best_bpress_res_ek = self.first_attempt_bpress_res_ek
-        if self.second_attempt_bpress_res_ek and self.second_attempt_bpress_off_ek in ['2', '3'] and self.second_attempt_bpress_res_ek > self.first_attempt_bpress_res_ek:
-            self.best_bpress_res_ek = self.second_attempt_bpress_res_ek
-        if self.third_attempt_bpress_res_ek and self.third_attempt_bpress_off_ek in ['2', '3'] and self.third_attempt_bpress_res_ek > self.first_attempt_bpress_res_ek and self.third_attempt_bpress_res_ek > self.second_attempt_bpress_res_ek:
-            self.best_bpress_res_ek = self.third_attempt_bpress_res_ek
-        if self.first_attempt_dlift_res_ek and self.first_attempt_dlift_off_ek in ['2', '3']:
-            self.best_dlift_res_ek = self.first_attempt_dlift_res_ek
-        if self.second_attempt_dlift_res_ek and self.second_attempt_dlift_off_ek in ['2', '3'] and self.second_attempt_dlift_res_ek > self.first_attempt_dlift_res_ek:
-            self.best_dlift_res_ek = self.second_attempt_dlift_res_ek
-        if self.third_attempt_dlift_res_ek and self.third_attempt_dlift_off_ek in ['2', '3'] and self.third_attempt_dlift_res_ek > self.first_attempt_dlift_res_ek and self.third_attempt_dlift_res_ek > self.second_attempt_dlift_res_ek:
-            self.best_dlift_res_ek = self.third_attempt_dlift_res_ek
-        if self.best_squat_res_ek and not self.best_bpress_res_ek and not self.best_dlift_res_ek:
-            self.best_sum_res_ek = self.best_squat_res_ek
-        if self.best_bpress_res_ek and not self.best_squat_res_ek and not self.best_dlift_res_ek:
-            self.best_sum_res_ek = self.best_bpress_res_ek
-        if self.best_dlift_res_ek and not self.best_squat_res_ek and not self.best_bpress_res_ek:
-            self.best_sum_res_ek = self.best_dlift_res_ek
-        if self.best_squat_res_ek and self.best_bpress_res_ek and not self.best_dlift_res_ek:
-            self.best_sum_res_ek = Decimal(self.best_squat_res_ek) + Decimal(self.best_bpress_res_ek)
-        if self.best_squat_res_ek and self.best_dlift_res_ek and not self.best_bpress_res_ek:
-            self.best_sum_res_ek = Decimal(self.best_squat_res_ek) + Decimal(self.best_dlift_res_ek)
-        if self.best_bpress_res_ek and self.best_dlift_res_ek and not self.best_squat_res_ek:
-            self.best_sum_res_ek = Decimal(self.best_bpress_res_ek) + Decimal(self.best_dlift_res_ek)
-        if self.best_squat_res_ek and self.best_bpress_res_ek and self.best_dlift_res_ek:
-            self.best_sum_res_ek = Decimal(self.best_squat_res_ek) + Decimal(self.best_bpress_res_ek) + Decimal(self.best_dlift_res_ek)
+        squats = [(float(self.first_attempt_squat_res if self.first_attempt_squat_res is not None else 0), self.first_attempt_squat_off),
+                 (float(self.second_attempt_squat_res if self.second_attempt_squat_res is not None else 0), self.second_attempt_squat_off),
+                 (float(self.third_attempt_squat_res if self.third_attempt_squat_res is not None else 0), self.third_attempt_squat_off)]
+        res_squats = sorted(squats, key=itemgetter(0), reverse=True)
+        for res_squat in res_squats:
+            if res_squat[1] in ['2', '3']:
+                self.best_squat_res = res_squat[0]
+                break
+            else:
+                self.best_squat_res = None
+        bpresses = [(float(self.first_attempt_bpress_res if self.first_attempt_bpress_res is not None else 0), self.first_attempt_bpress_off),
+                   (float(self.second_attempt_bpress_res if self.second_attempt_bpress_res is not None else 0), self.second_attempt_bpress_off),
+                   (float(self.third_attempt_bpress_res if self.third_attempt_bpress_res is not None else 0), self.third_attempt_bpress_off)]
+        res_bpresses = sorted(bpresses, key=itemgetter(0), reverse=True)
+        for res_bpress in res_bpresses:
+            if res_bpress[1] in ['2', '3']:
+                self.best_bpress_res = res_bpress[0]
+                break
+            else:
+                self.best_bpress_res = None
+        dlifts = [(float(self.first_attempt_dlift_res if self.first_attempt_dlift_res is not None else 0), self.first_attempt_dlift_off),
+                 (float(self.second_attempt_dlift_res if self.second_attempt_dlift_res is not None else 0), self.second_attempt_dlift_off),
+                 (float(self.third_attempt_dlift_res if self.third_attempt_dlift_res is not None else 0), self.third_attempt_dlift_off)]
+        res_dlifts = sorted(dlifts, key=itemgetter(0), reverse=True)
+        for res_dlift in res_dlifts:
+            if res_dlift[1] in ['2', '3']:
+                self.best_dlift_res = res_dlift[0]
+                break
+            else:
+                self.best_dlift_res = None
+        res_sum = (Decimal(self.best_squat_res) if self.best_squat_res is not None else 0) + (Decimal(self.best_bpress_res) if self.best_bpress_res is not None else 0) + (Decimal(self.best_dlift_res) if self.best_dlift_res is not None else 0)
+        if res_sum != 0:
+            self.best_sum_res = res_sum
+        else:
+            self.best_sum_res = None
+        squats_ek = [(float(self.first_attempt_squat_res_ek if self.first_attempt_squat_res_ek is not None else 0), self.first_attempt_squat_off_ek),
+                    (float(self.second_attempt_squat_res_ek if self.second_attempt_squat_res_ek is not None else 0), self.second_attempt_squat_off_ek),
+                    (float(self.third_attempt_squat_res_ek if self.third_attempt_squat_res_ek is not None else 0), self.third_attempt_squat_off_ek)]
+        res_squats_ek = sorted(squats_ek, key=itemgetter(0), reverse=True)
+        for res_squat_ek in res_squats_ek:
+            if res_squat_ek[1] in ['2', '3']:
+                self.best_squat_res_ek = res_squat_ek[0]
+                break
+            else:
+                self.best_squat_res_ek = None
+        bpresses_ek = [(float(self.first_attempt_bpress_res_ek if self.first_attempt_bpress_res_ek is not None else 0), self.first_attempt_bpress_off_ek),
+                      (float(self.second_attempt_bpress_res_ek if self.second_attempt_bpress_res_ek is not None else 0), self.second_attempt_bpress_off),
+                      (float(self.third_attempt_bpress_res_ek if self.third_attempt_bpress_res_ek is not None else 0), self.third_attempt_bpress_off_ek)]
+        res_bpresses_ek = sorted(bpresses_ek, key=itemgetter(0), reverse=True)
+        for res_bpress_ek in res_bpresses_ek:
+            if res_bpress_ek[1] in ['2', '3']:
+                self.best_bpress_res_ek = res_bpress_ek[0]
+                break
+            else:
+                self.best_bpress_res_ek = None
+        dlifts_ek = [(float(self.first_attempt_dlift_res_ek if self.first_attempt_dlift_res_ek is not None else 0), self.first_attempt_dlift_off_ek),
+                    (float(self.second_attempt_dlift_res_ek if self.second_attempt_dlift_res_ek is not None else 0), self.second_attempt_dlift_off_ek),
+                    (float(self.third_attempt_dlift_res_ek if self.third_attempt_dlift_res_ek is not None else 0), self.third_attempt_dlift_off_ek)]
+        res_dlifts_ek = sorted(dlifts_ek, key=itemgetter(0), reverse=True)
+        for res_dlift_ek in res_dlifts_ek:
+            if res_dlift_ek[1] in ['2', '3']:
+                self.best_dlift_res_ek = res_dlift_ek[0]
+                break
+            else:
+                self.best_dlift_res_ek = None
+        res_sum_ek = (Decimal(self.best_squat_res_ek) if self.best_squat_res_ek is not None else 0) + (Decimal(self.best_bpress_res_ek) if self.best_bpress_res_ek is not None else 0) + (Decimal(self.best_dlift_res_ek) if self.best_dlift_res_ek is not None else 0)
+        if res_sum_ek != 0:
+            self.best_sum_res_ek = res_sum_ek
+        else:
+            self.best_sum_res_ek = None
+        # if self.first_attempt_squat_res and self.first_attempt_squat_off in ['2', '3']:
+        #     self.best_squat_res = self.first_attempt_squat_res
+        # if self.second_attempt_squat_res and self.second_attempt_squat_off in ['2', '3'] and self.second_attempt_squat_res > self.first_attempt_squat_res:
+        #     self.best_squat_res = self.second_attempt_squat_res
+        # if self.third_attempt_squat_res and self.third_attempt_squat_off in ['2', '3'] and self.third_attempt_squat_res > self.first_attempt_squat_res and self.third_attempt_squat_res > self.second_attempt_squat_res:
+        #     self.best_squat_res = self.third_attempt_squat_res
+        # if self.first_attempt_bpress_res and self.first_attempt_bpress_off in ['2', '3']:
+        #     self.best_bpress_res = self.first_attempt_bpress_res
+        # if self.second_attempt_bpress_res and self.second_attempt_bpress_off in ['2', '3'] and self.second_attempt_bpress_res > self.first_attempt_bpress_res:
+        #     self.best_bpress_res = self.second_attempt_bpress_res
+        # if self.third_attempt_bpress_res and self.third_attempt_bpress_off in ['2', '3'] and self.third_attempt_bpress_res > self.first_attempt_bpress_res and self.third_attempt_bpress_res > self.second_attempt_bpress_res:
+        #     self.best_bpress_res = self.third_attempt_bpress_res
+        # if self.first_attempt_dlift_res and self.first_attempt_dlift_off in ['2', '3']:
+        #     self.best_dlift_res = self.first_attempt_dlift_res
+        # if self.second_attempt_dlift_res and self.second_attempt_dlift_off in ['2', '3'] and self.second_attempt_dlift_res > self.first_attempt_dlift_res:
+        #     self.best_dlift_res = self.second_attempt_dlift_res
+        # if self.third_attempt_dlift_res and self.third_attempt_dlift_off in ['2', '3'] and self.third_attempt_dlift_res > self.first_attempt_dlift_res and self.third_attempt_dlift_res > self.second_attempt_dlift_res:
+        #     self.best_dlift_res = self.third_attempt_dlift_res
+        # if self.best_squat_res and not self.best_bpress_res and not self.best_dlift_res:
+        #     self.best_sum_res = self.best_squat_res
+        # if self.best_bpress_res and not self.best_squat_res and not self.best_dlift_res:
+        #     self.best_sum_res = self.best_bpress_res
+        # if self.best_dlift_res and not self.best_squat_res and not self.best_bpress_res:
+        #     self.best_sum_res = self.best_dlift_res
+        # if self.best_squat_res and self.best_bpress_res and not self.best_dlift_res:
+        #     self.best_sum_res = Decimal(self.best_squat_res) + Decimal(self.best_bpress_res)
+        # if self.best_squat_res and self.best_dlift_res and not self.best_bpress_res:
+        #     self.best_sum_res = Decimal(self.best_squat_res) + Decimal(self.best_dlift_res)
+        # if self.best_bpress_res and self.best_dlift_res and not self.best_squat_res:
+        #     self.best_sum_res = Decimal(self.best_bpress_res) + Decimal(self.best_dlift_res)
+        # if self.best_squat_res and self.best_bpress_res and self.best_dlift_res:
+        #     self.best_sum_res = Decimal(self.best_squat_res) + Decimal(self.best_bpress_res) + Decimal(self.best_dlift_res)
+        # if self.first_attempt_squat_res_ek and self.first_attempt_squat_off_ek in ['2', '3']:
+        #     self.best_squat_res_ek = self.first_attempt_squat_res_ek
+        # if self.second_attempt_squat_res_ek and self.second_attempt_squat_off_ek in ['2', '3'] and self.second_attempt_squat_res_ek > self.first_attempt_squat_res_ek:
+        #     self.best_squat_res_ek = self.second_attempt_squat_res_ek
+        # if self.third_attempt_squat_res_ek and self.third_attempt_squat_off_ek in ['2', '3'] and self.third_attempt_squat_res_ek > self.first_attempt_squat_res_ek and self.third_attempt_squat_res_ek > self.second_attempt_squat_res_ek:
+        #     self.best_squat_res_ek = self.third_attempt_squat_res_ek
+        # if self.first_attempt_bpress_res_ek and self.first_attempt_bpress_off_ek in ['2', '3']:
+        #     self.best_bpress_res_ek = self.first_attempt_bpress_res_ek
+        # if self.second_attempt_bpress_res_ek and self.second_attempt_bpress_off_ek in ['2', '3'] and self.second_attempt_bpress_res_ek > self.first_attempt_bpress_res_ek:
+        #     self.best_bpress_res_ek = self.second_attempt_bpress_res_ek
+        # if self.third_attempt_bpress_res_ek and self.third_attempt_bpress_off_ek in ['2', '3'] and self.third_attempt_bpress_res_ek > self.first_attempt_bpress_res_ek and self.third_attempt_bpress_res_ek > self.second_attempt_bpress_res_ek:
+        #     self.best_bpress_res_ek = self.third_attempt_bpress_res_ek
+        # if self.first_attempt_dlift_res_ek and self.first_attempt_dlift_off_ek in ['2', '3']:
+        #     self.best_dlift_res_ek = self.first_attempt_dlift_res_ek
+        # if self.second_attempt_dlift_res_ek and self.second_attempt_dlift_off_ek in ['2', '3'] and self.second_attempt_dlift_res_ek > self.first_attempt_dlift_res_ek:
+        #     self.best_dlift_res_ek = self.second_attempt_dlift_res_ek
+        # if self.third_attempt_dlift_res_ek and self.third_attempt_dlift_off_ek in ['2', '3'] and self.third_attempt_dlift_res_ek > self.first_attempt_dlift_res_ek and self.third_attempt_dlift_res_ek > self.second_attempt_dlift_res_ek:
+        #     self.best_dlift_res_ek = self.third_attempt_dlift_res_ek
+        # if self.best_squat_res_ek and not self.best_bpress_res_ek and not self.best_dlift_res_ek:
+        #     self.best_sum_res_ek = self.best_squat_res_ek
+        # if self.best_bpress_res_ek and not self.best_squat_res_ek and not self.best_dlift_res_ek:
+        #     self.best_sum_res_ek = self.best_bpress_res_ek
+        # if self.best_dlift_res_ek and not self.best_squat_res_ek and not self.best_bpress_res_ek:
+        #     self.best_sum_res_ek = self.best_dlift_res_ek
+        # if self.best_squat_res_ek and self.best_bpress_res_ek and not self.best_dlift_res_ek:
+        #     self.best_sum_res_ek = Decimal(self.best_squat_res_ek) + Decimal(self.best_bpress_res_ek)
+        # if self.best_squat_res_ek and self.best_dlift_res_ek and not self.best_bpress_res_ek:
+        #     self.best_sum_res_ek = Decimal(self.best_squat_res_ek) + Decimal(self.best_dlift_res_ek)
+        # if self.best_bpress_res_ek and self.best_dlift_res_ek and not self.best_squat_res_ek:
+        #     self.best_sum_res_ek = Decimal(self.best_bpress_res_ek) + Decimal(self.best_dlift_res_ek)
+        # if self.best_squat_res_ek and self.best_bpress_res_ek and self.best_dlift_res_ek:
+        #     self.best_sum_res_ek = Decimal(self.best_squat_res_ek) + Decimal(self.best_bpress_res_ek) + Decimal(self.best_dlift_res_ek)
         super(CompetitionProtocols, self).save(*args, **kwargs)
 
     def __str__(self):
