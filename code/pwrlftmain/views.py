@@ -318,6 +318,16 @@ def secretary_page(request, competition_slug):
     if 'secr-page_form-btn-plclass' in request.POST:
         # print(request.POST)
         comp_pk = request.POST.get('secr-page_form-btn-plclass')
+        pil_h_squat = request.POST.get('secr-page_form-pil_h_squat')
+        pil_h_bpress = request.POST.get('secr-page_form-pil_h_bpress')
+        if pil_h_squat:
+            pil_h_squat = pil_h_squat
+        else:
+            pil_h_squat = None
+        if pil_h_bpress:
+            pil_h_bpress = pil_h_bpress
+        else:
+            pil_h_bpress = None
         first_attempt_squat_res = request.POST.get('secr-page_form-fat-squat-res')
         if first_attempt_squat_res:
             first_attempt_squat_res = Decimal(first_attempt_squat_res)
@@ -427,6 +437,8 @@ def secretary_page(request, competition_slug):
             if comp_pk == str(cur_transl_pk):
                 if cur_transl_val == "Присед 1 класс" and first_attempt_squat_off:
                     # CompetitionProtocols.objects.filter(pk=cur_transl_pk).update(competitor_translation=None)
+                    cur_comp.pillar_height_squat = pil_h_squat
+                    cur_comp.pillar_height_bpress = pil_h_bpress
                     cur_comp.first_attempt_squat_res = first_attempt_squat_res
                     cur_comp.first_attempt_squat_off = first_attempt_squat_off
                     cur_comp.second_attempt_squat_res = second_attempt_squat_res
@@ -447,7 +459,7 @@ def secretary_page(request, competition_slug):
                     cur_comp.third_attempt_dlift_off = third_attempt_dlift_off
                     cur_comp.competitor_translation = comp_transl
                     cur_comp.save()
-                    return JsonResponse({"first_attempt_squat_res": first_attempt_squat_res, "first_attempt_squat_off": first_attempt_squat_off,
+                    return JsonResponse({"pil_h_squat": pil_h_squat, "pil_h_bpress": pil_h_bpress, "first_attempt_squat_res": first_attempt_squat_res, "first_attempt_squat_off": first_attempt_squat_off,
                                          "second_attempt_squat_res": second_attempt_squat_res, "second_attempt_squat_off": second_attempt_squat_off,
                                          "third_attempt_squat_res": third_attempt_squat_res, "third_attempt_squat_off": third_attempt_squat_off,
                                          "first_attempt_bpress_res": first_attempt_bpress_res, "first_attempt_bpress_off": first_attempt_bpress_off,
@@ -457,6 +469,8 @@ def secretary_page(request, competition_slug):
                                          "second_attempt_dlift_res": second_attempt_dlift_res, "second_attempt_dlift_off": second_attempt_dlift_off,
                                          "third_attempt_dlift_res": third_attempt_dlift_res, "third_attempt_dlift_off": third_attempt_dlift_off, "comp_transl": comp_transl}, status=200)
                 if cur_transl_val == "Присед 2 класс" and second_attempt_squat_off:
+                    cur_comp.pillar_height_squat = pil_h_squat
+                    cur_comp.pillar_height_bpress = pil_h_bpress
                     cur_comp.first_attempt_squat_res = first_attempt_squat_res
                     cur_comp.first_attempt_squat_off = first_attempt_squat_off
                     cur_comp.second_attempt_squat_res = second_attempt_squat_res
@@ -477,7 +491,7 @@ def secretary_page(request, competition_slug):
                     cur_comp.third_attempt_dlift_off = third_attempt_dlift_off
                     cur_comp.competitor_translation = comp_transl
                     cur_comp.save()
-                    return JsonResponse({"first_attempt_squat_res": first_attempt_squat_res,
+                    return JsonResponse({"pil_h_squat": pil_h_squat, "pil_h_bpress": pil_h_bpress, "first_attempt_squat_res": first_attempt_squat_res,
                                          "first_attempt_squat_off": first_attempt_squat_off,
                                          "second_attempt_squat_res": second_attempt_squat_res,
                                          "second_attempt_squat_off": second_attempt_squat_off,
@@ -497,6 +511,8 @@ def secretary_page(request, competition_slug):
                                          "third_attempt_dlift_off": third_attempt_dlift_off,
                                          "comp_transl": comp_transl}, status=200)
                 if cur_transl_val == "Присед 3 класс" and third_attempt_squat_off:
+                    cur_comp.pillar_height_squat = pil_h_squat
+                    cur_comp.pillar_height_bpress = pil_h_bpress
                     cur_comp.first_attempt_squat_res = first_attempt_squat_res
                     cur_comp.first_attempt_squat_off = first_attempt_squat_off
                     cur_comp.second_attempt_squat_res = second_attempt_squat_res
@@ -517,7 +533,7 @@ def secretary_page(request, competition_slug):
                     cur_comp.third_attempt_dlift_off = third_attempt_dlift_off
                     cur_comp.competitor_translation = comp_transl
                     cur_comp.save()
-                    return JsonResponse({"first_attempt_squat_res": first_attempt_squat_res,
+                    return JsonResponse({"pil_h_squat": pil_h_squat, "pil_h_bpress": pil_h_bpress, "first_attempt_squat_res": first_attempt_squat_res,
                                          "first_attempt_squat_off": first_attempt_squat_off,
                                          "second_attempt_squat_res": second_attempt_squat_res,
                                          "second_attempt_squat_off": second_attempt_squat_off,
@@ -537,6 +553,8 @@ def secretary_page(request, competition_slug):
                                          "third_attempt_dlift_off": third_attempt_dlift_off,
                                          "comp_transl": comp_transl}, status=200)
                 if cur_transl_val == "Жим 1 класс" and first_attempt_bpress_off:
+                    cur_comp.pillar_height_squat = pil_h_squat
+                    cur_comp.pillar_height_bpress = pil_h_bpress
                     cur_comp.first_attempt_squat_res = first_attempt_squat_res
                     cur_comp.first_attempt_squat_off = first_attempt_squat_off
                     cur_comp.second_attempt_squat_res = second_attempt_squat_res
@@ -557,7 +575,7 @@ def secretary_page(request, competition_slug):
                     cur_comp.third_attempt_dlift_off = third_attempt_dlift_off
                     cur_comp.competitor_translation = comp_transl
                     cur_comp.save()
-                    return JsonResponse({"first_attempt_squat_res": first_attempt_squat_res,
+                    return JsonResponse({"pil_h_squat": pil_h_squat, "pil_h_bpress": pil_h_bpress, "first_attempt_squat_res": first_attempt_squat_res,
                                          "first_attempt_squat_off": first_attempt_squat_off,
                                          "second_attempt_squat_res": second_attempt_squat_res,
                                          "second_attempt_squat_off": second_attempt_squat_off,
@@ -577,6 +595,8 @@ def secretary_page(request, competition_slug):
                                          "third_attempt_dlift_off": third_attempt_dlift_off,
                                          "comp_transl": comp_transl}, status=200)
                 if cur_transl_val == "Жим 2 класс" and second_attempt_bpress_off:
+                    cur_comp.pillar_height_squat = pil_h_squat
+                    cur_comp.pillar_height_bpress = pil_h_bpress
                     cur_comp.first_attempt_squat_res = first_attempt_squat_res
                     cur_comp.first_attempt_squat_off = first_attempt_squat_off
                     cur_comp.second_attempt_squat_res = second_attempt_squat_res
@@ -597,7 +617,7 @@ def secretary_page(request, competition_slug):
                     cur_comp.third_attempt_dlift_off = third_attempt_dlift_off
                     cur_comp.competitor_translation = comp_transl
                     cur_comp.save()
-                    return JsonResponse({"first_attempt_squat_res": first_attempt_squat_res,
+                    return JsonResponse({"pil_h_squat": pil_h_squat, "pil_h_bpress": pil_h_bpress, "first_attempt_squat_res": first_attempt_squat_res,
                                          "first_attempt_squat_off": first_attempt_squat_off,
                                          "second_attempt_squat_res": second_attempt_squat_res,
                                          "second_attempt_squat_off": second_attempt_squat_off,
@@ -617,6 +637,8 @@ def secretary_page(request, competition_slug):
                                          "third_attempt_dlift_off": third_attempt_dlift_off,
                                          "comp_transl": comp_transl}, status=200)
                 if cur_transl_val == "Жим 3 класс" and third_attempt_bpress_off:
+                    cur_comp.pillar_height_squat = pil_h_squat
+                    cur_comp.pillar_height_bpress = pil_h_bpress
                     cur_comp.first_attempt_squat_res = first_attempt_squat_res
                     cur_comp.first_attempt_squat_off = first_attempt_squat_off
                     cur_comp.second_attempt_squat_res = second_attempt_squat_res
@@ -637,7 +659,7 @@ def secretary_page(request, competition_slug):
                     cur_comp.third_attempt_dlift_off = third_attempt_dlift_off
                     cur_comp.competitor_translation = comp_transl
                     cur_comp.save()
-                    return JsonResponse({"first_attempt_squat_res": first_attempt_squat_res,
+                    return JsonResponse({"pil_h_squat": pil_h_squat, "pil_h_bpress": pil_h_bpress, "first_attempt_squat_res": first_attempt_squat_res,
                                          "first_attempt_squat_off": first_attempt_squat_off,
                                          "second_attempt_squat_res": second_attempt_squat_res,
                                          "second_attempt_squat_off": second_attempt_squat_off,
@@ -657,6 +679,8 @@ def secretary_page(request, competition_slug):
                                          "third_attempt_dlift_off": third_attempt_dlift_off,
                                          "comp_transl": comp_transl}, status=200)
                 if cur_transl_val == "Тяга 1 класс" and first_attempt_dlift_off:
+                    cur_comp.pillar_height_squat = pil_h_squat
+                    cur_comp.pillar_height_bpress = pil_h_bpress
                     cur_comp.first_attempt_squat_res = first_attempt_squat_res
                     cur_comp.first_attempt_squat_off = first_attempt_squat_off
                     cur_comp.second_attempt_squat_res = second_attempt_squat_res
@@ -677,7 +701,7 @@ def secretary_page(request, competition_slug):
                     cur_comp.third_attempt_dlift_off = third_attempt_dlift_off
                     cur_comp.competitor_translation = comp_transl
                     cur_comp.save()
-                    return JsonResponse({"first_attempt_squat_res": first_attempt_squat_res,
+                    return JsonResponse({"pil_h_squat": pil_h_squat, "pil_h_bpress": pil_h_bpress, "first_attempt_squat_res": first_attempt_squat_res,
                                          "first_attempt_squat_off": first_attempt_squat_off,
                                          "second_attempt_squat_res": second_attempt_squat_res,
                                          "second_attempt_squat_off": second_attempt_squat_off,
@@ -697,6 +721,8 @@ def secretary_page(request, competition_slug):
                                          "third_attempt_dlift_off": third_attempt_dlift_off,
                                          "comp_transl": comp_transl}, status=200)
                 if cur_transl_val == "Тяга 2 класс" and second_attempt_dlift_off:
+                    cur_comp.pillar_height_squat = pil_h_squat
+                    cur_comp.pillar_height_bpress = pil_h_bpress
                     cur_comp.first_attempt_squat_res = first_attempt_squat_res
                     cur_comp.first_attempt_squat_off = first_attempt_squat_off
                     cur_comp.second_attempt_squat_res = second_attempt_squat_res
@@ -717,7 +743,7 @@ def secretary_page(request, competition_slug):
                     cur_comp.third_attempt_dlift_off = third_attempt_dlift_off
                     cur_comp.competitor_translation = comp_transl
                     cur_comp.save()
-                    return JsonResponse({"first_attempt_squat_res": first_attempt_squat_res,
+                    return JsonResponse({"pil_h_squat": pil_h_squat, "pil_h_bpress": pil_h_bpress, "first_attempt_squat_res": first_attempt_squat_res,
                                          "first_attempt_squat_off": first_attempt_squat_off,
                                          "second_attempt_squat_res": second_attempt_squat_res,
                                          "second_attempt_squat_off": second_attempt_squat_off,
@@ -737,6 +763,8 @@ def secretary_page(request, competition_slug):
                                          "third_attempt_dlift_off": third_attempt_dlift_off,
                                          "comp_transl": comp_transl}, status=200)
                 if cur_transl_val == "Тяга 3 класс" and third_attempt_dlift_off:
+                    cur_comp.pillar_height_squat = pil_h_squat
+                    cur_comp.pillar_height_bpress = pil_h_bpress
                     cur_comp.first_attempt_squat_res = first_attempt_squat_res
                     cur_comp.first_attempt_squat_off = first_attempt_squat_off
                     cur_comp.second_attempt_squat_res = second_attempt_squat_res
@@ -757,7 +785,7 @@ def secretary_page(request, competition_slug):
                     cur_comp.third_attempt_dlift_off = third_attempt_dlift_off
                     cur_comp.competitor_translation = comp_transl
                     cur_comp.save()
-                    return JsonResponse({"first_attempt_squat_res": first_attempt_squat_res,
+                    return JsonResponse({"pil_h_squat": pil_h_squat, "pil_h_bpress": pil_h_bpress, "first_attempt_squat_res": first_attempt_squat_res,
                                          "first_attempt_squat_off": first_attempt_squat_off,
                                          "second_attempt_squat_res": second_attempt_squat_res,
                                          "second_attempt_squat_off": second_attempt_squat_off,
@@ -777,6 +805,8 @@ def secretary_page(request, competition_slug):
                                          "third_attempt_dlift_off": third_attempt_dlift_off,
                                          "comp_transl": comp_transl}, status=200)
         if comp_transl:
+            cur_comp.pillar_height_squat = pil_h_squat
+            cur_comp.pillar_height_bpress = pil_h_bpress
             cur_comp.first_attempt_squat_res = first_attempt_squat_res
             cur_comp.first_attempt_squat_off = first_attempt_squat_off
             cur_comp.second_attempt_squat_res = second_attempt_squat_res
@@ -798,7 +828,7 @@ def secretary_page(request, competition_slug):
             cur_comp.competitor_translation = comp_transl
             cur_comp.save()
             return JsonResponse(
-                {"first_attempt_squat_res": first_attempt_squat_res, "first_attempt_squat_off": first_attempt_squat_off,
+                {"pil_h_squat": pil_h_squat, "pil_h_bpress": pil_h_bpress, "first_attempt_squat_res": first_attempt_squat_res, "first_attempt_squat_off": first_attempt_squat_off,
                  "second_attempt_squat_res": second_attempt_squat_res,
                  "second_attempt_squat_off": second_attempt_squat_off,
                  "third_attempt_squat_res": third_attempt_squat_res, "third_attempt_squat_off": third_attempt_squat_off,
@@ -814,6 +844,8 @@ def secretary_page(request, competition_slug):
                  "third_attempt_dlift_res": third_attempt_dlift_res, "third_attempt_dlift_off": third_attempt_dlift_off,
                  "comp_transl": comp_transl}, status=200)
         else:
+            cur_comp.pillar_height_squat = pil_h_squat
+            cur_comp.pillar_height_bpress = pil_h_bpress
             cur_comp.first_attempt_squat_res = first_attempt_squat_res
             cur_comp.first_attempt_squat_off = first_attempt_squat_off
             cur_comp.second_attempt_squat_res = second_attempt_squat_res
@@ -835,7 +867,7 @@ def secretary_page(request, competition_slug):
             cur_comp.competitor_translation = None
             cur_comp.save()
             return JsonResponse(
-                {"first_attempt_squat_res": first_attempt_squat_res, "first_attempt_squat_off": first_attempt_squat_off,
+                {"pil_h_squat": pil_h_squat, "pil_h_bpress": pil_h_bpress, "first_attempt_squat_res": first_attempt_squat_res, "first_attempt_squat_off": first_attempt_squat_off,
                  "second_attempt_squat_res": second_attempt_squat_res,
                  "second_attempt_squat_off": second_attempt_squat_off,
                  "third_attempt_squat_res": third_attempt_squat_res, "third_attempt_squat_off": third_attempt_squat_off,
@@ -854,6 +886,11 @@ def secretary_page(request, competition_slug):
             # F("first_attempt_squat_res").asc(nulls_last=True)), use_natural_foreign_keys=True)
     if 'secr-page_form-btn-bpclass' in request.POST:
         comp_pk = request.POST.get('secr-page_form-btn-bpclass')
+        pil_h_bpress = request.POST.get('secr-page_form-pil_h_bpress')
+        if pil_h_bpress:
+            pil_h_bpress = pil_h_bpress
+        else:
+            pil_h_bpress = None
         first_attempt_bpress_res = request.POST.get('secr-page_form-fat-bpress-res')
         if first_attempt_bpress_res:
             first_attempt_bpress_res = Decimal(first_attempt_bpress_res)
@@ -885,6 +922,7 @@ def secretary_page(request, competition_slug):
             cur_transl_pk = cur_transl.values_list('id', flat=True)[0]
             if comp_pk == str(cur_transl_pk):
                 if cur_transl_val == "Жим 1 класс" and first_attempt_bpress_off:
+                    cur_comp.pillar_height_bpress = pil_h_bpress
                     cur_comp.first_attempt_bpress_res = first_attempt_bpress_res
                     cur_comp.first_attempt_bpress_off = first_attempt_bpress_off
                     cur_comp.second_attempt_bpress_res = second_attempt_bpress_res
@@ -893,7 +931,7 @@ def secretary_page(request, competition_slug):
                     cur_comp.third_attempt_bpress_off = third_attempt_bpress_off
                     cur_comp.competitor_translation = comp_transl
                     cur_comp.save()
-                    return JsonResponse({"first_attempt_bpress_res": first_attempt_bpress_res,
+                    return JsonResponse({"pil_h_bpress": pil_h_bpress, "first_attempt_bpress_res": first_attempt_bpress_res,
                                          "first_attempt_bpress_off": first_attempt_bpress_off,
                                          "second_attempt_bpress_res": second_attempt_bpress_res,
                                          "second_attempt_bpress_off": second_attempt_bpress_off,
@@ -901,6 +939,7 @@ def secretary_page(request, competition_slug):
                                          "third_attempt_bpress_off": third_attempt_bpress_off,
                                          "comp_transl": comp_transl}, status=200)
                 if cur_transl_val == "Жим 2 класс" and second_attempt_bpress_off:
+                    cur_comp.pillar_height_bpress = pil_h_bpress
                     cur_comp.first_attempt_bpress_res = first_attempt_bpress_res
                     cur_comp.first_attempt_bpress_off = first_attempt_bpress_off
                     cur_comp.second_attempt_bpress_res = second_attempt_bpress_res
@@ -909,7 +948,7 @@ def secretary_page(request, competition_slug):
                     cur_comp.third_attempt_bpress_off = third_attempt_bpress_off
                     cur_comp.competitor_translation = comp_transl
                     cur_comp.save()
-                    return JsonResponse({"first_attempt_bpress_res": first_attempt_bpress_res,
+                    return JsonResponse({"pil_h_bpress": pil_h_bpress, "first_attempt_bpress_res": first_attempt_bpress_res,
                                          "first_attempt_bpress_off": first_attempt_bpress_off,
                                          "second_attempt_bpress_res": second_attempt_bpress_res,
                                          "second_attempt_bpress_off": second_attempt_bpress_off,
@@ -917,6 +956,7 @@ def secretary_page(request, competition_slug):
                                          "third_attempt_bpress_off": third_attempt_bpress_off,
                                          "comp_transl": comp_transl}, status=200)
                 if cur_transl_val == "Жим 3 класс" and third_attempt_bpress_off:
+                    cur_comp.pillar_height_bpress = pil_h_bpress
                     cur_comp.first_attempt_bpress_res = first_attempt_bpress_res
                     cur_comp.first_attempt_bpress_off = first_attempt_bpress_off
                     cur_comp.second_attempt_bpress_res = second_attempt_bpress_res
@@ -925,7 +965,7 @@ def secretary_page(request, competition_slug):
                     cur_comp.third_attempt_bpress_off = third_attempt_bpress_off
                     cur_comp.competitor_translation = comp_transl
                     cur_comp.save()
-                    return JsonResponse({"first_attempt_bpress_res": first_attempt_bpress_res,
+                    return JsonResponse({"pil_h_bpress": pil_h_bpress, "first_attempt_bpress_res": first_attempt_bpress_res,
                                          "first_attempt_bpress_off": first_attempt_bpress_off,
                                          "second_attempt_bpress_res": second_attempt_bpress_res,
                                          "second_attempt_bpress_off": second_attempt_bpress_off,
@@ -933,6 +973,7 @@ def secretary_page(request, competition_slug):
                                          "third_attempt_bpress_off": third_attempt_bpress_off,
                                          "comp_transl": comp_transl}, status=200)
         if comp_transl:
+            cur_comp.pillar_height_bpress = pil_h_bpress
             cur_comp.first_attempt_bpress_res = first_attempt_bpress_res
             cur_comp.first_attempt_bpress_off = first_attempt_bpress_off
             cur_comp.second_attempt_bpress_res = second_attempt_bpress_res
@@ -942,7 +983,7 @@ def secretary_page(request, competition_slug):
             cur_comp.competitor_translation = comp_transl
             cur_comp.save()
             return JsonResponse(
-                {"first_attempt_bpress_res": first_attempt_bpress_res,
+                {"pil_h_bpress": pil_h_bpress, "first_attempt_bpress_res": first_attempt_bpress_res,
                  "first_attempt_bpress_off": first_attempt_bpress_off,
                  "second_attempt_bpress_res": second_attempt_bpress_res,
                  "second_attempt_bpress_off": second_attempt_bpress_off,
@@ -950,6 +991,7 @@ def secretary_page(request, competition_slug):
                  "third_attempt_bpress_off": third_attempt_bpress_off,
                  "comp_transl": comp_transl}, status=200)
         else:
+            cur_comp.pillar_height_bpress = pil_h_bpress
             cur_comp.first_attempt_bpress_res = first_attempt_bpress_res
             cur_comp.first_attempt_bpress_off = first_attempt_bpress_off
             cur_comp.second_attempt_bpress_res = second_attempt_bpress_res
@@ -959,7 +1001,7 @@ def secretary_page(request, competition_slug):
             cur_comp.competitor_translation = None
             cur_comp.save()
             return JsonResponse(
-                {"first_attempt_bpress_res": first_attempt_bpress_res,
+                {"pil_h_bpress": pil_h_bpress, "first_attempt_bpress_res": first_attempt_bpress_res,
                  "first_attempt_bpress_off": first_attempt_bpress_off,
                  "second_attempt_bpress_res": second_attempt_bpress_res,
                  "second_attempt_bpress_off": second_attempt_bpress_off,
@@ -968,6 +1010,16 @@ def secretary_page(request, competition_slug):
                  "comp_transl": comp_transl}, status=200)
     if 'secr-page_form-btn-plek' in request.POST:
         comp_pk = request.POST.get('secr-page_form-btn-plek')
+        pil_h_squat = request.POST.get('secr-page_form-pil_h_squat')
+        pil_h_bpress = request.POST.get('secr-page_form-pil_h_bpress')
+        if pil_h_squat:
+            pil_h_squat = pil_h_squat
+        else:
+            pil_h_squat = None
+        if pil_h_bpress:
+            pil_h_bpress = pil_h_bpress
+        else:
+            pil_h_bpress = None
         first_attempt_squat_res = request.POST.get('secr-page_form-fat-squat-res')
         if first_attempt_squat_res:
             first_attempt_squat_res = Decimal(first_attempt_squat_res)
@@ -1035,6 +1087,8 @@ def secretary_page(request, competition_slug):
             cur_transl_pk = cur_transl.values_list('id', flat=True)[0]
             if comp_pk == str(cur_transl_pk):
                 if cur_transl_val == "Присед 1 экип" and first_attempt_squat_off:
+                    cur_comp.pillar_height_squat = pil_h_squat
+                    cur_comp.pillar_height_bpress = pil_h_bpress
                     cur_comp.first_attempt_squat_res_ek = first_attempt_squat_res
                     cur_comp.first_attempt_squat_off_ek = first_attempt_squat_off
                     cur_comp.second_attempt_squat_res_ek = second_attempt_squat_res
@@ -1055,7 +1109,7 @@ def secretary_page(request, competition_slug):
                     cur_comp.third_attempt_dlift_off_ek = third_attempt_dlift_off
                     cur_comp.competitor_translation = comp_transl
                     cur_comp.save()
-                    return JsonResponse({"first_attempt_squat_res": first_attempt_squat_res,
+                    return JsonResponse({"pil_h_squat": pil_h_squat, "pil_h_bpress": pil_h_bpress, "first_attempt_squat_res": first_attempt_squat_res,
                                          "first_attempt_squat_off": first_attempt_squat_off,
                                          "second_attempt_squat_res": second_attempt_squat_res,
                                          "second_attempt_squat_off": second_attempt_squat_off,
@@ -1075,6 +1129,8 @@ def secretary_page(request, competition_slug):
                                          "third_attempt_dlift_off": third_attempt_dlift_off,
                                          "comp_transl": comp_transl}, status=200)
                 if cur_transl_val == "Присед 2 экип" and second_attempt_squat_off:
+                    cur_comp.pillar_height_squat = pil_h_squat
+                    cur_comp.pillar_height_bpress = pil_h_bpress
                     cur_comp.first_attempt_squat_res_ek = first_attempt_squat_res
                     cur_comp.first_attempt_squat_off_ek = first_attempt_squat_off
                     cur_comp.second_attempt_squat_res_ek = second_attempt_squat_res
@@ -1095,7 +1151,7 @@ def secretary_page(request, competition_slug):
                     cur_comp.third_attempt_dlift_off_ek = third_attempt_dlift_off
                     cur_comp.competitor_translation = comp_transl
                     cur_comp.save()
-                    return JsonResponse({"first_attempt_squat_res": first_attempt_squat_res,
+                    return JsonResponse({"pil_h_squat": pil_h_squat, "pil_h_bpress": pil_h_bpress, "first_attempt_squat_res": first_attempt_squat_res,
                                          "first_attempt_squat_off": first_attempt_squat_off,
                                          "second_attempt_squat_res": second_attempt_squat_res,
                                          "second_attempt_squat_off": second_attempt_squat_off,
@@ -1115,6 +1171,8 @@ def secretary_page(request, competition_slug):
                                          "third_attempt_dlift_off": third_attempt_dlift_off,
                                          "comp_transl": comp_transl}, status=200)
                 if cur_transl_val == "Присед 3 экип" and third_attempt_squat_off:
+                    cur_comp.pillar_height_squat = pil_h_squat
+                    cur_comp.pillar_height_bpress = pil_h_bpress
                     cur_comp.first_attempt_squat_res_ek = first_attempt_squat_res
                     cur_comp.first_attempt_squat_off_ek = first_attempt_squat_off
                     cur_comp.second_attempt_squat_res_ek = second_attempt_squat_res
@@ -1135,7 +1193,7 @@ def secretary_page(request, competition_slug):
                     cur_comp.third_attempt_dlift_off_ek = third_attempt_dlift_off
                     cur_comp.competitor_translation = comp_transl
                     cur_comp.save()
-                    return JsonResponse({"first_attempt_squat_res": first_attempt_squat_res,
+                    return JsonResponse({"pil_h_squat": pil_h_squat, "pil_h_bpress": pil_h_bpress, "first_attempt_squat_res": first_attempt_squat_res,
                                          "first_attempt_squat_off": first_attempt_squat_off,
                                          "second_attempt_squat_res": second_attempt_squat_res,
                                          "second_attempt_squat_off": second_attempt_squat_off,
@@ -1155,6 +1213,8 @@ def secretary_page(request, competition_slug):
                                          "third_attempt_dlift_off": third_attempt_dlift_off,
                                          "comp_transl": comp_transl}, status=200)
                 if cur_transl_val == "Жим 1 экип" and first_attempt_bpress_off:
+                    cur_comp.pillar_height_squat = pil_h_squat
+                    cur_comp.pillar_height_bpress = pil_h_bpress
                     cur_comp.first_attempt_squat_res_ek = first_attempt_squat_res
                     cur_comp.first_attempt_squat_off_ek = first_attempt_squat_off
                     cur_comp.second_attempt_squat_res_ek = second_attempt_squat_res
@@ -1175,7 +1235,7 @@ def secretary_page(request, competition_slug):
                     cur_comp.third_attempt_dlift_off_ek = third_attempt_dlift_off
                     cur_comp.competitor_translation = comp_transl
                     cur_comp.save()
-                    return JsonResponse({"first_attempt_squat_res": first_attempt_squat_res,
+                    return JsonResponse({"pil_h_squat": pil_h_squat, "pil_h_bpress": pil_h_bpress, "first_attempt_squat_res": first_attempt_squat_res,
                                          "first_attempt_squat_off": first_attempt_squat_off,
                                          "second_attempt_squat_res": second_attempt_squat_res,
                                          "second_attempt_squat_off": second_attempt_squat_off,
@@ -1195,6 +1255,8 @@ def secretary_page(request, competition_slug):
                                          "third_attempt_dlift_off": third_attempt_dlift_off,
                                          "comp_transl": comp_transl}, status=200)
                 if cur_transl_val == "Жим 2 экип" and second_attempt_bpress_off:
+                    cur_comp.pillar_height_squat = pil_h_squat
+                    cur_comp.pillar_height_bpress = pil_h_bpress
                     cur_comp.first_attempt_squat_res_ek = first_attempt_squat_res
                     cur_comp.first_attempt_squat_off_ek = first_attempt_squat_off
                     cur_comp.second_attempt_squat_res_ek = second_attempt_squat_res
@@ -1215,7 +1277,7 @@ def secretary_page(request, competition_slug):
                     cur_comp.third_attempt_dlift_off_ek = third_attempt_dlift_off
                     cur_comp.competitor_translation = comp_transl
                     cur_comp.save()
-                    return JsonResponse({"first_attempt_squat_res": first_attempt_squat_res,
+                    return JsonResponse({"pil_h_squat": pil_h_squat, "pil_h_bpress": pil_h_bpress, "first_attempt_squat_res": first_attempt_squat_res,
                                          "first_attempt_squat_off": first_attempt_squat_off,
                                          "second_attempt_squat_res": second_attempt_squat_res,
                                          "second_attempt_squat_off": second_attempt_squat_off,
@@ -1235,6 +1297,8 @@ def secretary_page(request, competition_slug):
                                          "third_attempt_dlift_off": third_attempt_dlift_off,
                                          "comp_transl": comp_transl}, status=200)
                 if cur_transl_val == "Жим 3 экип" and third_attempt_bpress_off:
+                    cur_comp.pillar_height_squat = pil_h_squat
+                    cur_comp.pillar_height_bpress = pil_h_bpress
                     cur_comp.first_attempt_squat_res_ek = first_attempt_squat_res
                     cur_comp.first_attempt_squat_off_ek = first_attempt_squat_off
                     cur_comp.second_attempt_squat_res_ek = second_attempt_squat_res
@@ -1255,7 +1319,7 @@ def secretary_page(request, competition_slug):
                     cur_comp.third_attempt_dlift_off_ek = third_attempt_dlift_off
                     cur_comp.competitor_translation = comp_transl
                     cur_comp.save()
-                    return JsonResponse({"first_attempt_squat_res": first_attempt_squat_res,
+                    return JsonResponse({"pil_h_squat": pil_h_squat, "pil_h_bpress": pil_h_bpress, "first_attempt_squat_res": first_attempt_squat_res,
                                          "first_attempt_squat_off": first_attempt_squat_off,
                                          "second_attempt_squat_res": second_attempt_squat_res,
                                          "second_attempt_squat_off": second_attempt_squat_off,
@@ -1275,6 +1339,8 @@ def secretary_page(request, competition_slug):
                                          "third_attempt_dlift_off": third_attempt_dlift_off,
                                          "comp_transl": comp_transl}, status=200)
                 if cur_transl_val == "Тяга 1 экип" and first_attempt_dlift_off:
+                    cur_comp.pillar_height_squat = pil_h_squat
+                    cur_comp.pillar_height_bpress = pil_h_bpress
                     cur_comp.first_attempt_squat_res_ek = first_attempt_squat_res
                     cur_comp.first_attempt_squat_off_ek = first_attempt_squat_off
                     cur_comp.second_attempt_squat_res_ek = second_attempt_squat_res
@@ -1295,7 +1361,7 @@ def secretary_page(request, competition_slug):
                     cur_comp.third_attempt_dlift_off_ek = third_attempt_dlift_off
                     cur_comp.competitor_translation = comp_transl
                     cur_comp.save()
-                    return JsonResponse({"first_attempt_squat_res": first_attempt_squat_res,
+                    return JsonResponse({"pil_h_squat": pil_h_squat, "pil_h_bpress": pil_h_bpress, "first_attempt_squat_res": first_attempt_squat_res,
                                          "first_attempt_squat_off": first_attempt_squat_off,
                                          "second_attempt_squat_res": second_attempt_squat_res,
                                          "second_attempt_squat_off": second_attempt_squat_off,
@@ -1315,6 +1381,8 @@ def secretary_page(request, competition_slug):
                                          "third_attempt_dlift_off": third_attempt_dlift_off,
                                          "comp_transl": comp_transl}, status=200)
                 if cur_transl_val == "Тяга 2 экип" and second_attempt_dlift_off:
+                    cur_comp.pillar_height_squat = pil_h_squat
+                    cur_comp.pillar_height_bpress = pil_h_bpress
                     cur_comp.first_attempt_squat_res_ek = first_attempt_squat_res
                     cur_comp.first_attempt_squat_off_ek = first_attempt_squat_off
                     cur_comp.second_attempt_squat_res_ek = second_attempt_squat_res
@@ -1335,7 +1403,7 @@ def secretary_page(request, competition_slug):
                     cur_comp.third_attempt_dlift_off_ek = third_attempt_dlift_off
                     cur_comp.competitor_translation = comp_transl
                     cur_comp.save()
-                    return JsonResponse({"first_attempt_squat_res": first_attempt_squat_res,
+                    return JsonResponse({"pil_h_squat": pil_h_squat, "pil_h_bpress": pil_h_bpress, "first_attempt_squat_res": first_attempt_squat_res,
                                          "first_attempt_squat_off": first_attempt_squat_off,
                                          "second_attempt_squat_res": second_attempt_squat_res,
                                          "second_attempt_squat_off": second_attempt_squat_off,
@@ -1355,6 +1423,8 @@ def secretary_page(request, competition_slug):
                                          "third_attempt_dlift_off": third_attempt_dlift_off,
                                          "comp_transl": comp_transl}, status=200)
                 if cur_transl_val == "Тяга 3 экип" and third_attempt_dlift_off:
+                    cur_comp.pillar_height_squat = pil_h_squat
+                    cur_comp.pillar_height_bpress = pil_h_bpress
                     cur_comp.first_attempt_squat_res_ek = first_attempt_squat_res
                     cur_comp.first_attempt_squat_off_ek = first_attempt_squat_off
                     cur_comp.second_attempt_squat_res_ek = second_attempt_squat_res
@@ -1375,7 +1445,7 @@ def secretary_page(request, competition_slug):
                     cur_comp.third_attempt_dlift_off_ek = third_attempt_dlift_off
                     cur_comp.competitor_translation = comp_transl
                     cur_comp.save()
-                    return JsonResponse({"first_attempt_squat_res": first_attempt_squat_res,
+                    return JsonResponse({"pil_h_squat": pil_h_squat, "pil_h_bpress": pil_h_bpress, "first_attempt_squat_res": first_attempt_squat_res,
                                          "first_attempt_squat_off": first_attempt_squat_off,
                                          "second_attempt_squat_res": second_attempt_squat_res,
                                          "second_attempt_squat_off": second_attempt_squat_off,
@@ -1395,6 +1465,8 @@ def secretary_page(request, competition_slug):
                                          "third_attempt_dlift_off": third_attempt_dlift_off,
                                          "comp_transl": comp_transl}, status=200)
         if comp_transl:
+            cur_comp.pillar_height_squat = pil_h_squat
+            cur_comp.pillar_height_bpress = pil_h_bpress
             cur_comp.first_attempt_squat_res_ek = first_attempt_squat_res
             cur_comp.first_attempt_squat_off_ek = first_attempt_squat_off
             cur_comp.second_attempt_squat_res_ek = second_attempt_squat_res
@@ -1416,7 +1488,7 @@ def secretary_page(request, competition_slug):
             cur_comp.competitor_translation = comp_transl
             cur_comp.save()
             return JsonResponse(
-                {"first_attempt_squat_res": first_attempt_squat_res,
+                {"pil_h_squat": pil_h_squat, "pil_h_bpress": pil_h_bpress, "first_attempt_squat_res": first_attempt_squat_res,
                  "first_attempt_squat_off": first_attempt_squat_off,
                  "second_attempt_squat_res": second_attempt_squat_res,
                  "second_attempt_squat_off": second_attempt_squat_off,
@@ -1436,6 +1508,8 @@ def secretary_page(request, competition_slug):
                  "third_attempt_dlift_off": third_attempt_dlift_off,
                  "comp_transl": comp_transl}, status=200)
         else:
+            cur_comp.pillar_height_squat = pil_h_squat
+            cur_comp.pillar_height_bpress = pil_h_bpress
             cur_comp.first_attempt_squat_res_ek = first_attempt_squat_res
             cur_comp.first_attempt_squat_off_ek = first_attempt_squat_off
             cur_comp.second_attempt_squat_res_ek = second_attempt_squat_res
@@ -1457,7 +1531,7 @@ def secretary_page(request, competition_slug):
             cur_comp.competitor_translation = None
             cur_comp.save()
             return JsonResponse(
-                {"first_attempt_squat_res": first_attempt_squat_res,
+                {"pil_h_squat": pil_h_squat, "pil_h_bpress": pil_h_bpress, "first_attempt_squat_res": first_attempt_squat_res,
                  "first_attempt_squat_off": first_attempt_squat_off,
                  "second_attempt_squat_res": second_attempt_squat_res,
                  "second_attempt_squat_off": second_attempt_squat_off,
@@ -1478,6 +1552,11 @@ def secretary_page(request, competition_slug):
                  "comp_transl": comp_transl}, status=200)
     if 'secr-page_form-btn-bpek' in request.POST:
         comp_pk = request.POST.get('secr-page_form-btn-bpek')
+        pil_h_bpress = request.POST.get('secr-page_form-pil_h_bpress')
+        if pil_h_bpress:
+            pil_h_bpress = pil_h_bpress
+        else:
+            pil_h_bpress = None
         first_attempt_bpress_res = request.POST.get('secr-page_form-fat-bpress-res')
         if first_attempt_bpress_res:
             first_attempt_bpress_res = Decimal(first_attempt_bpress_res)
@@ -1509,6 +1588,7 @@ def secretary_page(request, competition_slug):
             cur_transl_pk = cur_transl.values_list('id', flat=True)[0]
             if comp_pk == str(cur_transl_pk):
                 if cur_transl_val == "Жим 1 экип" and first_attempt_bpress_off:
+                    cur_comp.pillar_height_bpress = pil_h_bpress
                     cur_comp.first_attempt_bpress_res_ek = first_attempt_bpress_res
                     cur_comp.first_attempt_bpress_off_ek = first_attempt_bpress_off
                     cur_comp.second_attempt_bpress_res_ek = second_attempt_bpress_res
@@ -1517,7 +1597,7 @@ def secretary_page(request, competition_slug):
                     cur_comp.third_attempt_bpress_off_ek = third_attempt_bpress_off
                     cur_comp.competitor_translation = comp_transl
                     cur_comp.save()
-                    return JsonResponse({"first_attempt_bpress_res": first_attempt_bpress_res,
+                    return JsonResponse({"pil_h_bpress": pil_h_bpress, "first_attempt_bpress_res": first_attempt_bpress_res,
                                          "first_attempt_bpress_off": first_attempt_bpress_off,
                                          "second_attempt_bpress_res": second_attempt_bpress_res,
                                          "second_attempt_bpress_off": second_attempt_bpress_off,
@@ -1525,6 +1605,7 @@ def secretary_page(request, competition_slug):
                                          "third_attempt_bpress_off": third_attempt_bpress_off,
                                          "comp_transl": comp_transl}, status=200)
                 if cur_transl_val == "Жим 2 экип" and second_attempt_bpress_off:
+                    cur_comp.pillar_height_bpress = pil_h_bpress
                     cur_comp.first_attempt_bpress_res_ek = first_attempt_bpress_res
                     cur_comp.first_attempt_bpress_off_ek = first_attempt_bpress_off
                     cur_comp.second_attempt_bpress_res_ek = second_attempt_bpress_res
@@ -1533,7 +1614,7 @@ def secretary_page(request, competition_slug):
                     cur_comp.third_attempt_bpress_off_ek = third_attempt_bpress_off
                     cur_comp.competitor_translation = comp_transl
                     cur_comp.save()
-                    return JsonResponse({"first_attempt_bpress_res": first_attempt_bpress_res,
+                    return JsonResponse({"pil_h_bpress": pil_h_bpress, "first_attempt_bpress_res": first_attempt_bpress_res,
                                          "first_attempt_bpress_off": first_attempt_bpress_off,
                                          "second_attempt_bpress_res": second_attempt_bpress_res,
                                          "second_attempt_bpress_off": second_attempt_bpress_off,
@@ -1541,6 +1622,7 @@ def secretary_page(request, competition_slug):
                                          "third_attempt_bpress_off": third_attempt_bpress_off,
                                          "comp_transl": comp_transl}, status=200)
                 if cur_transl_val == "Жим 3 экип" and third_attempt_bpress_off:
+                    cur_comp.pillar_height_bpress = pil_h_bpress
                     cur_comp.first_attempt_bpress_res_ek = first_attempt_bpress_res
                     cur_comp.first_attempt_bpress_off_ek = first_attempt_bpress_off
                     cur_comp.second_attempt_bpress_res_ek = second_attempt_bpress_res
@@ -1549,7 +1631,7 @@ def secretary_page(request, competition_slug):
                     cur_comp.third_attempt_bpress_off_ek = third_attempt_bpress_off
                     cur_comp.competitor_translation = comp_transl
                     cur_comp.save()
-                    return JsonResponse({"first_attempt_bpress_res": first_attempt_bpress_res,
+                    return JsonResponse({"pil_h_bpress": pil_h_bpress, "first_attempt_bpress_res": first_attempt_bpress_res,
                                          "first_attempt_bpress_off": first_attempt_bpress_off,
                                          "second_attempt_bpress_res": second_attempt_bpress_res,
                                          "second_attempt_bpress_off": second_attempt_bpress_off,
@@ -1557,6 +1639,7 @@ def secretary_page(request, competition_slug):
                                          "third_attempt_bpress_off": third_attempt_bpress_off,
                                          "comp_transl": comp_transl}, status=200)
         if comp_transl:
+            cur_comp.pillar_height_bpress = pil_h_bpress
             cur_comp.first_attempt_bpress_res_ek = first_attempt_bpress_res
             cur_comp.first_attempt_bpress_off_ek = first_attempt_bpress_off
             cur_comp.second_attempt_bpress_res_ek = second_attempt_bpress_res
@@ -1566,7 +1649,7 @@ def secretary_page(request, competition_slug):
             cur_comp.competitor_translation = comp_transl
             cur_comp.save()
             return JsonResponse(
-                {"first_attempt_bpress_res": first_attempt_bpress_res,
+                {"pil_h_bpress": pil_h_bpress, "first_attempt_bpress_res": first_attempt_bpress_res,
                  "first_attempt_bpress_off": first_attempt_bpress_off,
                  "second_attempt_bpress_res": second_attempt_bpress_res,
                  "second_attempt_bpress_off": second_attempt_bpress_off,
@@ -1574,6 +1657,7 @@ def secretary_page(request, competition_slug):
                  "third_attempt_bpress_off": third_attempt_bpress_off,
                  "comp_transl": comp_transl}, status=200)
         else:
+            cur_comp.pillar_height_bpress = pil_h_bpress
             cur_comp.first_attempt_bpress_res_ek = first_attempt_bpress_res
             cur_comp.first_attempt_bpress_off_ek = first_attempt_bpress_off
             cur_comp.second_attempt_bpress_res_ek = second_attempt_bpress_res
@@ -1583,7 +1667,7 @@ def secretary_page(request, competition_slug):
             cur_comp.competitor_translation = None
             cur_comp.save()
             return JsonResponse(
-                {"first_attempt_bpress_res": first_attempt_bpress_res,
+                {"pil_h_bpress": pil_h_bpress, "first_attempt_bpress_res": first_attempt_bpress_res,
                  "first_attempt_bpress_off": first_attempt_bpress_off,
                  "second_attempt_bpress_res": second_attempt_bpress_res,
                  "second_attempt_bpress_off": second_attempt_bpress_off,
@@ -1712,7 +1796,7 @@ def scoreboard_page(request, competition_slug):
                 status=200)
         else:
             cur_flow = CompetitorsFlow.objects.first().comp_flow
-            cur_flow_competitors_st = CompetitionProtocols.objects.filter(competitor_stream=cur_flow)
+            cur_flow_competitors_st = CompetitionProtocols.objects.filter(competitor_stream=cur_flow, competitor__comp_title__competition_slug=competition_slug)
             competitors_stypes_st = cur_flow_competitors_st.values_list('competitor__sports_type__title', flat=True)
             competitors_stypes = []
             for csts in competitors_stypes_st:
@@ -1814,7 +1898,8 @@ def scoreboard_comp_page(request, competition_slug):
     }
     if 'score-form_btn' in request.POST:
         cur_flow = CompetitorsFlow.objects.first().comp_flow
-        cur_flow_competitors_st = CompetitionProtocols.objects.filter(competitor_stream=cur_flow)
+        # cur_flow_competitors_st = CompetitionProtocols.objects.filter(competitor_stream=cur_flow)
+        cur_flow_competitors_st = CompetitionProtocols.objects.filter(competitor__comp_title__competition_slug=competition_slug, competitor_stream=cur_flow)
         competitors_stypes_st = cur_flow_competitors_st.values_list('competitor__sports_type__title', flat=True)
         competitors_stypes = []
         for csts in competitors_stypes_st:

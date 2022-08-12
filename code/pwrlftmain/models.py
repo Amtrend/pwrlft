@@ -217,6 +217,8 @@ class CompetitionProtocols(models.Model):
     best_bpress_res_ek = models.DecimalField(max_digits=5, decimal_places=2, verbose_name='Итоговый жим результат (экип.)', blank=True, null=True)
     best_dlift_res_ek = models.DecimalField(max_digits=5, decimal_places=2, verbose_name='Итоговая тяга результат (экип.)', blank=True, null=True)
     best_sum_res_ek = models.DecimalField(max_digits=6, decimal_places=2, verbose_name='Итоговая сумма результат (экип.)', blank=True, null=True)
+    pillar_height_squat = models.PositiveIntegerField(verbose_name='Высота стоек для приседа', blank=True, null=True)
+    pillar_height_bpress = models.PositiveIntegerField(verbose_name='Высота стоек для жима', blank=True, null=True)
     competitor_translation = models.CharField(max_length=20, verbose_name='Текущая трансляция', blank=True, null=True)
     register_date = models.DateTimeField(auto_now_add=True, verbose_name='Дата создания')
     updated_at = models.DateTimeField(auto_now=True, verbose_name='Дата изменении')

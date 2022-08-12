@@ -422,6 +422,12 @@ ready(() => {
                     myxmlhttp.send(resultSPForm);
                     myxmlhttp.onload = function() {
                         if (myxmlhttp.status === 200) {
+                            document.getElementById('secr-page_noform-pil_h_squat_' + pkId).textContent = JSON.parse(myxmlhttp.response).pil_h_squat;
+                            document.getElementById('secr-page_form-pil_h_squat_' + pkId).value = JSON.parse(myxmlhttp.response).pil_h_squat;
+                            document.getElementById('secr-page_form-pil_h_squat_' + pkId).placeholder = JSON.parse(myxmlhttp.response).pil_h_squat;
+                            document.getElementById('secr-page_noform-pil_h_bpress_' + pkId).textContent = JSON.parse(myxmlhttp.response).pil_h_bpress;
+                            document.getElementById('secr-page_form-pil_h_bpress_' + pkId).value = JSON.parse(myxmlhttp.response).pil_h_bpress;
+                            document.getElementById('secr-page_form-pil_h_bpress_' + pkId).placeholder = JSON.parse(myxmlhttp.response).pil_h_bpress;
                             document.getElementById('secr-page_noform-fat-squat-res_' + pkId).textContent = JSON.parse(myxmlhttp.response).first_attempt_squat_res;
                             document.getElementById('secr-page_form-fat-squat-res_' + pkId).value = JSON.parse(myxmlhttp.response).first_attempt_squat_res;
                             document.getElementById('secr-page_form-fat-squat-res_' + pkId).placeholder = JSON.parse(myxmlhttp.response).first_attempt_squat_res;
@@ -561,6 +567,12 @@ ready(() => {
                     myxmlhttp.send(resultSPForm);
                     myxmlhttp.onload = function() {
                         if (myxmlhttp.status === 200) {
+                            document.getElementById('secr-page_noform-pil_h_squat_' + pkId).textContent = JSON.parse(myxmlhttp.response).pil_h_squat;
+                            document.getElementById('secr-page_form-pil_h_squat_' + pkId).value = JSON.parse(myxmlhttp.response).pil_h_squat;
+                            document.getElementById('secr-page_form-pil_h_squat_' + pkId).placeholder = JSON.parse(myxmlhttp.response).pil_h_squat;
+                            document.getElementById('secr-page_noform-pil_h_bpress_' + pkId).textContent = JSON.parse(myxmlhttp.response).pil_h_bpress;
+                            document.getElementById('secr-page_form-pil_h_bpress_' + pkId).value = JSON.parse(myxmlhttp.response).pil_h_bpress;
+                            document.getElementById('secr-page_form-pil_h_bpress_' + pkId).placeholder = JSON.parse(myxmlhttp.response).pil_h_bpress;
                             document.getElementById('secr-page_noform-fat-squat-res_' + pkId).textContent = JSON.parse(myxmlhttp.response).first_attempt_squat_res;
                             document.getElementById('secr-page_form-fat-squat-res_' + pkId).value = JSON.parse(myxmlhttp.response).first_attempt_squat_res;
                             document.getElementById('secr-page_form-fat-squat-res_' + pkId).placeholder = JSON.parse(myxmlhttp.response).first_attempt_squat_res;
@@ -694,6 +706,9 @@ ready(() => {
                     myxmlhttp.send(resultSPForm);
                     myxmlhttp.onload = function() {
                         if (myxmlhttp.status === 200) {
+                            document.getElementById('secr-page_noform-pil_h_bpress_' + pkId).textContent = JSON.parse(myxmlhttp.response).pil_h_bpress;
+                            document.getElementById('secr-page_form-pil_h_bpress_' + pkId).value = JSON.parse(myxmlhttp.response).pil_h_bpress;
+                            document.getElementById('secr-page_form-pil_h_bpress_' + pkId).placeholder = JSON.parse(myxmlhttp.response).pil_h_bpress;
                             document.getElementById('secr-page_noform-fat-bpress-res_' + pkId).textContent = JSON.parse(myxmlhttp.response).first_attempt_bpress_res;
                             document.getElementById('secr-page_form-fat-bpress-res_' + pkId).value = JSON.parse(myxmlhttp.response).first_attempt_bpress_res;
                             document.getElementById('secr-page_form-fat-bpress-res_' + pkId).placeholder = JSON.parse(myxmlhttp.response).first_attempt_bpress_res;
@@ -799,6 +814,9 @@ ready(() => {
                     myxmlhttp.send(resultSPForm);
                     myxmlhttp.onload = function() {
                         if (myxmlhttp.status === 200) {
+                            document.getElementById('secr-page_noform-pil_h_bpress_' + pkId).textContent = JSON.parse(myxmlhttp.response).pil_h_bpress;
+                            document.getElementById('secr-page_form-pil_h_bpress_' + pkId).value = JSON.parse(myxmlhttp.response).pil_h_bpress;
+                            document.getElementById('secr-page_form-pil_h_bpress_' + pkId).placeholder = JSON.parse(myxmlhttp.response).pil_h_bpress;
                             document.getElementById('secr-page_noform-fat-bpress-res_' + pkId).textContent = JSON.parse(myxmlhttp.response).first_attempt_bpress_res;
                             document.getElementById('secr-page_form-fat-bpress-res_' + pkId).value = JSON.parse(myxmlhttp.response).first_attempt_bpress_res;
                             document.getElementById('secr-page_form-fat-bpress-res_' + pkId).placeholder = JSON.parse(myxmlhttp.response).first_attempt_bpress_res;

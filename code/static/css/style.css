@@ -1217,6 +1217,10 @@ a, div {
     flex-direction: column;
 }
 
+.row-form_buttons-mar {
+    margin-top: 5px;
+}
+
 .secr-page_form-btn {
     padding: 3px 15px;
     border-radius: 5px;
@@ -1303,8 +1307,10 @@ a, div {
 }
 
 .ind_scoreboard {
-    height: 100vh;
-    width: 100vw;
+    /*height: 100vh;*/
+    height: 100%;
+    /*width: 100vw;*/
+    width: 100%;
     background-color: black;
     position: absolute;
     top: 0;
@@ -1323,6 +1329,7 @@ a, div {
     justify-content: space-between;
     align-items: center;
     padding: 2vw;
+    /*padding: 40px;*/
 }
 
 .ind_scoreboard-wcat_score-text {
@@ -1330,15 +1337,18 @@ a, div {
     color: #FFFFFF;
     font-weight: 500;
     font-size: calc(16px + 2vw);
+    /*font-size: 55px;*/
+    /*padding-left: 20px;*/
 }
 
-.ind_scoreboard-wcat_score-text-score {
+    .ind_scoreboard-wcat_score-text-score {
     border: 5px solid white;
     border-radius: 50%;
     background-color: red;
     width: 7vw;
     height: 7vw;
     margin-right: 6vw;
+    /*margin-right: 40px;*/
 }
 
 .ind_scoreboard-wcat_score-text-score-block {
@@ -1351,7 +1361,8 @@ a, div {
     color: #fcfc9e;
     font-weight: 600;
     font-size: calc(16px + 4vw);
-    margin-top: calc(20px + 3vw);
+    /*margin-top: calc(20px + 3vw);*/
+    /*margin-top: 75px;*/
     text-align: center;
 }
 
@@ -1362,6 +1373,7 @@ a, div {
     align-items: center;
     /*margin-top: calc(20px + 3vw);*/
     padding: 2vw;
+    /*padding: 40px;*/
 }
 
 .ind_scoreboard-type-weight_type {
@@ -1384,8 +1396,9 @@ a, div {
     /*font-weight: 400;*/
     font-size: calc(16px + 8vw);
     text-align: center;
-    margin-top: auto;
+    /*margin-top: auto;*/
     padding: 2vw;
+    /*padding: 40px;*/
 }
 
 .mass_scoreboard-table {
