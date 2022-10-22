@@ -929,7 +929,7 @@
                         <table class="competitors_list_table">
                             <tbody class="competitors_list_table-tbody">
                             <tr><th>ФИО участника</th><th>Дата рождения</th><th>Спортивный разряд</th><th>Спортивный клуб</th><th>ФИО тренера</th><th>Вес</th><th>Жим 1 подход</th><th>Жим 2 подход</th><th>Жим 3 подход</th><th>Жим итог</th></tr>
-                            {% for comp in competitiors_pwlekip_f %}
+                            {% for comp in competitiors_bpekip_f %}
                                 {% if comp.competitor.weight_cat == "43" %}
                                     <tr><td>{{ comp.competitor.surname_comp }} {{ comp.competitor.name_comp }} {{ comp.competitor.patronymic_comp }}</td><td>{{ comp.competitor.birthday }}</td><td>{{ comp.competitor.sports_cat }}</td><td>{% if comp.competitor.club %}{{ comp.competitor.club }}{% endif %}</td><td>{% if comp.competitor.surname_trainer %}{{ comp.competitor.surname_trainer }}{% endif %} {% if comp.competitor.name_trainer %}{{ comp.competitor.name_trainer }}{% endif %} {% if comp.competitor.patronymic_trainer %}{{ comp.competitor.patronymic_trainer }}{% endif %}</td><td>{{ comp.competitor_weight }}</td>
                                         <td {% if comp.first_attempt_bpress_off_ek %}{% if comp.first_attempt_bpress_off_ek == "2" or comp.first_attempt_bpress_off_ek == "3" %}style="background-color: rgb(170, 255, 170);"{% elif comp.first_attempt_bpress_off_ek == "1" or comp.first_attempt_bpress_off_ek == "0" %}style="background-color: rgb(255, 160, 160);"{% endif %}{% endif %}>{% if comp.first_attempt_bpress_res_ek %}{{ comp.first_attempt_bpress_res_ek }}{% endif %}</td>
@@ -949,7 +949,7 @@
                         <table class="competitors_list_table">
                             <tbody class="competitors_list_table-tbody">
                             <tr><th>ФИО участника</th><th>Дата рождения</th><th>Спортивный разряд</th><th>Спортивный клуб</th><th>ФИО тренера</th><th>Вес</th><th>Жим 1 подход</th><th>Жим 2 подход</th><th>Жим 3 подход</th><th>Жим итог</th></tr>
-                            {% for comp in competitiors_pwlekip_f %}
+                            {% for comp in competitiors_bpekip_f %}
                                 {% if comp.competitor.weight_cat == "47" %}
                                     <tr><td>{{ comp.competitor.surname_comp }} {{ comp.competitor.name_comp }} {{ comp.competitor.patronymic_comp }}</td><td>{{ comp.competitor.birthday }}</td><td>{{ comp.competitor.sports_cat }}</td><td>{% if comp.competitor.club %}{{ comp.competitor.club }}{% endif %}</td><td>{% if comp.competitor.surname_trainer %}{{ comp.competitor.surname_trainer }}{% endif %} {% if comp.competitor.name_trainer %}{{ comp.competitor.name_trainer }}{% endif %} {% if comp.competitor.patronymic_trainer %}{{ comp.competitor.patronymic_trainer }}{% endif %}</td><td>{{ comp.competitor_weight }}</td>
                                         <td {% if comp.first_attempt_bpress_off_ek %}{% if comp.first_attempt_bpress_off_ek == "2" or comp.first_attempt_bpress_off_ek == "3" %}style="background-color: rgb(170, 255, 170);"{% elif comp.first_attempt_bpress_off_ek == "1" or comp.first_attempt_bpress_off_ek == "0" %}style="background-color: rgb(255, 160, 160);"{% endif %}{% endif %}>{% if comp.first_attempt_bpress_res_ek %}{{ comp.first_attempt_bpress_res_ek }}{% endif %}</td>
@@ -969,7 +969,7 @@
                         <table class="competitors_list_table">
                             <tbody class="competitors_list_table-tbody">
                             <tr><th>ФИО участника</th><th>Дата рождения</th><th>Спортивный разряд</th><th>Спортивный клуб</th><th>ФИО тренера</th><th>Вес</th><th>Жим 1 подход</th><th>Жим 2 подход</th><th>Жим 3 подход</th><th>Жим итог</th></tr>
-                            {% for comp in competitiors_pwlekip_f %}
+                            {% for comp in competitiors_bpekip_f %}
                                 {% if comp.competitor.weight_cat == "52" %}
                                     <tr><td>{{ comp.competitor.surname_comp }} {{ comp.competitor.name_comp }} {{ comp.competitor.patronymic_comp }}</td><td>{{ comp.competitor.birthday }}</td><td>{{ comp.competitor.sports_cat }}</td><td>{% if comp.competitor.club %}{{ comp.competitor.club }}{% endif %}</td><td>{% if comp.competitor.surname_trainer %}{{ comp.competitor.surname_trainer }}{% endif %} {% if comp.competitor.name_trainer %}{{ comp.competitor.name_trainer }}{% endif %} {% if comp.competitor.patronymic_trainer %}{{ comp.competitor.patronymic_trainer }}{% endif %}</td><td>{{ comp.competitor_weight }}</td>
                                         <td {% if comp.first_attempt_bpress_off_ek %}{% if comp.first_attempt_bpress_off_ek == "2" or comp.first_attempt_bpress_off_ek == "3" %}style="background-color: rgb(170, 255, 170);"{% elif comp.first_attempt_bpress_off_ek == "1" or comp.first_attempt_bpress_off_ek == "0" %}style="background-color: rgb(255, 160, 160);"{% endif %}{% endif %}>{% if comp.first_attempt_bpress_res_ek %}{{ comp.first_attempt_bpress_res_ek }}{% endif %}</td>
@@ -989,7 +989,7 @@
                         <table class="competitors_list_table">
                             <tbody class="competitors_list_table-tbody">
                             <tr><th>ФИО участника</th><th>Дата рождения</th><th>Спортивный разряд</th><th>Спортивный клуб</th><th>ФИО тренера</th><th>Вес</th><th>Жим 1 подход</th><th>Жим 2 подход</th><th>Жим 3 подход</th><th>Жим итог</th></tr>
-                            {% for comp in competitiors_pwlekip_f %}
+                            {% for comp in competitiors_bpekip_f %}
                                 {% if comp.competitor.weight_cat == "57" %}
                                     <tr><td>{{ comp.competitor.surname_comp }} {{ comp.competitor.name_comp }} {{ comp.competitor.patronymic_comp }}</td><td>{{ comp.competitor.birthday }}</td><td>{{ comp.competitor.sports_cat }}</td><td>{% if comp.competitor.club %}{{ comp.competitor.club }}{% endif %}</td><td>{% if comp.competitor.surname_trainer %}{{ comp.competitor.surname_trainer }}{% endif %} {% if comp.competitor.name_trainer %}{{ comp.competitor.name_trainer }}{% endif %} {% if comp.competitor.patronymic_trainer %}{{ comp.competitor.patronymic_trainer }}{% endif %}</td><td>{{ comp.competitor_weight }}</td>
                                         <td {% if comp.first_attempt_bpress_off_ek %}{% if comp.first_attempt_bpress_off_ek == "2" or comp.first_attempt_bpress_off_ek == "3" %}style="background-color: rgb(170, 255, 170);"{% elif comp.first_attempt_bpress_off_ek == "1" or comp.first_attempt_bpress_off_ek == "0" %}style="background-color: rgb(255, 160, 160);"{% endif %}{% endif %}>{% if comp.first_attempt_bpress_res_ek %}{{ comp.first_attempt_bpress_res_ek }}{% endif %}</td>
@@ -1009,7 +1009,7 @@
                         <table class="competitors_list_table">
                             <tbody class="competitors_list_table-tbody">
                             <tr><th>ФИО участника</th><th>Дата рождения</th><th>Спортивный разряд</th><th>Спортивный клуб</th><th>ФИО тренера</th><th>Вес</th><th>Жим 1 подход</th><th>Жим 2 подход</th><th>Жим 3 подход</th><th>Жим итог</th></tr>
-                            {% for comp in competitiors_pwlekip_f %}
+                            {% for comp in competitiors_bpekip_f %}
                                 {% if comp.competitor.weight_cat == "63" %}
                                     <tr><td>{{ comp.competitor.surname_comp }} {{ comp.competitor.name_comp }} {{ comp.competitor.patronymic_comp }}</td><td>{{ comp.competitor.birthday }}</td><td>{{ comp.competitor.sports_cat }}</td><td>{% if comp.competitor.club %}{{ comp.competitor.club }}{% endif %}</td><td>{% if comp.competitor.surname_trainer %}{{ comp.competitor.surname_trainer }}{% endif %} {% if comp.competitor.name_trainer %}{{ comp.competitor.name_trainer }}{% endif %} {% if comp.competitor.patronymic_trainer %}{{ comp.competitor.patronymic_trainer }}{% endif %}</td><td>{{ comp.competitor_weight }}</td>
                                         <td {% if comp.first_attempt_bpress_off_ek %}{% if comp.first_attempt_bpress_off_ek == "2" or comp.first_attempt_bpress_off_ek == "3" %}style="background-color: rgb(170, 255, 170);"{% elif comp.first_attempt_bpress_off_ek == "1" or comp.first_attempt_bpress_off_ek == "0" %}style="background-color: rgb(255, 160, 160);"{% endif %}{% endif %}>{% if comp.first_attempt_bpress_res_ek %}{{ comp.first_attempt_bpress_res_ek }}{% endif %}</td>
@@ -1029,7 +1029,7 @@
                         <table class="competitors_list_table">
                             <tbody class="competitors_list_table-tbody">
                             <tr><th>ФИО участника</th><th>Дата рождения</th><th>Спортивный разряд</th><th>Спортивный клуб</th><th>ФИО тренера</th><th>Вес</th><th>Жим 1 подход</th><th>Жим 2 подход</th><th>Жим 3 подход</th><th>Жим итог</th></tr>
-                            {% for comp in competitiors_pwlekip_f %}
+                            {% for comp in competitiors_bpekip_f %}
                                 {% if comp.competitor.weight_cat == "69" %}
                                     <tr><td>{{ comp.competitor.surname_comp }} {{ comp.competitor.name_comp }} {{ comp.competitor.patronymic_comp }}</td><td>{{ comp.competitor.birthday }}</td><td>{{ comp.competitor.sports_cat }}</td><td>{% if comp.competitor.club %}{{ comp.competitor.club }}{% endif %}</td><td>{% if comp.competitor.surname_trainer %}{{ comp.competitor.surname_trainer }}{% endif %} {% if comp.competitor.name_trainer %}{{ comp.competitor.name_trainer }}{% endif %} {% if comp.competitor.patronymic_trainer %}{{ comp.competitor.patronymic_trainer }}{% endif %}</td><td>{{ comp.competitor_weight }}</td>
                                         <td {% if comp.first_attempt_bpress_off_ek %}{% if comp.first_attempt_bpress_off_ek == "2" or comp.first_attempt_bpress_off_ek == "3" %}style="background-color: rgb(170, 255, 170);"{% elif comp.first_attempt_bpress_off_ek == "1" or comp.first_attempt_bpress_off_ek == "0" %}style="background-color: rgb(255, 160, 160);"{% endif %}{% endif %}>{% if comp.first_attempt_bpress_res_ek %}{{ comp.first_attempt_bpress_res_ek }}{% endif %}</td>
@@ -1049,7 +1049,7 @@
                         <table class="competitors_list_table">
                             <tbody class="competitors_list_table-tbody">
                             <tr><th>ФИО участника</th><th>Дата рождения</th><th>Спортивный разряд</th><th>Спортивный клуб</th><th>ФИО тренера</th><th>Вес</th><th>Жим 1 подход</th><th>Жим 2 подход</th><th>Жим 3 подход</th><th>Жим итог</th></tr>
-                            {% for comp in competitiors_pwlekip_f %}
+                            {% for comp in competitiors_bpekip_f %}
                                 {% if comp.competitor.weight_cat == "76" %}
                                     <tr><td>{{ comp.competitor.surname_comp }} {{ comp.competitor.name_comp }} {{ comp.competitor.patronymic_comp }}</td><td>{{ comp.competitor.birthday }}</td><td>{{ comp.competitor.sports_cat }}</td><td>{% if comp.competitor.club %}{{ comp.competitor.club }}{% endif %}</td><td>{% if comp.competitor.surname_trainer %}{{ comp.competitor.surname_trainer }}{% endif %} {% if comp.competitor.name_trainer %}{{ comp.competitor.name_trainer }}{% endif %} {% if comp.competitor.patronymic_trainer %}{{ comp.competitor.patronymic_trainer }}{% endif %}</td><td>{{ comp.competitor_weight }}</td>
                                         <td {% if comp.first_attempt_bpress_off_ek %}{% if comp.first_attempt_bpress_off_ek == "2" or comp.first_attempt_bpress_off_ek == "3" %}style="background-color: rgb(170, 255, 170);"{% elif comp.first_attempt_bpress_off_ek == "1" or comp.first_attempt_bpress_off_ek == "0" %}style="background-color: rgb(255, 160, 160);"{% endif %}{% endif %}>{% if comp.first_attempt_bpress_res_ek %}{{ comp.first_attempt_bpress_res_ek }}{% endif %}</td>
@@ -1069,7 +1069,7 @@
                         <table class="competitors_list_table">
                             <tbody class="competitors_list_table-tbody">
                             <tr><th>ФИО участника</th><th>Дата рождения</th><th>Спортивный разряд</th><th>Спортивный клуб</th><th>ФИО тренера</th><th>Вес</th><th>Жим 1 подход</th><th>Жим 2 подход</th><th>Жим 3 подход</th><th>Жим итог</th></tr>
-                            {% for comp in competitiors_pwlekip_f %}
+                            {% for comp in competitiors_bpekip_f %}
                                 {% if comp.competitor.weight_cat == "84" %}
                                     <tr><td>{{ comp.competitor.surname_comp }} {{ comp.competitor.name_comp }} {{ comp.competitor.patronymic_comp }}</td><td>{{ comp.competitor.birthday }}</td><td>{{ comp.competitor.sports_cat }}</td><td>{% if comp.competitor.club %}{{ comp.competitor.club }}{% endif %}</td><td>{% if comp.competitor.surname_trainer %}{{ comp.competitor.surname_trainer }}{% endif %} {% if comp.competitor.name_trainer %}{{ comp.competitor.name_trainer }}{% endif %} {% if comp.competitor.patronymic_trainer %}{{ comp.competitor.patronymic_trainer }}{% endif %}</td><td>{{ comp.competitor_weight }}</td>
                                         <td {% if comp.first_attempt_bpress_off_ek %}{% if comp.first_attempt_bpress_off_ek == "2" or comp.first_attempt_bpress_off_ek == "3" %}style="background-color: rgb(170, 255, 170);"{% elif comp.first_attempt_bpress_off_ek == "1" or comp.first_attempt_bpress_off_ek == "0" %}style="background-color: rgb(255, 160, 160);"{% endif %}{% endif %}>{% if comp.first_attempt_bpress_res_ek %}{{ comp.first_attempt_bpress_res_ek }}{% endif %}</td>
@@ -1089,7 +1089,7 @@
                         <table class="competitors_list_table">
                             <tbody class="competitors_list_table-tbody">
                             <tr><th>ФИО участника</th><th>Дата рождения</th><th>Спортивный разряд</th><th>Спортивный клуб</th><th>ФИО тренера</th><th>Вес</th><th>Жим 1 подход</th><th>Жим 2 подход</th><th>Жим 3 подход</th><th>Жим итог</th></tr>
-                            {% for comp in competitiors_pwlekip_f %}
+                            {% for comp in competitiors_bpekip_f %}
                                 {% if comp.competitor.weight_cat == "84+" %}
                                     <tr><td>{{ comp.competitor.surname_comp }} {{ comp.competitor.name_comp }} {{ comp.competitor.patronymic_comp }}</td><td>{{ comp.competitor.birthday }}</td><td>{{ comp.competitor.sports_cat }}</td><td>{% if comp.competitor.club %}{{ comp.competitor.club }}{% endif %}</td><td>{% if comp.competitor.surname_trainer %}{{ comp.competitor.surname_trainer }}{% endif %} {% if comp.competitor.name_trainer %}{{ comp.competitor.name_trainer }}{% endif %} {% if comp.competitor.patronymic_trainer %}{{ comp.competitor.patronymic_trainer }}{% endif %}</td><td>{{ comp.competitor_weight }}</td>
                                         <td {% if comp.first_attempt_bpress_off_ek %}{% if comp.first_attempt_bpress_off_ek == "2" or comp.first_attempt_bpress_off_ek == "3" %}style="background-color: rgb(170, 255, 170);"{% elif comp.first_attempt_bpress_off_ek == "1" or comp.first_attempt_bpress_off_ek == "0" %}style="background-color: rgb(255, 160, 160);"{% endif %}{% endif %}>{% if comp.first_attempt_bpress_res_ek %}{{ comp.first_attempt_bpress_res_ek }}{% endif %}</td>
