@@ -242,33 +242,6 @@ a, div {
         width: 0%;
         left: 50%;
     }
-    .menu_mobile-body {
-        /*opacity: 0;*/
-        /*visibility: hidden;*/
-        /*transition: 0.2s;*/
-        height: calc(100vh - 70px);
-        background-color: #203354;
-        display: none;
-        flex-direction: column;
-        z-index: 2;
-        overflow-y: scroll;
-    }
-    .visible_body {
-        /*opacity: 1;*/
-        /*visibility: visible;*/
-        display: flex;
-    }
-    .menu_mobile-body_link-el, .menu_mobile-body-menu_el-block-head {
-        padding: 25px;
-    }
-    .menu_mobile-body-menu_el-block-body {
-        display: none;
-        flex-direction: column;
-        margin-left: 25px;
-    }
-    .menu_mobile-body-menu_el-block-body_visible {
-        display: flex;
-    }
 }
 
 

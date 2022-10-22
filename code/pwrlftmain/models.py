@@ -270,7 +270,7 @@ class CompetitionProtocols(models.Model):
             else:
                 self.best_squat_res_ek = None
         bpresses_ek = [(float(self.first_attempt_bpress_res_ek if self.first_attempt_bpress_res_ek is not None else 0), self.first_attempt_bpress_off_ek),
-                      (float(self.second_attempt_bpress_res_ek if self.second_attempt_bpress_res_ek is not None else 0), self.second_attempt_bpress_off),
+                      (float(self.second_attempt_bpress_res_ek if self.second_attempt_bpress_res_ek is not None else 0), self.second_attempt_bpress_off_ek),
                       (float(self.third_attempt_bpress_res_ek if self.third_attempt_bpress_res_ek is not None else 0), self.third_attempt_bpress_off_ek)]
         res_bpresses_ek = sorted(bpresses_ek, key=itemgetter(0), reverse=True)
         for res_bpress_ek in res_bpresses_ek:
