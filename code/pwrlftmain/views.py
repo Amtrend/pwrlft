@@ -2843,6 +2843,7 @@ def create_excel_protocol(request, competition_slug):
         for col, value in dims2.items():
             ws.column_dimensions['D'].width = value + 2
         return "Done"
+    # 1
     # def create_sheet_bp_cl(wbook, name_disc, name_disc_full, wcats, competitors_wcats, font_title, font_sub_title, font_title_table, font_table_text, alignment_center, border, cur_competition_title, competitors_pl):
     #     wbook.create_sheet(name_disc)
     #     ws = wbook[name_disc]
