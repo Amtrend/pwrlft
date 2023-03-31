@@ -219,6 +219,7 @@ a, div {
         flex: 1;
         text-align: center;
         margin-right: 70px;
+        margin-top: 0px!important;
     }
     .nav_icon-mobile {
         width: 40px;
