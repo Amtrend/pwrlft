@@ -29,4 +29,7 @@ urlpatterns = [
     path('competitions/<slug:competition_slug>/scoreboard_page/', scoreboard_page, name='scoreboard_page'),
     path('competitions/<slug:competition_slug>/scoreboard_comp_page/', scoreboard_comp_page, name='scoreboard_comp_page'),
     path('competitions/<slug:competition_slug>/protocol_excel/', create_excel_protocol, name='competition_protocol_excel'),
+    path('competitions/<slug:competition_slug>/register_participants/', register_participants_page, name='register_participants'),
+    path('competitions/<slug:competition_slug>/<int:pk>/register_participant/', register_participant_page, name='register_participant'),
+    path('competitions/<slug:competition_slug>/register_new_participant/', register_new_participant_page, name='register_new_participant'),
 ]

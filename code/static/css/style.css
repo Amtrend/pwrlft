@@ -1119,12 +1119,78 @@ a, div {
 /* ========== SECRETARY_PAGE ========== */
 
 
+.secr-page_span-click:hover {
+    cursor: pointer;
+    color: #5373a1;
+}
+
+.secr-page_before-span-block {
+    display: none;
+}
+
+.secr-page_before-span-block_ok {
+    margin-top: 3px;
+    background-color: #092942;
+    color: white;
+    border-radius: 5px;
+    outline: none;
+    border: 1px solid #092942;
+}
+
+.secr-page_before-span-block_no {
+    background-color: #d94f4f;
+    color: white;
+    border-radius: 5px;
+    outline: none;
+    border: 1px solid #d94f4f;
+}
+
+.secr-page_before-span-block_ok:hover, .secr-page_before-span-block_no:hover {
+    cursor: pointer;
+}
+
+.secr-page_show_btn-p, .secr-page_show_btn-s {
+    width: fit-content;
+    margin: 5px auto;
+    padding: 5px 15px;
+    border-radius: 10px;
+    background-color: #092942;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#secretary-page_form, .secr-page_show_btn-s {
+    display: none;
+}
+
+.secr-page_show_btn-p:hover, .secr-page_show_btn-s:hover {
+    cursor: pointer;
+}
+
+.secr-page_show_btn_play {
+    border-style: solid;
+    border-width: 6px 0 6px 13px;
+    border-color: transparent transparent transparent wheat;
+}
+
+.secr-page_show_btn_stop {
+    border-style: solid;
+    border-width: 6px;
+    border-color: wheat;
+}
+
 .form-secretary_stream-btn {
     display: none;
 }
 
 .form-secretary_stream-select {
     margin: 15px;
+}
+
+.secretary-page_link {
+    text-decoration: none;
+    color: wheat;
 }
 
 .form-secretary_stream-select {
@@ -1314,7 +1380,7 @@ a, div {
     /*padding-left: 20px;*/
 }
 
-    .ind_scoreboard-wcat_score-text-score {
+.ind_scoreboard-wcat_score-text-score {
     border: 5px solid white;
     border-radius: 50%;
     background-color: red;
@@ -1347,6 +1413,42 @@ a, div {
     /*margin-top: calc(20px + 3vw);*/
     padding: 2vw;
     /*padding: 40px;*/
+}
+
+.ind_scoreboard-appr {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: flex-start;
+    /*padding: 1vw;*/
+    padding: 0.5vw 0.5vw 0.5vw 2vw;
+}
+
+.ind_scoreboard-appr_weight {
+    font-family: Montserrat, sans-serif;
+    color: white;
+    font-weight: 500;
+    font-size: calc(12px + 2vw);
+    margin: 0.5vw;
+    padding: 1vw;
+    border: 5px solid white;
+    border-radius: 2vw;
+}
+
+#ind_scoreboard-appr_weight-1, #ind_scoreboard-appr_weight-2, #ind_scoreboard-appr_weight-3 {
+    display: none;
+}
+
+.ind_scoreboard-appr_weight-take {
+    background-color: green;
+}
+
+.ind_scoreboard-appr_weight-nottake {
+    background-color: red;
+}
+
+.ind_scoreboard-appr_weight-cur {
+    background-color: #b7b7b7;
 }
 
 .ind_scoreboard-type-weight_type {
@@ -1452,4 +1554,273 @@ a, div {
         margin-right: 20px;
         margin-bottom: 20px;
     }
+}
+
+
+/* ========== REGISTER_PARTICIPANT_PAGE ========== */
+
+
+.register_part_page-title {
+    margin: 15px auto;
+    text-align: center;
+}
+
+.register_part_page-participants_block {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    margin: 30px auto;
+    width: fit-content;
+}
+
+.register_part_page-participant_block {
+    padding: 20px;
+    margin: 5px;
+    border: 1px solid #192b45;
+    border-radius: 15px;
+    text-decoration: none;
+    color: black;
+}
+
+.register_part_page-participant_block:hover {
+    box-shadow: 0 1px 10px #828282;
+}
+
+.register_part_page-search_block {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    padding: 10px;
+}
+
+.register_part_page-filter_block {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    padding: 10px;
+}
+
+.register_part_page-filter_block-gen {
+    border: 1px solid #192b45;
+    padding: 15px 30px;
+    border-radius: 15px;
+    color: white;
+    background-color: #192b45;
+    font-weight: 700;
+    margin-right: 10px;
+}
+
+#register_part_page-filter_block-wcat-male, #register_part_page-filter_block-wcat-female {
+    display: none;
+}
+
+.register_part_page-filter_block-gen:hover {
+    cursor: pointer;
+}
+
+.register_part_page-participants_cnt {
+    margin-left: 15px;
+}
+
+.register_part_page-competitors_cnt {
+    margin-left: 15px;
+}
+
+.register_part_page-filter_block-btn {
+    border-radius: 15px;
+    padding: 15px 30px;
+    font-size: 16px;
+    color: white;
+    background-color: #192b45;
+}
+
+.register_part_page-filter_block-btn:hover {
+    box-shadow: 0 1px 10px #828282;
+    cursor: pointer;
+}
+
+.register_part_page-add_new {
+    text-decoration: none;
+    border: 1px solid #192b45;
+    padding: 15px 30px;
+    border-radius: 15px;
+    color: white;
+    background-color: #192b45;
+    font-weight: 700;
+}
+
+.register_part_page-add_new:hover {
+    box-shadow: 0 1px 10px #828282;
+}
+
+.register_part_page-search {
+    margin-left: 15px;
+    border-radius: 15px;
+    padding: 15px;
+    font-size: 16px;
+}
+
+.register_part_page-search:hover {
+    cursor: pointer;
+}
+
+.register_part_page-search_btn {
+    margin-left: 15px;
+    border-radius: 15px;
+    padding: 15px 30px;
+    font-size: 16px;
+    color: white;
+    background-color: #192b45;
+}
+
+.register_part_page-search_btn:hover {
+    box-shadow: 0 1px 10px #828282;
+    cursor: pointer;
+}
+
+.register_part_page-search_cls {
+    margin-left: 15px;
+    border-radius: 15px;
+    padding: 15px 30px;
+    font-size: 16px;
+    color: white;
+    background-color: #d94f4f;
+    border: 1px solid #d94f4f;
+}
+
+.register_part_page-search_cls:hover {
+    box-shadow: 0 1px 10px #828282;
+    cursor: pointer;
+}
+
+.competition_registry-form_squat, .competition_registry-form_bpress, .competition_registry-form_dlift {
+    display: none;
+}
+
+.competition_registry-form_send {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.competition_entry-form_del {
+    background-color: #d94f4f;
+    font-family: Montserrat, sans-serif;
+    font-weight: 500;
+    font-size: 14px;
+    line-height: 18px;
+    color: #FFFFFF;
+    padding: 10px 20px;
+    border-radius: 10px;
+    -webkit-appearance: none;
+    border: 1px solid #d94f4f;
+}
+
+.competition_entry-form_del:hover {
+    box-shadow: 0 1px 10px #828282;
+    cursor: pointer;
+}
+
+.modal_are-u-sure {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    position: fixed;
+    z-index: 5;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.4);
+}
+
+.modal_are-u-sure_content {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    background-color: white;
+    align-self: center;
+    padding: 20px;
+    margin: 15px;
+    font-family: Montserrat, sans-serif;
+    font-weight: 400;
+    font-size: 20px;
+    line-height: 24px;
+    border-radius: 5px;
+    max-width: 400px;
+}
+
+.modal_are-u-sure_close {
+    position: absolute;
+    top: 0;
+    right: 0;
+    color: #192b45;
+    padding-bottom: 5px;
+    align-self: end;
+    font-size: 40px;
+    font-weight: 600;
+}
+
+.modal_are-u-sure_close:hover {
+    cursor: pointer;
+}
+
+.modal_are-u-sure-text {
+    margin: 10px;
+}
+
+.modal_are-u-sure-btns {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+}
+
+.modal_are-u-sure_yes {
+    background-color: #192b45;
+    border: 1px solid #192b45;
+    outline: none;
+    font-family: Montserrat, sans-serif;
+    font-size: 14px;
+    line-height: 18px;
+    font-weight: 600;
+    padding: 10px 20px;
+    margin: 5px;
+    color: white;
+    border-radius: 10px;
+    width: fit-content;
+}
+
+.modal_are-u-sure_yes:hover {
+    cursor: pointer;
+    box-shadow: 0 1px 10px #828282;
+}
+
+.modal_are-u-sure_no {
+    background-color: white;
+    border: 1px solid #192b45;
+    outline: none;
+    font-family: Montserrat, sans-serif;
+    font-size: 14px;
+    line-height: 18px;
+    font-weight: 600;
+    padding: 10px 20px;
+    margin: 5px;
+    color: #192b45;
+    border-radius: 10px;
+    width: fit-content;
+}
+
+.modal_are-u-sure_no:hover {
+    cursor: pointer;
+    background-color: white;
+}
+
+.modal_are-u-sure_no:active {
+    background-color: white;
+}
+
+.modal_are-u-sure {
+    display: none;
 }

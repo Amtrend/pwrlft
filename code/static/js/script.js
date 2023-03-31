@@ -90,6 +90,26 @@ ready(() => {
             sekectWcM.style.display = 'none';
         });
     }
+    let maleRadioCompetitionsRegister = document.getElementById('competition_registry-form_gender-male');
+    let femaleRadioCompetitionsRegister = document.getElementById('competition_registry-form_gender-female');
+    if (maleRadioCompetitionsRegister) {
+        let labelWcMR = document.getElementById('competition_registry-form_wcat-m-label');
+        let labelWcFR = document.getElementById('competition_registry-form_wcat-f-label');
+        let selectWcMR = document.getElementById('competition_registry-form_wcat-m');
+        let selectWcFR = document.getElementById('competition_registry-form_wcat-f');
+        maleRadioCompetitionsRegister.addEventListener('click', function (e) {
+            labelWcMR.style.display = 'block';
+            selectWcMR.style.display = 'block';
+            labelWcFR.style.display = 'none';
+            selectWcFR.style.display = 'none';
+        });
+        femaleRadioCompetitionsRegister.addEventListener('click', function (e) {
+            labelWcFR.style.display = 'block';
+            selectWcFR.style.display = 'block';
+            labelWcMR.style.display = 'none';
+            selectWcMR.style.display = 'none';
+        });
+    }
     let SportsTypeCheckedChckbxs = document.querySelectorAll('.competition_entry-form_sp-t_chckbx');
     if (SportsTypeCheckedChckbxs) {
         let blockBestBP = document.querySelector('.competition_entry-form_sur-bp');
@@ -128,6 +148,80 @@ ready(() => {
                         blockBestBP.style.display = 'flex';
                     } else {
                         blockBestBP.style.display = 'none';
+                    }
+                }
+            });
+        }
+    }
+    let SportsTypeCheckedChckbxsReg = document.querySelectorAll('.competition_registry-form_sp-t_chckbx');
+    if (SportsTypeCheckedChckbxsReg.length > 0) {
+        let blockBestBP = document.querySelector('.competition_entry-form_sur-bp');
+        let blockBestBPEkip = document.querySelector('.competition_entry-form_sur-bpekip');
+        let blockBestPL = document.querySelector('.competition_entry-form_sur-pwlclass');
+        let blockBestPLEkip = document.querySelector('.competition_entry-form_sur-pwlekip');
+        let blockFirstS = document.querySelector('.competition_registry-form_squat');
+        let blockFirstB = document.querySelector('.competition_registry-form_bpress');
+        let blockFirstD = document.querySelector('.competition_registry-form_dlift');
+        for (let i = 0; i < SportsTypeCheckedChckbxsReg.length; i ++) {
+            SportsTypeCheckedChckbxsReg[i].addEventListener('change', function (e) {
+                if (this.value === "Троеборье классическое") {
+                    if (this.checked) {
+                        blockBestPL.style.display = 'flex';
+                        document.querySelector('input[value="Жим лёжа (без экип.)"]').checked = true;
+                        blockBestBP.style.display = 'flex';
+                        blockFirstS.style.display = 'flex';
+                        blockFirstB.style.display = 'flex';
+                        blockFirstD.style.display = 'flex';
+                    } else {
+                        blockBestPL.style.display = 'none';
+                        if (!document.querySelector('input[value="Жим лёжа (экип.)"]').checked && !document.querySelector('input[value="Жим лёжа (без экип.)"]').checked ) {
+                            blockFirstB.style.display = 'none';
+                        }
+                        if (!document.querySelector('input[value="Троеборье (экип.)"]').checked) {
+                            blockFirstD.style.display = 'none';
+                            blockFirstS.style.display = 'none';
+                        }
+                    }
+                }
+                if (this.value === "Троеборье (экип.)") {
+                    if (this.checked) {
+                        blockBestPLEkip.style.display = 'flex';
+                        document.querySelector('input[value="Жим лёжа (экип.)"]').checked = true;
+                        blockBestBPEkip.style.display = 'flex';
+                        blockFirstS.style.display = 'flex';
+                        blockFirstB.style.display = 'flex';
+                        blockFirstD.style.display = 'flex';
+                    } else {
+                        blockBestPLEkip.style.display = 'none';
+                        if (!document.querySelector('input[value="Жим лёжа (экип.)"]').checked && !document.querySelector('input[value="Жим лёжа (без экип.)"]').checked ) {
+                            blockFirstB.style.display = 'none';
+                        }
+                        if (!document.querySelector('input[value="Троеборье классическое"]').checked) {
+                            blockFirstD.style.display = 'none';
+                            blockFirstS.style.display = 'none';
+                        }
+                    }
+                }
+                if (this.value === "Жим лёжа (экип.)") {
+                    if (this.checked) {
+                        blockBestBPEkip.style.display = 'flex';
+                        blockFirstB.style.display = 'flex';
+                    } else {
+                        blockBestBPEkip.style.display = 'none';
+                        if (!document.querySelector('input[value="Троеборье классическое"]').checked && !document.querySelector('input[value="Троеборье (экип.)"]').checked ) {
+                            blockFirstB.style.display = 'none';
+                        }
+                    }
+                }
+                if (this.value === "Жим лёжа (без экип.)") {
+                    if (this.checked) {
+                        blockBestBP.style.display = 'flex';
+                        blockFirstB.style.display = 'flex';
+                    } else {
+                        blockBestBP.style.display = 'none';
+                        if (!document.querySelector('input[value="Троеборье классическое"]').checked && !document.querySelector('input[value="Троеборье (экип.)"]').checked ) {
+                            blockFirstB.style.display = 'none';
+                        }
                     }
                 }
             });
@@ -905,6 +999,12 @@ ready(() => {
         let competitorOwOff = '';
         let timerp = document.getElementById('timer');
         let duration = 59;
+        let compFitstWeightDiv = document.getElementById("ind_scoreboard-appr_weight-1")
+        let compSecWeightDiv = document.getElementById("ind_scoreboard-appr_weight-2")
+        let compThirdWeightDiv = document.getElementById("ind_scoreboard-appr_weight-3")
+        let compFitstWeightSpan = document.getElementById("ind_scoreboard-appr_weight-1-sp")
+        let compSecWeightSpan = document.getElementById("ind_scoreboard-appr_weight-2-sp")
+        let compThirdWeightSpan = document.getElementById("ind_scoreboard-appr_weight-3-sp")
 
         let timeoutTimeId = null;
         function startTimerComp(duration, timerp) {
@@ -948,6 +1048,15 @@ ready(() => {
             competitorOw = '';
             competitorOwOff = '';
             timerp.textContent = "01:00";
+            compFitstWeightDiv.className = 'ind_scoreboard-appr_weight';
+            compSecWeightDiv.className = 'ind_scoreboard-appr_weight';
+            compThirdWeightDiv.className = 'ind_scoreboard-appr_weight';
+            compFitstWeightDiv.style.display = "none";
+            compSecWeightDiv.style.display = "none";
+            compThirdWeightDiv.style.display = "none";
+            compFitstWeightSpan.textContent = "";
+            compSecWeightSpan.textContent = "";
+            compThirdWeightSpan.textContent = "";
         }
 
         scoreboardForm.addEventListener('submit', function (e) {
@@ -970,8 +1079,6 @@ ready(() => {
             myxmlhttp.send(resultScbForm);
             myxmlhttp.onload = function() {
                 if (myxmlhttp.status === 200) {
-                    // console.log("запрос")
-
                     if (JSON.parse(myxmlhttp.response).cur_flow_competitors_json) {
                         if (querysetsFromBack !== JSON.parse(myxmlhttp.response).cur_flow_competitors_json) {
                             querysetsFromBack = JSON.parse(myxmlhttp.response).cur_flow_competitors_json;
@@ -979,9 +1086,8 @@ ready(() => {
                             while (massTable.rows.length > 1) {
                                 massTable.deleteRow(-1);
                             }
-
                             console.log(querysetsFromBackJson)
-                            console.log(querysetsFromBackJson[0]["fields"])
+                            // console.log(querysetsFromBackJson[0]["fields"])
                             for (let i = 0; i < querysetsFromBackJson.length; i ++) {
                                 let newRow = massTable.insertRow();
                                 let newCellFi = newRow.insertCell();
@@ -1360,20 +1466,96 @@ ready(() => {
                             indScoreAc.textContent = competitorEx;
                             indScoreAtt.textContent = competitorExAtt;
                             indScoreWeight.textContent = competitorOw;
+                            if (JSON.parse(myxmlhttp.response).comp_first_off && JSON.parse(myxmlhttp.response).comp_sec_off) {
+                                compFitstWeightDiv.style.display = "block";
+                                compSecWeightDiv.style.display = "block";
+                                compThirdWeightDiv.style.display = "block";
+                                compFitstWeightSpan.textContent = JSON.parse(myxmlhttp.response).comp_first_weight;
+                                compSecWeightSpan.textContent = JSON.parse(myxmlhttp.response).comp_sec_weight;
+                                compThirdWeightSpan.textContent = competitorOw;
+                                compThirdWeightDiv.classList.add('ind_scoreboard-appr_weight-cur');
+                                if (JSON.parse(myxmlhttp.response).comp_first_off === "2" || JSON.parse(myxmlhttp.response).comp_first_off === "3") {
+                                    compFitstWeightDiv.classList.add('ind_scoreboard-appr_weight-take');
+                                } else {
+                                    compFitstWeightDiv.classList.add('ind_scoreboard-appr_weight-nottake');
+                                }
+                                if (JSON.parse(myxmlhttp.response).comp_sec_off === "2" || JSON.parse(myxmlhttp.response).comp_sec_off === "3") {
+                                    compSecWeightDiv.classList.add('ind_scoreboard-appr_weight-take');
+                                } else {
+                                    compSecWeightDiv.classList.add('ind_scoreboard-appr_weight-nottake');
+                                }
+                            } else if (JSON.parse(myxmlhttp.response).comp_first_off) {
+                                compFitstWeightDiv.style.display = "block";
+                                compSecWeightDiv.style.display = "block";
+                                compFitstWeightSpan.textContent = JSON.parse(myxmlhttp.response).comp_first_weight;
+                                compSecWeightSpan.textContent = competitorOw;
+                                compSecWeightDiv.classList.add('ind_scoreboard-appr_weight-cur');
+                                if (JSON.parse(myxmlhttp.response).comp_first_off === "2" || JSON.parse(myxmlhttp.response).comp_first_off === "3") {
+                                    compFitstWeightDiv.classList.add('ind_scoreboard-appr_weight-take');
+                                } else {
+                                    compFitstWeightDiv.classList.add('ind_scoreboard-appr_weight-nottake');
+                                }
+                            } else {
+                                compFitstWeightDiv.style.display = "block";
+                                compFitstWeightSpan.textContent = competitorOw;
+                                compFitstWeightDiv.classList.add('ind_scoreboard-appr_weight-cur');
+                            }
                         } else if (curtranslPk === JSON.parse(myxmlhttp.response).cur_transl_pk && JSON.parse(myxmlhttp.response).competitor_ordered_weight_offset.length !== 0) {
                             competitorOwOff = JSON.parse(myxmlhttp.response).competitor_ordered_weight_offset;
                             // document.getElementById('score_page-competitor_ordered_weight_offset').textContent = competitorOwOff;
                             if (competitorOwOff === "1") {
                                 indScoreScore1.style.backgroundColor = "white";
+                                if (JSON.parse(myxmlhttp.response).comp_first_off && JSON.parse(myxmlhttp.response).comp_sec_off) {
+                                    compThirdWeightDiv.classList.remove('ind_scoreboard-appr_weight-cur');
+                                    compThirdWeightDiv.classList.add('ind_scoreboard-appr_weight-nottake');
+                                } else if (JSON.parse(myxmlhttp.response).comp_first_off) {
+                                    compSecWeightDiv.classList.remove('ind_scoreboard-appr_weight-cur');
+                                    compSecWeightDiv.classList.add('ind_scoreboard-appr_weight-nottake');
+                                } else {
+                                    compFitstWeightDiv.classList.remove('ind_scoreboard-appr_weight-cur');
+                                    compFitstWeightDiv.classList.add('ind_scoreboard-appr_weight-nottake');
+                                }
                             } else if (competitorOwOff === "2") {
                                 indScoreScore1.style.backgroundColor = "white";
                                 indScoreScore2.style.backgroundColor = "white";
+                                if (JSON.parse(myxmlhttp.response).comp_first_off && JSON.parse(myxmlhttp.response).comp_sec_off) {
+                                    compThirdWeightDiv.classList.remove('ind_scoreboard-appr_weight-cur');
+                                    compThirdWeightDiv.classList.add('ind_scoreboard-appr_weight-take');
+                                } else if (JSON.parse(myxmlhttp.response).comp_first_off) {
+                                    compSecWeightDiv.classList.remove('ind_scoreboard-appr_weight-cur');
+                                    compSecWeightDiv.classList.add('ind_scoreboard-appr_weight-take');
+                                } else {
+                                    compFitstWeightDiv.classList.remove('ind_scoreboard-appr_weight-cur');
+                                    compFitstWeightDiv.classList.add('ind_scoreboard-appr_weight-take');
+                                }
                             } else if (competitorOwOff === "3") {
                                 indScoreScore1.style.backgroundColor = "white";
                                 indScoreScore2.style.backgroundColor = "white";
                                 indScoreScore3.style.backgroundColor = "white";
+                                if (JSON.parse(myxmlhttp.response).comp_first_off && JSON.parse(myxmlhttp.response).comp_sec_off) {
+                                    compThirdWeightDiv.classList.remove('ind_scoreboard-appr_weight-cur');
+                                    compThirdWeightDiv.classList.add('ind_scoreboard-appr_weight-take');
+                                } else if (JSON.parse(myxmlhttp.response).comp_first_off) {
+                                    compSecWeightDiv.classList.remove('ind_scoreboard-appr_weight-cur');
+                                    compSecWeightDiv.classList.add('ind_scoreboard-appr_weight-take');
+                                } else {
+                                    compFitstWeightDiv.classList.remove('ind_scoreboard-appr_weight-cur');
+                                    compFitstWeightDiv.classList.add('ind_scoreboard-appr_weight-take');
+                                }
+                            } else if (competitorOwOff === "0") {
+                                if (JSON.parse(myxmlhttp.response).comp_first_off && JSON.parse(myxmlhttp.response).comp_sec_off) {
+                                    compThirdWeightDiv.classList.remove('ind_scoreboard-appr_weight-cur');
+                                    compThirdWeightDiv.classList.add('ind_scoreboard-appr_weight-nottake');
+                                } else if (JSON.parse(myxmlhttp.response).comp_first_off) {
+                                    compSecWeightDiv.classList.remove('ind_scoreboard-appr_weight-cur');
+                                    compSecWeightDiv.classList.add('ind_scoreboard-appr_weight-nottake');
+                                } else {
+                                    compFitstWeightDiv.classList.remove('ind_scoreboard-appr_weight-cur');
+                                    compFitstWeightDiv.classList.add('ind_scoreboard-appr_weight-nottake');
+                                }
                             }
-                            setTimeout(clearScore, 4000);
+                            // show 4 sec after get offset
+                            // setTimeout(clearScore, 4000);
                             stopTimerComp();
                         }
                     } else {
@@ -1391,14 +1573,161 @@ ready(() => {
         });
         function getScore() {
             document.getElementById('score-form_btn').click();
-            // console.log(curtranslPk)
-            // console.log(curtranslVal)
         }
 
         setInterval(getScore, 5000);
 
     }
 
+    let secrPageSpanClickBtns = document.querySelectorAll('.secr-page_span-click');
+    if (secrPageSpanClickBtns.length > 0) {
+        for (let i=0; i < secrPageSpanClickBtns.length; i++) {
+            secrPageSpanClickBtns[i].addEventListener('click', function (e) {
+                secrPageSpanClickBtns[i].parentElement.parentElement.style.border = '3px solid rgb(162, 125, 41)';
+                secrPageSpanClickBtns[i].style.display = 'none';
+                secrPageSpanClickBtns[i].previousElementSibling.style.display = 'block';
+                let closeBtn = secrPageSpanClickBtns[i].previousElementSibling.querySelector('.secr-page_before-span-block_no');
+                closeBtn.addEventListener('click', function (e) {
+                    secrPageSpanClickBtns[i].previousElementSibling.style.display = 'none';
+                    secrPageSpanClickBtns[i].style.display = 'block';
+                    secrPageSpanClickBtns[i].parentElement.parentElement.style.border = '1px solid #092942';
+                });
+                let sendBtn = secrPageSpanClickBtns[i].previousElementSibling.querySelector('.secr-page_before-span-block_ok');
+                sendBtn.addEventListener('click', function (e) {
+                    e.stopImmediatePropagation();
+                    secrPageSpanClickBtns[i].parentElement.parentElement.style.border = '1px solid #092942';
+                    let method = document.getElementById('secretary-page_form').getAttribute('method');
+                    let endpoint = document.getElementById('secretary-page_form').getAttribute('action');
+                    let token = document.getElementById('secretary-page_form').querySelector('[name="csrfmiddlewaretoken"]').value;
+                    let targElementOfData = secrPageSpanClickBtns[i].previousElementSibling.firstElementChild;
+                    let sendData = '';
+                    if (targElementOfData.tagName === "INPUT" || targElementOfData.tagName === "SELECT") {
+                        if (targElementOfData.tagName === "INPUT") {
+                            if (targElementOfData.value === '') {
+                                targElementOfData.value = 0;
+                            }
+                        }
+                        sendData = 'saveval=yes&saveattrname=' + encodeURIComponent(targElementOfData.name) + '&saveattrval=' + encodeURIComponent(targElementOfData.value);
+                    }
+                    let xhr = new XMLHttpRequest();
+                    xhr.open(method, endpoint, true);
+                    xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+                    xhr.setRequestHeader('X-CSRFToken', token);
+                    xhr.send(sendData);
+                    xhr.onload = function () {
+                        if (xhr.status === 200) {
+                            targElementOfData.value = JSON.parse(xhr.response).saved_val;
+                            targElementOfData.placeholder = JSON.parse(xhr.response).saved_val;
+                            secrPageSpanClickBtns[i].textContent = JSON.parse(xhr.response).saved_val;
+                            secrPageSpanClickBtns[i].previousElementSibling.style.display = 'none';
+                            secrPageSpanClickBtns[i].style.display = 'block';
+                            if (JSON.parse(xhr.response).saved_val === '' && targElementOfData.tagName === 'SELECT') {
+                                secrPageSpanClickBtns[i].textContent = 'пусто';
+                            }
+                        }
+                    }
+                    xhr.onerror = function () {
+                        console.log(xhr.responseText);
+                    };
+                });
+            });
+        }
+    }
+
+    let secrPagePlayBtns = document.querySelectorAll('.secr-page_show_btn-p');
+    if (secrPagePlayBtns.length > 0) {
+        let modalSecr = document.getElementById('secr-page_form_modal');
+        let modalSecrClose = document.getElementById('secr-page_form_modal-close');
+        let modalSecrTextMain = document.getElementById('secr-page_form_modal-text');
+        let curTranslVal = document.getElementById('cur_transl').value;
+        if (curTranslVal.length > 0) {
+            let curTranslValPk = curTranslVal.split('_')[0];
+            let curTranslValType = curTranslVal.split('_')[1];
+            let curTranslTr = document.getElementById('secr-page_noform-tr_' + curTranslValPk);
+            let curTranslDiv = curTranslTr.querySelector(`div[data-attr="${curTranslValType}"]`)
+            curTranslDiv.parentElement.style.border = '3px solid rgb(162, 125, 41)';
+            curTranslDiv.nextElementSibling.style.display = 'block';
+            curTranslDiv.style.display = 'none';
+            curTranslDiv.nextElementSibling.addEventListener('dblclick', function (e) {
+                let method = document.getElementById('secretary-page_form').getAttribute('method');
+                let endpoint = document.getElementById('secretary-page_form').getAttribute('action');
+                let token = document.getElementById('secretary-page_form').querySelector('[name="csrfmiddlewaretoken"]').value;
+                let pkId = curTranslDiv.previousElementSibling.id.split('secr-page_noform-')[1].split('_')[1];
+                let sendData = 'showmeatt=no&pk=' + encodeURIComponent(pkId);
+                let xhr = new XMLHttpRequest();
+                xhr.open(method, endpoint, true);
+                xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+                xhr.setRequestHeader('X-CSRFToken', token);
+                xhr.send(sendData);
+                xhr.onload = function () {
+                    if (xhr.status === 200) {
+                        curTranslDiv.parentElement.style.border = '1px solid #092942';
+                        curTranslDiv.style.display = 'block';
+                        curTranslDiv.nextElementSibling.style.display = 'none';
+                    }
+                }
+                xhr.onerror = function () {
+                    console.log(xhr.responseText);
+                };
+            });
+        }
+        for (let i=0; i < secrPagePlayBtns.length; i++) {
+            secrPagePlayBtns[i].addEventListener('dblclick', function (e){
+                let parentTd = secrPagePlayBtns[i].parentElement;
+                let stopBtn = secrPagePlayBtns[i].nextElementSibling;
+                let pkId = secrPagePlayBtns[i].previousElementSibling.id.split('secr-page_noform-')[1].split('_')[1];
+                let typeOfMot = secrPagePlayBtns[i].getAttribute('data-attr');
+                let method = document.getElementById('secretary-page_form').getAttribute('method');
+                let endpoint = document.getElementById('secretary-page_form').getAttribute('action');
+                let token = document.getElementById('secretary-page_form').querySelector('[name="csrfmiddlewaretoken"]').value;
+                let sendData = 'showmeatt=yes&pk=' + encodeURIComponent(pkId) + '&typeatt=' + encodeURIComponent(typeOfMot);
+                let xhr = new XMLHttpRequest();
+                xhr.open(method, endpoint, true);
+                xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+                xhr.setRequestHeader('X-CSRFToken', token);
+                xhr.send(sendData);
+                xhr.onload = function () {
+                    if (xhr.status === 200) {
+                        parentTd.style.border = '3px solid rgb(162, 125, 41)';
+                        secrPagePlayBtns[i].style.display = 'none';
+                        stopBtn.style.display = 'block';
+                        stopBtn.addEventListener('dblclick', function (e) {
+                            sendData = 'showmeatt=no&pk=' + encodeURIComponent(pkId);
+                            xhr = new XMLHttpRequest();
+                            xhr.open(method, endpoint, true);
+                            xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+                            xhr.setRequestHeader('X-CSRFToken', token);
+                            xhr.send(sendData);
+                            xhr.onload = function () {
+                                if (xhr.status === 200) {
+                                    parentTd.style.border = '1px solid #092942';
+                                    secrPagePlayBtns[i].style.display = 'block';
+                                    stopBtn.style.display = 'none';
+                                }
+                            }
+                            xhr.onerror = function () {
+                                console.log(xhr.responseText);
+                            };
+                        });
+                    } else if (xhr.status === 302) {
+                        modalSecr.style.display = "block";
+                        modalSecrTextMain.textContent = JSON.parse(xhr.response).error;
+                        window.onclick = function(event) {
+                            if (event.target === modalSecr) {
+                                modalSecr.style.display = "none";
+                            }
+                        }
+                        modalSecrClose.onclick = function() {
+                            modalSecr.style.display = "none";
+                        }
+                    }
+                }
+                xhr.onerror = function () {
+                    console.log(xhr.responseText);
+                };
+            });
+        }
+    }
 
     let scoreboardCompForm = document.getElementById('score-comp-form');
     if (scoreboardCompForm) {
@@ -1434,7 +1763,7 @@ ready(() => {
                                 massTable.deleteRow(-1);
                             }
                             console.log(querysetsFromBackJson)
-                            console.log(querysetsFromBackJson[0]["fields"])
+                            // console.log(querysetsFromBackJson[0]["fields"])
                             for (let i = 0; i < querysetsFromBackJson.length; i ++) {
                                 let newRow = massTable.insertRow();
                                 let newCellFi = newRow.insertCell();
@@ -1797,9 +2126,238 @@ ready(() => {
         function getScoreComp() {
             document.getElementById('score-comp-form_btn').click();
         }
-
         setInterval(getScoreComp, 5000);
+    }
 
+    let searchParticipantBtn = document.getElementById('register_part_page-search_btn');
+    let participantsAllText = document.getElementById('register_part_page-participants_cnt');
+    let competitorsAllText = document.getElementById('register_part_page-competitors_cnt');
+    if (searchParticipantBtn) {
+        searchParticipantBtn.addEventListener('click', function (e) {
+            e.stopImmediatePropagation();
+            let method = 'post';
+            let endpoint = window.location.pathname;
+            let token = document.querySelector('[name="csrfmiddlewaretoken"]').value;
+            let searchData = document.querySelector('.register_part_page-search').value;
+            let sendData = 'search=yes&searchval=' + encodeURIComponent(searchData);
+            let xhr = new XMLHttpRequest();
+            let mainBlock = document.querySelector('.register_part_page-participants_block');
+            let partSlug = document.getElementById('comp_name').value;
+            xhr.open(method, endpoint, true);
+            xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+            xhr.setRequestHeader('X-CSRFToken', token);
+            xhr.send(sendData);
+            xhr.onload = function () {
+                if (xhr.status === 200) {
+                    let answer = JSON.parse(xhr.response).answer;
+                    document.querySelector('.register_part_page-search').value = '';
+                    while (mainBlock.firstChild) {
+                        mainBlock.removeChild(mainBlock.firstChild);
+                    }
+                    if (answer.length > 0) {
+                        for (let i=0; i < answer.length; i ++) {
+                            let aPart = document.createElement('a');
+                            aPart.classList.add('register_part_page-participant_block');
+                            aPart.setAttribute('target', '_blank');
+                            aPart.setAttribute('href', '/competitions/' + partSlug + '/' + answer[i]['id'] + '/register_participant/');
+                            let pPart = document.createElement('p');
+                            pPart.textContent = answer[i]['surname_comp'] + ' ' + answer[i]['name_comp'] + ' ' + answer[i]['patronymic_comp'] + ' ' + new Date(answer[i]['birthday']).toLocaleString().split(',')[0];
+                            aPart.append(pPart);
+                            mainBlock.append(aPart);
+                        }
+                    }
+                    participantsAllText.textContent = JSON.parse(xhr.response).cur_participants_cnt;
+                    competitorsAllText.textContent = JSON.parse(xhr.response).cur_compprotocols_cnt;
+                }
+                xhr.onerror = function () {
+                    console.log(xhr.responseText);
+                };
+            }
+        });
+        let selectGender = document.getElementById('register_part_page-filter_block-gen');
+        let selectMain = document.getElementById('register_part_page-filter_block-wcat');
+        let selectMale = document.getElementById('register_part_page-filter_block-wcat-male');
+        let selectFemale = document.getElementById('register_part_page-filter_block-wcat-female');
+        let searchClearBtn = document.getElementById('register_part_page-search_cls');
+        searchClearBtn.addEventListener('click', function (e) {
+            e.stopImmediatePropagation();
+            let method = 'post';
+            let endpoint = window.location.pathname;
+            let token = document.querySelector('[name="csrfmiddlewaretoken"]').value;
+            let sendData = 'searchstop=yes';
+            let xhr = new XMLHttpRequest();
+            let mainBlock = document.querySelector('.register_part_page-participants_block');
+            let partSlug = document.getElementById('comp_name').value;
+            xhr.open(method, endpoint, true);
+            xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+            xhr.setRequestHeader('X-CSRFToken', token);
+            xhr.send(sendData);
+            xhr.onload = function () {
+                if (xhr.status === 200) {
+                    let answer = JSON.parse(xhr.response).answer;
+                    document.querySelector('.register_part_page-search').value = '';
+                    while (mainBlock.firstChild) {
+                        mainBlock.removeChild(mainBlock.firstChild);
+                    }
+                    if (answer.length > 0) {
+                        for (let i=0; i < answer.length; i ++) {
+                            let aPart = document.createElement('a');
+                            aPart.classList.add('register_part_page-participant_block');
+                            aPart.setAttribute('target', '_blank');
+                            aPart.setAttribute('href', '/competitions/' + partSlug + '/' + answer[i]['id'] + '/register_participant/');
+                            let pPart = document.createElement('p');
+                            pPart.textContent = answer[i]['surname_comp'] + ' ' + answer[i]['name_comp'] + ' ' + answer[i]['patronymic_comp'] + ' ' + new Date(answer[i]['birthday']).toLocaleString().split(',')[0];
+                            aPart.append(pPart);
+                            mainBlock.append(aPart);
+                        }
+                    }
+                    participantsAllText.textContent = JSON.parse(xhr.response).cur_participants_cnt;
+                    competitorsAllText.textContent = JSON.parse(xhr.response).cur_compprotocols_cnt;
+                    selectMain.style.display = 'block';
+                    selectGender.value = 'change_gen';
+                    selectFemale.value = 'change_cat';
+                    selectMale.value = 'change_cat';
+                    selectFemale.style.display = 'none';
+                    selectMale.style.display = 'none';
+                }
+                xhr.onerror = function () {
+                    console.log(xhr.responseText);
+                };
+            }
+        });
+        let goShowFiltered = document.getElementById('register_part_page-filter_block-btn');
+        selectGender.addEventListener('change', function (e) {
+            if (selectGender.value === 'male') {
+                selectMain.style.display = 'none';
+                selectFemale.style.display = 'none';
+                selectMale.style.display = 'block';
+            }
+            if (selectGender.value === 'female') {
+                selectMain.style.display = 'none';
+                selectMale.style.display = 'none';
+                selectFemale.style.display = 'block';
+            }
+            if (selectGender.value === 'change_gen') {
+                selectMain.style.display = 'block';
+                selectMale.style.display = 'none';
+                selectFemale.style.display = 'none';
+            }
+        });
+        goShowFiltered.addEventListener('click', function (e) {
+            e.stopImmediatePropagation();
+            if (selectGender.value !== 'change_gen') {
+                let genSelected = selectGender.value;
+                let wcatSelected = '';
+                if (getComputedStyle(selectMale).display === 'block') {
+                    wcatSelected = selectMale.value;
+                }
+                if (getComputedStyle(selectFemale).display === 'block') {
+                    wcatSelected = selectFemale.value;
+                }
+                let method = 'post';
+                let endpoint = window.location.pathname;
+                let token = document.querySelector('[name="csrfmiddlewaretoken"]').value;
+                let sendData = 'filtershow=yes&gen=' + encodeURIComponent(genSelected) + '&wcat=' + encodeURIComponent(wcatSelected);
+                let xhr = new XMLHttpRequest();
+                let mainBlock = document.querySelector('.register_part_page-participants_block');
+                let partSlug = document.getElementById('comp_name').value;
+                xhr.open(method, endpoint, true);
+                xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+                xhr.setRequestHeader('X-CSRFToken', token);
+                xhr.send(sendData);
+                xhr.onload = function () {
+                    if (xhr.status === 200) {
+                        let answer = JSON.parse(xhr.response).answer;
+                        while (mainBlock.firstChild) {
+                            mainBlock.removeChild(mainBlock.firstChild);
+                        }
+                        if (answer.length > 0) {
+                            for (let i=0; i < answer.length; i ++) {
+                                let aPart = document.createElement('a');
+                                aPart.classList.add('register_part_page-participant_block');
+                                aPart.setAttribute('target', '_blank');
+                                aPart.setAttribute('href', '/competitions/' + partSlug + '/' + answer[i]['id'] + '/register_participant/');
+                                let pPart = document.createElement('p');
+                                pPart.textContent = answer[i]['surname_comp'] + ' ' + answer[i]['name_comp'] + ' ' + answer[i]['patronymic_comp'] + ' ' + new Date(answer[i]['birthday']).toLocaleString().split(',')[0];
+                                aPart.append(pPart);
+                                mainBlock.append(aPart);
+                            }
+                        }
+                        participantsAllText.textContent = JSON.parse(xhr.response).cur_participants_cnt;
+                        competitorsAllText.textContent = JSON.parse(xhr.response).cur_compprotocols_cnt;
+                    }
+                    xhr.onerror = function () {
+                        console.log(xhr.responseText);
+                    };
+                }
+            }
+        });
+    }
+    let delParticipantBtn = document.getElementById('competition_registry-form_del');
+    if (delParticipantBtn) {
+        let modal = document.getElementById('reg-participant-modal_aus');
+        let modalY = document.getElementById('reg-participant-modal_aus_yes');
+        let modalN = document.getElementById('reg-participant-modal_aus_no');
+        let modalClose = document.getElementById('reg-participant-modal_aus_close');
+        let modalText = document.getElementById('reg-participant-modal_aus-text');
+        delParticipantBtn.addEventListener('click', function (e) {
+            modalText.textContent = 'Вы уверены?';
+            modal.style.display = 'flex';
+            window.onclick = function(event) {
+                if (event.target === modal) {
+                    modal.style.display = "none";
+                }
+            }
+            modalN.onclick = function() {
+                modal.style.display = "none";
+            }
+            modalClose.onclick = function() {
+                modal.style.display = "none";
+            }
+            modalY.onclick = function() {
+                let method = 'post';
+                let endpoint = window.location.pathname;
+                let token = document.querySelector('[name="csrfmiddlewaretoken"]').value;
+                let sendData = 'delpart=yes';
+                let xhr = new XMLHttpRequest();
+                let partSlug = document.getElementById('comp_name').value;
+                xhr.open(method, endpoint, true);
+                xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+                xhr.setRequestHeader('X-CSRFToken', token);
+                xhr.send(sendData);
+                xhr.onload = function () {
+                    if (xhr.status === 200) {
+                        window.location.href = '/competitions/' + partSlug + '/register_participants/';
+                    }
+                    xhr.onerror = function () {
+                        console.log(xhr.responseText);
+                    };
+                }
+            }
+        });
+    }
+    let saveCurFlowBtn = document.getElementById('register_part_page-cur-flow-btn');
+    if (saveCurFlowBtn) {
+        saveCurFlowBtn.addEventListener('click', function (e) {
+            let setFlow = document.getElementById('competition_registry-cur-flow').value;
+            let method = 'post';
+            let endpoint = window.location.pathname;
+            let token = document.querySelector('[name="csrfmiddlewaretoken"]').value;
+            let sendData = 'setflow=' + encodeURIComponent(setFlow);
+            let xhr = new XMLHttpRequest();
+            xhr.open(method, endpoint, true);
+            xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+            xhr.setRequestHeader('X-CSRFToken', token);
+            xhr.send(sendData);
+            xhr.onload = function () {
+                // if (xhr.status === 200) {
+                //     window.location.href = '/competitions/' + partSlug + '/register_participants/';
+                // }
+                xhr.onerror = function () {
+                    console.log(xhr.responseText);
+                };
+            }
+        });
     }
 
 // console.log(window.location.pathname)

@@ -5,6 +5,4 @@ let ready = (callback) => {
 
 ready(() => {
 
-    console.log("hello admin")
-
 });

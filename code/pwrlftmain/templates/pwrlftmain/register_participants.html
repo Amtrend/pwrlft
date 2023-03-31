@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Страница регистрации участников{% endblock %}
+{% block content %}
+    <h3 class="register_part_page-title">Рестрация участников на соревнования: {{ cur_competition }}</h3>
+    <p class="register_part_page-participants_cnt">Подано заявок: <span id="register_part_page-participants_cnt">{{ cur_participants_cnt }}</span></p>
+    <br>
+    <p class="register_part_page-competitors_cnt">Прошли взвешивание: <span id="register_part_page-competitors_cnt">{{ cur_compprotocols_cnt }}</span></p>
+    <br>
+    <select name="competition_registry-cur-flow" class="register_part_page-filter_block-gen" id="competition_registry-cur-flow" style="margin-left: 15px;">
+        <option value="1 поток" {% if cur_flow.comp_flow == "1 поток" %}selected{% endif %}>1 поток</option>
+        <option value="2 поток" {% if cur_flow.comp_flow == "2 поток" %}selected{% endif %}>2 поток</option>
+        <option value="3 поток" {% if cur_flow.comp_flow == "3 поток" %}selected{% endif %}>3 поток</option>
+        <option value="4 поток" {% if cur_flow.comp_flow == "4 поток" %}selected{% endif %}>4 поток</option>
+        <option value="5 поток" {% if cur_flow.comp_flow == "5 поток" %}selected{% endif %}>5 поток</option>
+        <option value="6 поток" {% if cur_flow.comp_flow == "6" %}selected{% endif %}>6 поток</option>
+        <option value="7 поток" {% if cur_flow.comp_flow == "7 поток" %}selected{% endif %}>7 поток</option>
+        <option value="8 поток" {% if cur_flow.comp_flow == "8 поток" %}selected{% endif %}>8 поток</option>
+        <option value="9 поток" {% if cur_flow.comp_flow == "9 поток" %}selected{% endif %}>9 поток</option>
+        <option value="10 поток" {% if cur_flow.comp_flow == "10 поток" %}selected{% endif %}>10 поток</option>
+    </select>
+    <input type="button" class="register_part_page-filter_block-btn" id="register_part_page-cur-flow-btn" value="Установить">
+    <div class="register_part_page-head-block">
+        <div class="register_part_page-search_block">
+            <a href="{% url 'register_new_participant' competition_slug %}" class="register_part_page-add_new" target="_blank">+</a>
+            <input type="text" class="register_part_page-search" placeholder="поиск...">
+            <input type="button" class="register_part_page-search_btn" id="register_part_page-search_btn" value="Поиск">
+            <input type="button" class="register_part_page-search_cls" id="register_part_page-search_cls" value="x">
+        </div>
+        <div class="register_part_page-filter_block">
+            <select name="register_part_page-filter_block-gen" class="register_part_page-filter_block-gen" id="register_part_page-filter_block-gen">
+                <option value="change_gen" selected>Выберите пол</option>
+                <option value="male">Муж</option>
+                <option value="female">Жен</option>
+            </select>
+            <select name="register_part_page-filter_block-wcat" class="register_part_page-filter_block-gen" id="register_part_page-filter_block-wcat">
+                <option value="Выберите категорию" selected>Выберите категорию</option>
+            </select>
+            <select name="register_part_page-filter_block-wcat-male" class="register_part_page-filter_block-gen" id="register_part_page-filter_block-wcat-male">
+                <option value="change_cat" selected>Выберите категорию</option>
+                <option value="53">53</option>
+                <option value="59">59</option>
+                <option value="66">66</option>
+                <option value="74">74</option>
+                <option value="83">83</option>
+                <option value="93">93</option>
+                <option value="105">105</option>
+                <option value="120">120</option>
+                <option value="120+">120+</option>
+            </select>
+            <select name="register_part_page-filter_block-wcat-female" class="register_part_page-filter_block-gen" id="register_part_page-filter_block-wcat-female">
+                <option value="change_cat" selected>Выберите категорию</option>
+                <option value="43">43</option>
+                <option value="47">47</option>
+                <option value="52">52</option>
+                <option value="57">57</option>
+                <option value="63">63</option>
+                <option value="69">69</option>
+                <option value="76">76</option>
+                <option value="84">84</option>
+                <option value="84+">84+</option>
+            </select>
+            <input type="button" class="register_part_page-filter_block-btn" id="register_part_page-filter_block-btn" value="Показать">
+        </div>
+        <div class="register_part_page-participants_block">
+            {% for par in cur_participants %}
+                <a href="{% url 'register_participant' competition_slug par.id %}" target="_blank" class="register_part_page-participant_block">
+                    <p>{{ par.surname_comp }} {{ par.name_comp }} {{ par.patronymic_comp }} {{ par.birthday|date:"d.m.Y" }}</p>
+                </a>
+            {% endfor %}
+        </div>
+    </div>
+    {% csrf_token %}
+    <input type="hidden" id="comp_name" value="{{ competition_slug }}">
+{% endblock %}
