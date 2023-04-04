@@ -15,72 +15,68 @@
 </script>
 <noscript><div><img src="https://mc.yandex.ru/watch/88742639" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
 <!-- /Yandex.Metrika counter -->
-<section id="menu_desktop">
-    <div class="menu_desktop">
-        <a href="{% url 'home' %}" class="unlink_class">
-            <p class="menu_el">Главная</p>
-        </a>
-        <a href="{% url 'news' %}" class="unlink_class">
-            <p class="menu_el">Новости</p>
-        </a>
-        <div class="menu_el-doc-head">
-            <p class="menu_el">Документы</p>
-            <div class="menu_el-doc_block">
-                <a href="{% url 'standards' %}" class="unlink_class">
-                    <p class="menu_el-sub">Нормативы</p>
-                </a>
-                <a href="{% static 'docs/pravila_2020_IPF_rus-_2_.pdf' %}" class="unlink_class" target="_blank">
-                    <p class="menu_el-sub">Правила</p>
-                </a>
-                <a href="{% static 'docs/ekip2019-2022.pdf' %}" class="unlink_class" target="_blank">
-                    <p class="menu_el-sub">Экипировка</p>
-                </a>
-                <a href="{% static 'docs/ekip_2019_2022_spravochnik.pdf' %}" class="unlink_class" target="_blank">
-                    <p class="menu_el-sub">Экипировка в картинках</p>
-                </a>
-            </div>
-        </div>
-        <a href="{% url 'competitions' %}" class="unlink_class">
-            <p class="menu_el">Соревнования</p>
-        </a>
-    </div>
-</section>
-<section id="menu_mobile">
-    <div class="menu_mobile">
-        <div class="menu_mobile-head">
-            <div class="nav_icon-mobile">
-                <span></span>
-                <span></span>
-                <span></span>
-                <span></span>
-            </div>
-            <a href="{% url 'home' %}" class="unlink_class menu_mobile-head_link"><p class="menu_mobile-head-text">Powerlifting</p></a>
-        </div>
-        <div class="menu_mobile-body">
-            <a href="{% url 'home' %}" class="unlink_class menu_mobile-body_link-el">
-                <p class="menu_mobile-body-menu_el">Главная</p>
+<div class="menu_desktop">
+    <a href="{% url 'home' %}" class="unlink_class">
+        <p class="menu_el">Главная</p>
+    </a>
+    <a href="{% url 'news' %}" class="unlink_class">
+        <p class="menu_el">Новости</p>
+    </a>
+    <div class="menu_el-doc-head">
+        <p class="menu_el">Документы</p>
+        <div class="menu_el-doc_block">
+            <a href="{% url 'standards' %}" class="unlink_class">
+                <p class="menu_el-sub">Нормативы</p>
             </a>
-            <a href="{% url 'competitions' %}" class="unlink_class menu_mobile-body_link-el">
-                <p class="menu_mobile-body-menu_el">Соревнования</p>
+            <a href="{% static 'docs/pravila_2020_IPF_rus-_2_.pdf' %}" class="unlink_class" target="_blank">
+                <p class="menu_el-sub">Правила</p>
             </a>
-            <a href="{% url 'news' %}" class="unlink_class menu_mobile-body_link-el">
-                <p class="menu_mobile-body-menu_el">Новости</p>
+            <a href="{% static 'docs/ekip2019-2022.pdf' %}" class="unlink_class" target="_blank">
+                <p class="menu_el-sub">Экипировка</p>
             </a>
-            <p class="menu_mobile-body-menu_el menu_mobile-body-menu_el-block-head">Документы</p>
-            <div class="menu_mobile-body-menu_el-block-body">
-                <a href="{% url 'standards' %}" class="unlink_class menu_mobile-body_link-el">
-                    <p class="menu_mobile-body-menu_el">Нормативы</p>
-                </a>
-                <a href="{% static 'docs/pravila_2020_IPF_rus-_2_.pdf' %}" class="unlink_class menu_mobile-body_link-el" target="_blank">
-                    <p class="menu_mobile-body-menu_el">Правила</p>
-                </a>
-                <a href="{% static 'docs/ekip2019-2022.pdf' %}" class="unlink_class menu_mobile-body_link-el" target="_blank">
-                    <p class="menu_mobile-body-menu_el">Экипировка</p>
-                </a>
-                <a href="{% static 'docs/ekip_2019_2022_spravochnik.pdf' %}" class="unlink_class menu_mobile-body_link-el" target="_blank">
-                    <p class="menu_mobile-body-menu_el">Экипировка в картинках</p>
-                </a>
-            </div>
+            <a href="{% static 'docs/ekip_2019_2022_spravochnik.pdf' %}" class="unlink_class" target="_blank">
+                <p class="menu_el-sub">Экипировка в картинках</p>
+            </a>
         </div>
     </div>
-</section>
+    <a href="{% url 'competitions' %}" class="unlink_class">
+        <p class="menu_el">Соревнования</p>
+    </a>
+</div>
+<div class="menu_mobile">
+    <div class="menu_mobile-head">
+        <div class="nav_icon-mobile">
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+        <a href="{% url 'home' %}" class="unlink_class menu_mobile-head_link"><p class="menu_mobile-head-text">Powerlifting</p></a>
+    </div>
+    <div class="menu_mobile-body">
+        <a href="{% url 'home' %}" class="unlink_class menu_mobile-body_link-el">
+            <p class="menu_mobile-body-menu_el">Главная</p>
+        </a>
+        <a href="{% url 'competitions' %}" class="unlink_class menu_mobile-body_link-el">
+            <p class="menu_mobile-body-menu_el">Соревнования</p>
+        </a>
+        <a href="{% url 'news' %}" class="unlink_class menu_mobile-body_link-el">
+            <p class="menu_mobile-body-menu_el">Новости</p>
+        </a>
+        <p class="menu_mobile-body-menu_el menu_mobile-body-menu_el-block-head menu_mobile-body_link-el">Документы</p>
+        <div class="menu_mobile-body-menu_el-block-body">
+            <a href="{% url 'standards' %}" class="unlink_class menu_mobile-body_link-el menu_mobile-body_link-el-sub">
+                <p class="menu_mobile-body-menu_el">Нормативы</p>
+            </a>
+            <a href="{% static 'docs/pravila_2020_IPF_rus-_2_.pdf' %}" class="unlink_class menu_mobile-body_link-el menu_mobile-body_link-el-sub" target="_blank">
+                <p class="menu_mobile-body-menu_el">Правила</p>
+            </a>
+            <a href="{% static 'docs/ekip2019-2022.pdf' %}" class="unlink_class menu_mobile-body_link-el menu_mobile-body_link-el-sub" target="_blank">
+                <p class="menu_mobile-body-menu_el">Экипировка</p>
+            </a>
+            <a href="{% static 'docs/ekip_2019_2022_spravochnik.pdf' %}" class="unlink_class menu_mobile-body_link-el menu_mobile-body_link-el-sub" target="_blank">
+                <p class="menu_mobile-body-menu_el">Экипировка в картинках</p>
+            </a>
+        </div>
+    </div>
+</div>

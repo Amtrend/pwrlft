@@ -63,7 +63,7 @@ a, div {
 .unlink_class {
     text-decoration: none;
     color: inherit;
-    margin-top: 40px;
+    /*margin-top: 40px;*/
 }
 
 .page_in_dev {
@@ -107,10 +107,6 @@ a, div {
 /* ========== HEADER ========== */
 
 
-#menu_mobile {
-    z-index: 1;
-}
-
 .menu_desktop {
     display: flex;
     flex-direction: row;
@@ -141,28 +137,8 @@ a, div {
     cursor: pointer;
 }
 
-.visible_body, .menu_mobile-body-menu_el-block-body_visible {
-    visibility: visible!important;
-}
-
-.menu_mobile-body {
-    visibility: hidden;
-    background-color: #203354;
-    display: flex;
-    flex-direction: column;
-    padding-left: 15px;
-    height: 100vh;
-}
-
-.menu_mobile-body-menu_el-block-body {
-    visibility: hidden;
-    display: flex;
-    flex-direction: column;
-    padding-left: 15px;
-}
-
-.menu_mobile-body-menu_el-block-head {
-    margin-top: 40px;
+.menu_mobile {
+    display: none;
 }
 
 .menu_el, .menu_el-sub, .menu_mobile-body-menu_el {
@@ -181,24 +157,21 @@ a, div {
     padding: 15px 25px;
 }
 
-#menu_mobile {
-    display: none;
-}
-
 @media (max-width: 992px) {
-    #menu_desktop {
+    .menu_mobile-body-menu_el-block-body {
         display: none;
+        flex-direction: column;
     }
-    #menu_mobile {
-        display: block;
-        position: fixed;
-        top: 0;
-        width: 100%;
+    .menu_desktop {
+        display: none;
     }
     .menu_mobile {
         display: flex;
+        position: fixed;
+        top: 0;
         flex-direction: column;
         width: 100%;
+        z-index: 10;
     }
     .menu_mobile-head {
         display: flex;
@@ -267,6 +240,27 @@ a, div {
         top: 10px;
         width: 0%;
         left: 50%;
+    }
+    .menu_mobile-body {
+        background-color: #203354;
+        display: none;
+        flex-direction: column;
+        padding-left: 15px;
+        height: calc(100vh - 55px);
+        z-index: 2;
+    }
+    .visible_body {
+        display: flex;
+    }
+    .unvisible {
+        visibility: hidden;
+    }
+    .menu_mobile-body_link-el {
+        margin-top: 40px;
+        padding-left: 20px;
+    }
+    .menu_mobile-body_link-el-sub {
+        padding-left: 40px;
     }
 }
 
