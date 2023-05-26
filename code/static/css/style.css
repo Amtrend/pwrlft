@@ -781,7 +781,7 @@ a, div {
     align-items: center;
 }
 
-.competition_entry-form_sp-t_chckbx {
+.competition_entry-form_sp-t_chckbx, .competition_entry-form_paid_chckbx {
     -webkit-appearance: none;
     -moz-appearance: none;
     appearance: none;
@@ -794,7 +794,11 @@ a, div {
     font-weight: 300;
 }
 
-.competition_entry-form_sp-t_chckbx::before {
+.competition_entry-form_paid_chckbx {
+    margin-left: auto;
+}
+
+.competition_entry-form_sp-t_chckbx::before, .competition_entry-form_paid_chckbx::before {
     /*content: "🗸";*/
     content: url("../img/Checkmark.svg");
     color: #192b45!important;
@@ -808,7 +812,7 @@ a, div {
     transition: .1s ease-in;
 }
 
-.competition_entry-form_sp-t_chckbx:checked::before {
+.competition_entry-form_sp-t_chckbx:checked::before, .competition_entry-form_paid_chckbx:checked::before {
     opacity: 1;
 }
 
@@ -1200,6 +1204,38 @@ a, div {
     border-color: wheat;
 }
 
+.secr-page_show_btn-timer-p, .secr-page_show_btn-timer-s {
+    width: fit-content;
+    margin: 5px 40px;
+    padding: 5px 40px;
+    border-radius: 20px;
+    background-color: #092942;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.secr-page_show_btn-timer-s {
+    display: none;
+}
+
+.secr-page_show_btn-timer-p:hover, .secr-page_show_btn-timer-s:hover {
+    cursor: pointer;
+}
+
+.secr-page_show_btn-timer_play {
+    border-style: solid;
+    border-width: 19px 0 19px 30px;
+    border-color: transparent transparent transparent wheat;
+}
+
+.secr-page_show_btn-timer_stop {
+    border-style: solid;
+    border-width: 15px;
+    border-color: wheat;
+}
+
 .form-secretary_stream-btn {
     display: none;
 }
@@ -1355,6 +1391,12 @@ a, div {
     font-size: 14px;
     line-height: 16px;
     font-weight: 500;
+}
+
+.block_header-secr-page {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
 }
 
 
@@ -1520,6 +1562,111 @@ a, div {
     background-color: #092942;
     text-align: center;
     color: #FFFFFF;
+}
+
+.weight_show_assistants {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: end;
+    position: absolute;
+    bottom: 15px;
+    right: 15px;
+}
+
+.weight_show_assistants-pillar {
+    font-family: Montserrat, sans-serif;
+    color: white;
+    font-weight: 500;
+    font-size: calc(12px + 3vw);
+    margin-left: 2vw;
+    align-self: end;
+}
+
+.weight_show_assistants-twenty_five {
+    font-family: Montserrat, sans-serif;
+    color: white;
+    font-weight: 500;
+    font-size: calc(12px + 3vw);
+    padding: 3vw 0.5vw;
+    background-color: red;
+    margin: 5px;
+}
+
+.weight_show_assistants-twenty {
+    font-family: Montserrat, sans-serif;
+    color: white;
+    font-weight: 500;
+    font-size: calc(12px + 3vw);
+    padding: 3vw 0.5vw;
+    background-color: blue;
+    margin: 5px;
+}
+
+.weight_show_assistants-fifteen {
+    font-family: Montserrat, sans-serif;
+    color: black;
+    font-weight: 500;
+    font-size: calc(12px + 3vw);
+    padding: 3vw 0.5vw;
+    background-color: yellow;
+    margin: 5px;
+}
+
+.weight_show_assistants-ten {
+    font-family: Montserrat, sans-serif;
+    color: white;
+    font-weight: 500;
+    font-size: calc(12px + 3vw);
+    padding: 2vw 0.5vw;
+    background-color: green;
+    margin: 5px;
+}
+
+.weight_show_assistants-five {
+    font-family: Montserrat, sans-serif;
+    color: black;
+    font-weight: 500;
+    font-size: calc(12px + 3vw);
+    padding: 1vw 0.1vw;
+    background-color: white;
+    margin: 5px;
+}
+
+.weight_show_assistants-two_half {
+    font-family: Montserrat, sans-serif;
+    color: white;
+    font-weight: 500;
+    font-size: calc(12px + 3vw);
+    padding: 0.2vw 0.1vw;
+    background-color: black;
+    margin: 5px;
+    border: 1px solid white;
+}
+
+.weight_show_assistants-one_twenty_five {
+    font-family: Montserrat, sans-serif;
+    color: black;
+    font-weight: 500;
+    font-size: calc(12px + 3vw);
+    padding: 0.1vw;
+    background-color: silver;
+    margin: 5px;
+}
+
+.weight_show_assistants-locks {
+    padding: 1vw;
+    background-color: silver;
+    margin: 5px;
+    position: relative;
+}
+
+.weight_show_assistants-locks_add {
+    position: absolute;
+    background-color: silver;
+    padding: 1.4vw 0.2vw;
+    top: -20%;
+    left: 60%;
 }
 
 

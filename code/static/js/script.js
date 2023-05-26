@@ -1002,14 +1002,17 @@ ready(() => {
         let competitorWc = '';
         let competitorOw = '';
         let competitorOwOff = '';
+        let pillarHeight = '';
         let timerp = document.getElementById('timer');
         let duration = 59;
-        let compFitstWeightDiv = document.getElementById("ind_scoreboard-appr_weight-1")
-        let compSecWeightDiv = document.getElementById("ind_scoreboard-appr_weight-2")
-        let compThirdWeightDiv = document.getElementById("ind_scoreboard-appr_weight-3")
-        let compFitstWeightSpan = document.getElementById("ind_scoreboard-appr_weight-1-sp")
-        let compSecWeightSpan = document.getElementById("ind_scoreboard-appr_weight-2-sp")
-        let compThirdWeightSpan = document.getElementById("ind_scoreboard-appr_weight-3-sp")
+        let compFitstWeightDiv = document.getElementById("ind_scoreboard-appr_weight-1");
+        let compSecWeightDiv = document.getElementById("ind_scoreboard-appr_weight-2");
+        let compThirdWeightDiv = document.getElementById("ind_scoreboard-appr_weight-3");
+        let compFitstWeightSpan = document.getElementById("ind_scoreboard-appr_weight-1-sp");
+        let compSecWeightSpan = document.getElementById("ind_scoreboard-appr_weight-2-sp");
+        let compThirdWeightSpan = document.getElementById("ind_scoreboard-appr_weight-3-sp");
+        let curStateTimer = 'stop';
+        let blockShowAss = document.getElementById('weight_show_assistants');
 
         let timeoutTimeId = null;
         function startTimerComp(duration, timerp) {
@@ -1035,6 +1038,10 @@ ready(() => {
 
         }
 
+        function clearTimerValues() {
+            timerp.textContent = "01:00";
+        }
+
         function clearScore() {
             indScoreBoard.style.display = "none";
             indScoreWcat.textContent = "";
@@ -1052,6 +1059,7 @@ ready(() => {
             competitorWc = '';
             competitorOw = '';
             competitorOwOff = '';
+            pillarHeight = '';
             timerp.textContent = "01:00";
             compFitstWeightDiv.className = 'ind_scoreboard-appr_weight';
             compSecWeightDiv.className = 'ind_scoreboard-appr_weight';
@@ -1084,384 +1092,1699 @@ ready(() => {
             myxmlhttp.send(resultScbForm);
             myxmlhttp.onload = function() {
                 if (myxmlhttp.status === 200) {
+
                     if (JSON.parse(myxmlhttp.response).cur_flow_competitors_json) {
-                        if (querysetsFromBack !== JSON.parse(myxmlhttp.response).cur_flow_competitors_json) {
-                            querysetsFromBack = JSON.parse(myxmlhttp.response).cur_flow_competitors_json;
-                            let querysetsFromBackJson = JSON.parse(querysetsFromBack);
-                            while (massTable.rows.length > 1) {
-                                massTable.deleteRow(-1);
+                        console.log(JSON.parse(myxmlhttp.response).cur_flow_competitors_json)
+
+                        let querysetsFromBackJson = JSON.parse(myxmlhttp.response).cur_flow_competitors_json;
+                        while (massTable.rows.length > 1) {
+                            massTable.deleteRow(-1);
+                        }
+                        for (let i = 0; i < querysetsFromBackJson.length; i ++) {
+                            let newRow = massTable.insertRow();
+                            let newCellFi = newRow.insertCell();
+                            let textFi = document.createTextNode(`${querysetsFromBackJson[i]["competitor__surname_comp"]} ${querysetsFromBackJson[i]["competitor__name_comp"]}`);
+                            if (querysetsFromBackJson[i]["competitor_translation"] !== null) {
+                                newCellFi.parentElement.style.border = "5px solid #A27D29";
                             }
-                            console.log(querysetsFromBackJson)
-                            // console.log(querysetsFromBackJson[0]["fields"])
-                            for (let i = 0; i < querysetsFromBackJson.length; i ++) {
-                                let newRow = massTable.insertRow();
-                                let newCellFi = newRow.insertCell();
-                                let textFi = document.createTextNode(`${querysetsFromBackJson[i]["fields"]["competitor"][0]} ${querysetsFromBackJson[i]["fields"]["competitor"][1]}`);
-                                newCellFi.appendChild(textFi);
-                                let newCellWeight = newRow.insertCell();
-                                let textWeight = document.createTextNode(querysetsFromBackJson[i]["fields"]["competitor_weight"]);
-                                newCellWeight.appendChild(textWeight);
-                                let compSTypes = querysetsFromBackJson[i]["fields"]["competitor"][2];
-                                if (compSTypes.includes("Троеборье классическое") || compSTypes.includes("Жим лёжа (без экип.)")) {
-                                    let newCellsquatRes1 = newRow.insertCell();
-                                    if (querysetsFromBackJson[i]["fields"]["first_attempt_squat_res"] === null) {
-                                        let textsquatRes1 = document.createTextNode("");
-                                        newCellsquatRes1.appendChild(textsquatRes1);
-                                    } else {
-                                        let textsquatRes1 = document.createTextNode(querysetsFromBackJson[i]["fields"]["first_attempt_squat_res"]);
-                                        newCellsquatRes1.appendChild(textsquatRes1);
-                                        if (querysetsFromBackJson[i]["fields"]["first_attempt_squat_off"] !== null) {
-                                            if (querysetsFromBackJson[i]["fields"]["first_attempt_squat_off"] === "0" || querysetsFromBackJson[i]["fields"]["first_attempt_squat_off"] === "1") {
-                                                newCellsquatRes1.style.backgroundColor = "#ffa0a0";
-                                            } else if (querysetsFromBackJson[i]["fields"]["first_attempt_squat_off"] === "2" || querysetsFromBackJson[i]["fields"]["first_attempt_squat_off"] === "3") {
-                                                newCellsquatRes1.style.backgroundColor = "#aaffaa";
-                                            }
-                                        }
-                                    }
-                                    let newCellsquatRes2 = newRow.insertCell();
-                                    if (querysetsFromBackJson[i]["fields"]["second_attempt_squat_res"] === null) {
-                                        let textsquatRes2 = document.createTextNode("");
-                                        newCellsquatRes2.appendChild(textsquatRes2);
-                                    } else {
-                                        let textsquatRes2 = document.createTextNode(querysetsFromBackJson[i]["fields"]["second_attempt_squat_res"]);
-                                        newCellsquatRes2.appendChild(textsquatRes2);
-                                        if (querysetsFromBackJson[i]["fields"]["second_attempt_squat_off"] !== null) {
-                                            if (querysetsFromBackJson[i]["fields"]["second_attempt_squat_off"] === "0" || querysetsFromBackJson[i]["fields"]["second_attempt_squat_off"] === "1") {
-                                                newCellsquatRes2.style.backgroundColor = "#ffa0a0";
-                                            } else if (querysetsFromBackJson[i]["fields"]["second_attempt_squat_off"] === "2" || querysetsFromBackJson[i]["fields"]["second_attempt_squat_off"] === "3") {
-                                                newCellsquatRes2.style.backgroundColor = "#aaffaa";
-                                            }
-                                        }
-                                    }
-                                    let newCellsquatRes3 = newRow.insertCell();
-                                    if (querysetsFromBackJson[i]["fields"]["third_attempt_squat_res"] === null) {
-                                        let textsquatRes3 = document.createTextNode("");
-                                        newCellsquatRes3.appendChild(textsquatRes3);
-                                    } else {
-                                        let textsquatRes3 = document.createTextNode(querysetsFromBackJson[i]["fields"]["third_attempt_squat_res"]);
-                                        newCellsquatRes3.appendChild(textsquatRes3);
-                                        if (querysetsFromBackJson[i]["fields"]["third_attempt_squat_off"] !== null) {
-                                            if (querysetsFromBackJson[i]["fields"]["third_attempt_squat_off"] === "0" || querysetsFromBackJson[i]["fields"]["third_attempt_squat_off"] === "1") {
-                                                newCellsquatRes3.style.backgroundColor = "#ffa0a0";
-                                            } else if (querysetsFromBackJson[i]["fields"]["third_attempt_squat_off"] === "2" || querysetsFromBackJson[i]["fields"]["third_attempt_squat_off"] === "3") {
-                                                newCellsquatRes3.style.backgroundColor = "#aaffaa";
-                                            }
-                                        }
-                                    }
-                                    let newCellbpRes1 = newRow.insertCell();
-                                    if (querysetsFromBackJson[i]["fields"]["first_attempt_bpress_res"] === null) {
-                                        let textbpRes1 = document.createTextNode("");
-                                        newCellbpRes1.appendChild(textbpRes1);
-                                    } else {
-                                        let textbpRes1 = document.createTextNode(querysetsFromBackJson[i]["fields"]["first_attempt_bpress_res"]);
-                                        newCellbpRes1.appendChild(textbpRes1);
-                                        if (querysetsFromBackJson[i]["fields"]["first_attempt_bpress_off"] !== null) {
-                                            if (querysetsFromBackJson[i]["fields"]["first_attempt_bpress_off"] === "0" || querysetsFromBackJson[i]["fields"]["first_attempt_bpress_off"] === "1") {
-                                                newCellbpRes1.style.backgroundColor = "#ffa0a0";
-                                            } else if (querysetsFromBackJson[i]["fields"]["first_attempt_bpress_off"] === "2" || querysetsFromBackJson[i]["fields"]["first_attempt_bpress_off"] === "3") {
-                                                newCellbpRes1.style.backgroundColor = "#aaffaa";
-                                            }
-                                        }
-                                    }
-                                    let newCellbpRes2 = newRow.insertCell();
-                                    if (querysetsFromBackJson[i]["fields"]["second_attempt_bpress_res"] === null) {
-                                        let textbpRes2 = document.createTextNode("");
-                                        newCellbpRes2.appendChild(textbpRes2);
-                                    } else {
-                                        let textbpRes2 = document.createTextNode(querysetsFromBackJson[i]["fields"]["second_attempt_bpress_res"]);
-                                        newCellbpRes2.appendChild(textbpRes2);
-                                        if (querysetsFromBackJson[i]["fields"]["second_attempt_bpress_off"] !== null) {
-                                            if (querysetsFromBackJson[i]["fields"]["second_attempt_bpress_off"] === "0" || querysetsFromBackJson[i]["fields"]["second_attempt_bpress_off"] === "1") {
-                                                newCellbpRes2.style.backgroundColor = "#ffa0a0";
-                                            } else if (querysetsFromBackJson[i]["fields"]["second_attempt_bpress_off"] === "2" || querysetsFromBackJson[i]["fields"]["second_attempt_bpress_off"] === "3") {
-                                                newCellbpRes2.style.backgroundColor = "#aaffaa";
-                                            }
-                                        }
-                                    }
-                                    let newCellbpRes3 = newRow.insertCell();
-                                    if (querysetsFromBackJson[i]["fields"]["third_attempt_bpress_res"] === null) {
-                                        let textbpRes3 = document.createTextNode("");
-                                        newCellbpRes3.appendChild(textbpRes3);
-                                    } else {
-                                        let textbpRes3 = document.createTextNode(querysetsFromBackJson[i]["fields"]["third_attempt_bpress_res"]);
-                                        newCellbpRes3.appendChild(textbpRes3);
-                                        if (querysetsFromBackJson[i]["fields"]["third_attempt_bpress_off"] !== null) {
-                                            if (querysetsFromBackJson[i]["fields"]["third_attempt_bpress_off"] === "0" || querysetsFromBackJson[i]["fields"]["third_attempt_bpress_off"] === "1") {
-                                                newCellbpRes3.style.backgroundColor = "#ffa0a0";
-                                            } else if (querysetsFromBackJson[i]["fields"]["third_attempt_bpress_off"] === "2" || querysetsFromBackJson[i]["fields"]["third_attempt_bpress_off"] === "3") {
-                                                newCellbpRes3.style.backgroundColor = "#aaffaa";
-                                            }
-                                        }
-                                    }
-                                    let newCelldlRes1 = newRow.insertCell();
-                                    if (querysetsFromBackJson[i]["fields"]["first_attempt_dlift_res"] === null) {
-                                        let textdlRes1 = document.createTextNode("");
-                                        newCelldlRes1.appendChild(textdlRes1);
-                                    } else {
-                                        let textdlRes1 = document.createTextNode(querysetsFromBackJson[i]["fields"]["first_attempt_dlift_res"]);
-                                        newCelldlRes1.appendChild(textdlRes1);
-                                        if (querysetsFromBackJson[i]["fields"]["first_attempt_dlift_off"] !== null) {
-                                            if (querysetsFromBackJson[i]["fields"]["first_attempt_dlift_off"] === "0" || querysetsFromBackJson[i]["fields"]["first_attempt_dlift_off"] === "1") {
-                                                newCelldlRes1.style.backgroundColor = "#ffa0a0";
-                                            } else if (querysetsFromBackJson[i]["fields"]["first_attempt_dlift_off"] === "2" || querysetsFromBackJson[i]["fields"]["first_attempt_dlift_off"] === "3") {
-                                                newCelldlRes1.style.backgroundColor = "#aaffaa";
-                                            }
-                                        }
-                                    }
-                                    let newCelldlRes2 = newRow.insertCell();
-                                    if (querysetsFromBackJson[i]["fields"]["second_attempt_dlift_res"] === null) {
-                                        let textdlRes2 = document.createTextNode("");
-                                        newCelldlRes2.appendChild(textdlRes2);
-                                    } else {
-                                        let textdlRes2 = document.createTextNode(querysetsFromBackJson[i]["fields"]["second_attempt_dlift_res"]);
-                                        newCelldlRes2.appendChild(textdlRes2);
-                                        if (querysetsFromBackJson[i]["fields"]["second_attempt_dlift_off"] !== null) {
-                                            if (querysetsFromBackJson[i]["fields"]["second_attempt_dlift_off"] === "0" || querysetsFromBackJson[i]["fields"]["second_attempt_dlift_off"] === "1") {
-                                                newCelldlRes2.style.backgroundColor = "#ffa0a0";
-                                            } else if (querysetsFromBackJson[i]["fields"]["second_attempt_dlift_off"] === "2" || querysetsFromBackJson[i]["fields"]["second_attempt_dlift_off"] === "3") {
-                                                newCelldlRes2.style.backgroundColor = "#aaffaa";
-                                            }
-                                        }
-                                    }
-                                    let newCelldlRes3 = newRow.insertCell();
-                                    if (querysetsFromBackJson[i]["fields"]["third_attempt_dlift_res"] === null) {
-                                        let textdlRes3 = document.createTextNode("");
-                                        newCelldlRes3.appendChild(textdlRes3);
-                                    } else {
-                                        let textdlRes3 = document.createTextNode(querysetsFromBackJson[i]["fields"]["third_attempt_dlift_res"]);
-                                        newCelldlRes3.appendChild(textdlRes3);
-                                        if (querysetsFromBackJson[i]["fields"]["third_attempt_dlift_off"] !== null) {
-                                            if (querysetsFromBackJson[i]["fields"]["third_attempt_dlift_off"] === "0" || querysetsFromBackJson[i]["fields"]["third_attempt_dlift_off"] === "1") {
-                                                newCelldlRes3.style.backgroundColor = "#ffa0a0";
-                                            } else if (querysetsFromBackJson[i]["fields"]["third_attempt_dlift_off"] === "2" || querysetsFromBackJson[i]["fields"]["third_attempt_dlift_off"] === "3") {
-                                                newCelldlRes3.style.backgroundColor = "#aaffaa";
-                                            }
-                                        }
-                                    }
-                                    let newCellitSquat = newRow.insertCell();
-                                    if (querysetsFromBackJson[i]["fields"]["best_squat_res"] === null) {
-                                        let textitSquat = document.createTextNode("");
-                                        newCellitSquat.appendChild(textitSquat);
-                                    } else {
-                                        let textitSquat = document.createTextNode(querysetsFromBackJson[i]["fields"]["best_squat_res"]);
-                                        newCellitSquat.appendChild(textitSquat);
-                                    }
-                                    let newCellitBp = newRow.insertCell();
-                                    if (querysetsFromBackJson[i]["fields"]["best_bpress_res"] === null) {
-                                        let textitBp = document.createTextNode("");
-                                        newCellitBp.appendChild(textitBp);
-                                    } else {
-                                        let textitBp = document.createTextNode(querysetsFromBackJson[i]["fields"]["best_bpress_res"]);
-                                        newCellitBp.appendChild(textitBp);
-                                    }
-                                    let newCellititDl = newRow.insertCell();
-                                    if (querysetsFromBackJson[i]["fields"]["best_dlift_res"] === null) {
-                                        let textitDl = document.createTextNode("");
-                                        newCellititDl.appendChild(textitDl);
-                                    } else {
-                                        let textitDl = document.createTextNode(querysetsFromBackJson[i]["fields"]["best_dlift_res"]);
-                                        newCellititDl.appendChild(textitDl);
-                                    }
-                                    let newCellIt = newRow.insertCell();
-                                    if (querysetsFromBackJson[i]["fields"]["best_sum_res"] === null) {
-                                        let textIt = document.createTextNode("");
-                                        newCellIt.appendChild(textIt);
-                                    } else {
-                                        let textIt = document.createTextNode(querysetsFromBackJson[i]["fields"]["best_sum_res"]);
-                                        newCellIt.appendChild(textIt);
-                                    }
+                            newCellFi.appendChild(textFi);
+                            let newCellWeight = newRow.insertCell();
+                            let textWeight = document.createTextNode(querysetsFromBackJson[i]["competitor_weight"]);
+                            newCellWeight.appendChild(textWeight);
+                            let compSTypes = querysetsFromBackJson[i]["competitor__sports_type__title"];
+                            if (compSTypes.includes("Троеборье классическое") || compSTypes.includes("Жим лёжа (без экип.)")) {
+                                let newCellsquatRes1 = newRow.insertCell();
+                                if (querysetsFromBackJson[i]["first_attempt_squat_res"] === null) {
+                                    let textsquatRes1 = document.createTextNode("");
+                                    newCellsquatRes1.appendChild(textsquatRes1);
                                 } else {
-                                    let newCellsquatRes1 = newRow.insertCell();
-                                    if (querysetsFromBackJson[i]["fields"]["first_attempt_squat_res_ek"] === null) {
-                                        let textsquatRes1 = document.createTextNode("");
-                                        newCellsquatRes1.appendChild(textsquatRes1);
-                                    } else {
-                                        let textsquatRes1 = document.createTextNode(querysetsFromBackJson[i]["fields"]["first_attempt_squat_res_ek"]);
-                                        newCellsquatRes1.appendChild(textsquatRes1);
-                                        if (querysetsFromBackJson[i]["fields"]["first_attempt_squat_off_ek"] !== null) {
-                                            if (querysetsFromBackJson[i]["fields"]["first_attempt_squat_off_ek"] === "0" || querysetsFromBackJson[i]["fields"]["first_attempt_squat_off_ek"] === "1") {
-                                                newCellsquatRes1.style.backgroundColor = "#ffa0a0";
-                                            } else if (querysetsFromBackJson[i]["fields"]["first_attempt_squat_off_ek"] === "2" || querysetsFromBackJson[i]["fields"]["first_attempt_squat_off_ek"] === "3") {
-                                                newCellsquatRes1.style.backgroundColor = "#aaffaa";
-                                            }
+                                    let textsquatRes1 = document.createTextNode(querysetsFromBackJson[i]["first_attempt_squat_res"]);
+                                    newCellsquatRes1.appendChild(textsquatRes1);
+                                    if (querysetsFromBackJson[i]["first_attempt_squat_off"] !== null) {
+                                        if (querysetsFromBackJson[i]["first_attempt_squat_off"] === "0" || querysetsFromBackJson[i]["first_attempt_squat_off"] === "1") {
+                                            newCellsquatRes1.style.backgroundColor = "#ffa0a0";
+                                        } else if (querysetsFromBackJson[i]["first_attempt_squat_off"] === "2" || querysetsFromBackJson[i]["first_attempt_squat_off"] === "3") {
+                                            newCellsquatRes1.style.backgroundColor = "#aaffaa";
                                         }
-                                    }
-                                    let newCellsquatRes2 = newRow.insertCell();
-                                    if (querysetsFromBackJson[i]["fields"]["second_attempt_squat_res_ek"] === null) {
-                                        let textsquatRes2 = document.createTextNode("");
-                                        newCellsquatRes2.appendChild(textsquatRes2);
-                                    } else {
-                                        let textsquatRes2 = document.createTextNode(querysetsFromBackJson[i]["fields"]["second_attempt_squat_res_ek"]);
-                                        newCellsquatRes2.appendChild(textsquatRes2);
-                                        if (querysetsFromBackJson[i]["fields"]["second_attempt_squat_off_ek"] !== null) {
-                                            if (querysetsFromBackJson[i]["fields"]["second_attempt_squat_off_ek"] === "0" || querysetsFromBackJson[i]["fields"]["second_attempt_squat_off_ek"] === "1") {
-                                                newCellsquatRes2.style.backgroundColor = "#ffa0a0";
-                                            } else if (querysetsFromBackJson[i]["fields"]["second_attempt_squat_off_ek"] === "2" || querysetsFromBackJson[i]["fields"]["second_attempt_squat_off_ek"] === "3") {
-                                                newCellsquatRes2.style.backgroundColor = "#aaffaa";
-                                            }
-                                        }
-                                    }
-                                    let newCellsquatRes3 = newRow.insertCell();
-                                    if (querysetsFromBackJson[i]["fields"]["third_attempt_squat_res_ek"] === null) {
-                                        let textsquatRes3 = document.createTextNode("");
-                                        newCellsquatRes3.appendChild(textsquatRes3);
-                                    } else {
-                                        let textsquatRes3 = document.createTextNode(querysetsFromBackJson[i]["fields"]["third_attempt_squat_res_ek"]);
-                                        newCellsquatRes3.appendChild(textsquatRes3);
-                                        if (querysetsFromBackJson[i]["fields"]["third_attempt_squat_off_ek"] !== null) {
-                                            if (querysetsFromBackJson[i]["fields"]["third_attempt_squat_off_ek"] === "0" || querysetsFromBackJson[i]["fields"]["third_attempt_squat_off_ek"] === "1") {
-                                                newCellsquatRes3.style.backgroundColor = "#ffa0a0";
-                                            } else if (querysetsFromBackJson[i]["fields"]["third_attempt_squat_off_ek"] === "2" || querysetsFromBackJson[i]["fields"]["third_attempt_squat_off_ek"] === "3") {
-                                                newCellsquatRes3.style.backgroundColor = "#aaffaa";
-                                            }
-                                        }
-                                    }
-                                    let newCellbpRes1 = newRow.insertCell();
-                                    if (querysetsFromBackJson[i]["fields"]["first_attempt_bpress_res_ek"] === null) {
-                                        let textbpRes1 = document.createTextNode("");
-                                        newCellbpRes1.appendChild(textbpRes1);
-                                    } else {
-                                        let textbpRes1 = document.createTextNode(querysetsFromBackJson[i]["fields"]["first_attempt_bpress_res_ek"]);
-                                        newCellbpRes1.appendChild(textbpRes1);
-                                        if (querysetsFromBackJson[i]["fields"]["first_attempt_bpress_off_ek"] !== null) {
-                                            if (querysetsFromBackJson[i]["fields"]["first_attempt_bpress_off_ek"] === "0" || querysetsFromBackJson[i]["fields"]["first_attempt_bpress_off_ek"] === "1") {
-                                                newCellbpRes1.style.backgroundColor = "#ffa0a0";
-                                            } else if (querysetsFromBackJson[i]["fields"]["first_attempt_bpress_off_ek"] === "2" || querysetsFromBackJson[i]["fields"]["first_attempt_bpress_off_ek"] === "3") {
-                                                newCellbpRes1.style.backgroundColor = "#aaffaa";
-                                            }
-                                        }
-                                    }
-                                    let newCellbpRes2 = newRow.insertCell();
-                                    if (querysetsFromBackJson[i]["fields"]["second_attempt_bpress_res_ek"] === null) {
-                                        let textbpRes2 = document.createTextNode("");
-                                        newCellbpRes2.appendChild(textbpRes2);
-                                    } else {
-                                        let textbpRes2 = document.createTextNode(querysetsFromBackJson[i]["fields"]["second_attempt_bpress_res_ek"]);
-                                        newCellbpRes2.appendChild(textbpRes2);
-                                        if (querysetsFromBackJson[i]["fields"]["second_attempt_bpress_off_ek"] !== null) {
-                                            if (querysetsFromBackJson[i]["fields"]["second_attempt_bpress_off_ek"] === "0" || querysetsFromBackJson[i]["fields"]["second_attempt_bpress_off_ek"] === "1") {
-                                                newCellbpRes2.style.backgroundColor = "#ffa0a0";
-                                            } else if (querysetsFromBackJson[i]["fields"]["second_attempt_bpress_off_ek"] === "2" || querysetsFromBackJson[i]["fields"]["second_attempt_bpress_off_ek"] === "3") {
-                                                newCellbpRes2.style.backgroundColor = "#aaffaa";
-                                            }
-                                        }
-                                    }
-                                    let newCellbpRes3 = newRow.insertCell();
-                                    if (querysetsFromBackJson[i]["fields"]["third_attempt_bpress_res_ek"] === null) {
-                                        let textbpRes3 = document.createTextNode("");
-                                        newCellbpRes3.appendChild(textbpRes3);
-                                    } else {
-                                        let textbpRes3 = document.createTextNode(querysetsFromBackJson[i]["fields"]["third_attempt_bpress_res_ek"]);
-                                        newCellbpRes3.appendChild(textbpRes3);
-                                        if (querysetsFromBackJson[i]["fields"]["third_attempt_bpress_off_ek"] !== null) {
-                                            if (querysetsFromBackJson[i]["fields"]["third_attempt_bpress_off_ek"] === "0" || querysetsFromBackJson[i]["fields"]["third_attempt_bpress_off_ek"] === "1") {
-                                                newCellbpRes3.style.backgroundColor = "#ffa0a0";
-                                            } else if (querysetsFromBackJson[i]["fields"]["third_attempt_bpress_off_ek"] === "2" || querysetsFromBackJson[i]["fields"]["third_attempt_bpress_off_ek"] === "3") {
-                                                newCellbpRes3.style.backgroundColor = "#aaffaa";
-                                            }
-                                        }
-                                    }
-                                    let newCelldlRes1 = newRow.insertCell();
-                                    if (querysetsFromBackJson[i]["fields"]["first_attempt_dlift_res_ek"] === null) {
-                                        let textdlRes1 = document.createTextNode("");
-                                        newCelldlRes1.appendChild(textdlRes1);
-                                    } else {
-                                        let textdlRes1 = document.createTextNode(querysetsFromBackJson[i]["fields"]["first_attempt_dlift_res_ek"]);
-                                        newCelldlRes1.appendChild(textdlRes1);
-                                        if (querysetsFromBackJson[i]["fields"]["first_attempt_dlift_off_ek"] !== null) {
-                                            if (querysetsFromBackJson[i]["fields"]["first_attempt_dlift_off_ek"] === "0" || querysetsFromBackJson[i]["fields"]["first_attempt_dlift_off_ek"] === "1") {
-                                                newCelldlRes1.style.backgroundColor = "#ffa0a0";
-                                            } else if (querysetsFromBackJson[i]["fields"]["first_attempt_dlift_off_ek"] === "2" || querysetsFromBackJson[i]["fields"]["first_attempt_dlift_off_ek"] === "3") {
-                                                newCelldlRes1.style.backgroundColor = "#aaffaa";
-                                            }
-                                        }
-                                    }
-                                    let newCelldlRes2 = newRow.insertCell();
-                                    if (querysetsFromBackJson[i]["fields"]["second_attempt_dlift_res_ek"] === null) {
-                                        let textdlRes2 = document.createTextNode("");
-                                        newCelldlRes2.appendChild(textdlRes2);
-                                    } else {
-                                        let textdlRes2 = document.createTextNode(querysetsFromBackJson[i]["fields"]["second_attempt_dlift_res_ek"]);
-                                        newCelldlRes2.appendChild(textdlRes2);
-                                        if (querysetsFromBackJson[i]["fields"]["second_attempt_dlift_off_ek"] !== null) {
-                                            if (querysetsFromBackJson[i]["fields"]["second_attempt_dlift_off_ek"] === "0" || querysetsFromBackJson[i]["fields"]["second_attempt_dlift_off_ek"] === "1") {
-                                                newCelldlRes2.style.backgroundColor = "#ffa0a0";
-                                            } else if (querysetsFromBackJson[i]["fields"]["second_attempt_dlift_off_ek"] === "2" || querysetsFromBackJson[i]["fields"]["second_attempt_dlift_off_ek"] === "3") {
-                                                newCelldlRes2.style.backgroundColor = "#aaffaa";
-                                            }
-                                        }
-                                    }
-                                    let newCelldlRes3 = newRow.insertCell();
-                                    if (querysetsFromBackJson[i]["fields"]["third_attempt_dlift_res_ek"] === null) {
-                                        let textdlRes3 = document.createTextNode("");
-                                        newCelldlRes3.appendChild(textdlRes3);
-                                    } else {
-                                        let textdlRes3 = document.createTextNode(querysetsFromBackJson[i]["fields"]["third_attempt_dlift_res_ek"]);
-                                        newCelldlRes3.appendChild(textdlRes3);
-                                        if (querysetsFromBackJson[i]["fields"]["third_attempt_dlift_off_ek"] !== null) {
-                                            if (querysetsFromBackJson[i]["fields"]["third_attempt_dlift_off_ek"] === "0" || querysetsFromBackJson[i]["fields"]["third_attempt_dlift_off_ek"] === "1") {
-                                                newCelldlRes3.style.backgroundColor = "#ffa0a0";
-                                            } else if (querysetsFromBackJson[i]["fields"]["third_attempt_dlift_off_ek"] === "2" || querysetsFromBackJson[i]["fields"]["third_attempt_dlift_off_ek"] === "3") {
-                                                newCelldlRes3.style.backgroundColor = "#aaffaa";
-                                            }
-                                        }
-                                    }
-                                    let newCellitSquat = newRow.insertCell();
-                                    if (querysetsFromBackJson[i]["fields"]["best_squat_res_ek"] === null) {
-                                        let textitSquat = document.createTextNode("");
-                                        newCellitSquat.appendChild(textitSquat);
-                                    } else {
-                                        let textitSquat = document.createTextNode(querysetsFromBackJson[i]["fields"]["best_squat_res_ek"]);
-                                        newCellitSquat.appendChild(textitSquat);
-                                    }
-                                    let newCellitBp = newRow.insertCell();
-                                    if (querysetsFromBackJson[i]["fields"]["best_bpress_res_ek"] === null) {
-                                        let textitBp = document.createTextNode("");
-                                        newCellitBp.appendChild(textitBp);
-                                    } else {
-                                        let textitBp = document.createTextNode(querysetsFromBackJson[i]["fields"]["best_bpress_res_ek"]);
-                                        newCellitBp.appendChild(textitBp);
-                                    }
-                                    let newCellititDl = newRow.insertCell();
-                                    if (querysetsFromBackJson[i]["fields"]["best_dlift_res_ek"] === null) {
-                                        let textitDl = document.createTextNode("");
-                                        newCellititDl.appendChild(textitDl);
-                                    } else {
-                                        let textitDl = document.createTextNode(querysetsFromBackJson[i]["fields"]["best_dlift_res_ek"]);
-                                        newCellititDl.appendChild(textitDl);
-                                    }
-                                    let newCellIt = newRow.insertCell();
-                                    if (querysetsFromBackJson[i]["fields"]["best_sum_res_ek"] === null) {
-                                        let textIt = document.createTextNode("");
-                                        newCellIt.appendChild(textIt);
-                                    } else {
-                                        let textIt = document.createTextNode(querysetsFromBackJson[i]["fields"]["best_sum_res_ek"]);
-                                        newCellIt.appendChild(textIt);
                                     }
                                 }
+                                let newCellsquatRes2 = newRow.insertCell();
+                                if (querysetsFromBackJson[i]["second_attempt_squat_res"] === null) {
+                                    let textsquatRes2 = document.createTextNode("");
+                                    newCellsquatRes2.appendChild(textsquatRes2);
+                                } else {
+                                    let textsquatRes2 = document.createTextNode(querysetsFromBackJson[i]["second_attempt_squat_res"]);
+                                    newCellsquatRes2.appendChild(textsquatRes2);
+                                    if (querysetsFromBackJson[i]["second_attempt_squat_off"] !== null) {
+                                        if (querysetsFromBackJson[i]["second_attempt_squat_off"] === "0" || querysetsFromBackJson[i]["second_attempt_squat_off"] === "1") {
+                                            newCellsquatRes2.style.backgroundColor = "#ffa0a0";
+                                        } else if (querysetsFromBackJson[i]["second_attempt_squat_off"] === "2" || querysetsFromBackJson[i]["second_attempt_squat_off"] === "3") {
+                                            newCellsquatRes2.style.backgroundColor = "#aaffaa";
+                                        }
+                                    }
+                                }
+                                let newCellsquatRes3 = newRow.insertCell();
+                                if (querysetsFromBackJson[i]["third_attempt_squat_res"] === null) {
+                                    let textsquatRes3 = document.createTextNode("");
+                                    newCellsquatRes3.appendChild(textsquatRes3);
+                                } else {
+                                    let textsquatRes3 = document.createTextNode(querysetsFromBackJson[i]["third_attempt_squat_res"]);
+                                    newCellsquatRes3.appendChild(textsquatRes3);
+                                    if (querysetsFromBackJson[i]["third_attempt_squat_off"] !== null) {
+                                        if (querysetsFromBackJson[i]["third_attempt_squat_off"] === "0" || querysetsFromBackJson[i]["third_attempt_squat_off"] === "1") {
+                                            newCellsquatRes3.style.backgroundColor = "#ffa0a0";
+                                        } else if (querysetsFromBackJson[i]["third_attempt_squat_off"] === "2" || querysetsFromBackJson[i]["third_attempt_squat_off"] === "3") {
+                                            newCellsquatRes3.style.backgroundColor = "#aaffaa";
+                                        }
+                                    }
+                                }
+                                let newCellbpRes1 = newRow.insertCell();
+                                if (querysetsFromBackJson[i]["first_attempt_bpress_res"] === null) {
+                                    let textbpRes1 = document.createTextNode("");
+                                    newCellbpRes1.appendChild(textbpRes1);
+                                } else {
+                                    let textbpRes1 = document.createTextNode(querysetsFromBackJson[i]["first_attempt_bpress_res"]);
+                                    newCellbpRes1.appendChild(textbpRes1);
+                                    if (querysetsFromBackJson[i]["first_attempt_bpress_off"] !== null) {
+                                        if (querysetsFromBackJson[i]["first_attempt_bpress_off"] === "0" || querysetsFromBackJson[i]["first_attempt_bpress_off"] === "1") {
+                                            newCellbpRes1.style.backgroundColor = "#ffa0a0";
+                                        } else if (querysetsFromBackJson[i]["first_attempt_bpress_off"] === "2" || querysetsFromBackJson[i]["first_attempt_bpress_off"] === "3") {
+                                            newCellbpRes1.style.backgroundColor = "#aaffaa";
+                                        }
+                                    }
+                                }
+                                let newCellbpRes2 = newRow.insertCell();
+                                if (querysetsFromBackJson[i]["second_attempt_bpress_res"] === null) {
+                                    let textbpRes2 = document.createTextNode("");
+                                    newCellbpRes2.appendChild(textbpRes2);
+                                } else {
+                                    let textbpRes2 = document.createTextNode(querysetsFromBackJson[i]["second_attempt_bpress_res"]);
+                                    newCellbpRes2.appendChild(textbpRes2);
+                                    if (querysetsFromBackJson[i]["second_attempt_bpress_off"] !== null) {
+                                        if (querysetsFromBackJson[i]["second_attempt_bpress_off"] === "0" || querysetsFromBackJson[i]["second_attempt_bpress_off"] === "1") {
+                                            newCellbpRes2.style.backgroundColor = "#ffa0a0";
+                                        } else if (querysetsFromBackJson[i]["second_attempt_bpress_off"] === "2" || querysetsFromBackJson[i]["second_attempt_bpress_off"] === "3") {
+                                            newCellbpRes2.style.backgroundColor = "#aaffaa";
+                                        }
+                                    }
+                                }
+                                let newCellbpRes3 = newRow.insertCell();
+                                if (querysetsFromBackJson[i]["third_attempt_bpress_res"] === null) {
+                                    let textbpRes3 = document.createTextNode("");
+                                    newCellbpRes3.appendChild(textbpRes3);
+                                } else {
+                                    let textbpRes3 = document.createTextNode(querysetsFromBackJson[i]["third_attempt_bpress_res"]);
+                                    newCellbpRes3.appendChild(textbpRes3);
+                                    if (querysetsFromBackJson[i]["third_attempt_bpress_off"] !== null) {
+                                        if (querysetsFromBackJson[i]["third_attempt_bpress_off"] === "0" || querysetsFromBackJson[i]["third_attempt_bpress_off"] === "1") {
+                                            newCellbpRes3.style.backgroundColor = "#ffa0a0";
+                                        } else if (querysetsFromBackJson[i]["third_attempt_bpress_off"] === "2" || querysetsFromBackJson[i]["third_attempt_bpress_off"] === "3") {
+                                            newCellbpRes3.style.backgroundColor = "#aaffaa";
+                                        }
+                                    }
+                                }
+                                let newCelldlRes1 = newRow.insertCell();
+                                if (querysetsFromBackJson[i]["first_attempt_dlift_res"] === null) {
+                                    let textdlRes1 = document.createTextNode("");
+                                    newCelldlRes1.appendChild(textdlRes1);
+                                } else {
+                                    let textdlRes1 = document.createTextNode(querysetsFromBackJson[i]["first_attempt_dlift_res"]);
+                                    newCelldlRes1.appendChild(textdlRes1);
+                                    if (querysetsFromBackJson[i]["first_attempt_dlift_off"] !== null) {
+                                        if (querysetsFromBackJson[i]["first_attempt_dlift_off"] === "0" || querysetsFromBackJson[i]["first_attempt_dlift_off"] === "1") {
+                                            newCelldlRes1.style.backgroundColor = "#ffa0a0";
+                                        } else if (querysetsFromBackJson[i]["first_attempt_dlift_off"] === "2" || querysetsFromBackJson[i]["first_attempt_dlift_off"] === "3") {
+                                            newCelldlRes1.style.backgroundColor = "#aaffaa";
+                                        }
+                                    }
+                                }
+                                let newCelldlRes2 = newRow.insertCell();
+                                if (querysetsFromBackJson[i]["second_attempt_dlift_res"] === null) {
+                                    let textdlRes2 = document.createTextNode("");
+                                    newCelldlRes2.appendChild(textdlRes2);
+                                } else {
+                                    let textdlRes2 = document.createTextNode(querysetsFromBackJson[i]["second_attempt_dlift_res"]);
+                                    newCelldlRes2.appendChild(textdlRes2);
+                                    if (querysetsFromBackJson[i]["second_attempt_dlift_off"] !== null) {
+                                        if (querysetsFromBackJson[i]["second_attempt_dlift_off"] === "0" || querysetsFromBackJson[i]["second_attempt_dlift_off"] === "1") {
+                                            newCelldlRes2.style.backgroundColor = "#ffa0a0";
+                                        } else if (querysetsFromBackJson[i]["second_attempt_dlift_off"] === "2" || querysetsFromBackJson[i]["second_attempt_dlift_off"] === "3") {
+                                            newCelldlRes2.style.backgroundColor = "#aaffaa";
+                                        }
+                                    }
+                                }
+                                let newCelldlRes3 = newRow.insertCell();
+                                if (querysetsFromBackJson[i]["third_attempt_dlift_res"] === null) {
+                                    let textdlRes3 = document.createTextNode("");
+                                    newCelldlRes3.appendChild(textdlRes3);
+                                } else {
+                                    let textdlRes3 = document.createTextNode(querysetsFromBackJson[i]["third_attempt_dlift_res"]);
+                                    newCelldlRes3.appendChild(textdlRes3);
+                                    if (querysetsFromBackJson[i]["third_attempt_dlift_off"] !== null) {
+                                        if (querysetsFromBackJson[i]["third_attempt_dlift_off"] === "0" || querysetsFromBackJson[i]["third_attempt_dlift_off"] === "1") {
+                                            newCelldlRes3.style.backgroundColor = "#ffa0a0";
+                                        } else if (querysetsFromBackJson[i]["third_attempt_dlift_off"] === "2" || querysetsFromBackJson[i]["third_attempt_dlift_off"] === "3") {
+                                            newCelldlRes3.style.backgroundColor = "#aaffaa";
+                                        }
+                                    }
+                                }
+                                let newCellitSquat = newRow.insertCell();
+                                if (querysetsFromBackJson[i]["best_squat_res"] === null) {
+                                    let textitSquat = document.createTextNode("");
+                                    newCellitSquat.appendChild(textitSquat);
+                                } else {
+                                    let textitSquat = document.createTextNode(querysetsFromBackJson[i]["best_squat_res"]);
+                                    newCellitSquat.appendChild(textitSquat);
+                                }
+                                let newCellitBp = newRow.insertCell();
+                                if (querysetsFromBackJson[i]["best_bpress_res"] === null) {
+                                    let textitBp = document.createTextNode("");
+                                    newCellitBp.appendChild(textitBp);
+                                } else {
+                                    let textitBp = document.createTextNode(querysetsFromBackJson[i]["best_bpress_res"]);
+                                    newCellitBp.appendChild(textitBp);
+                                }
+                                let newCellititDl = newRow.insertCell();
+                                if (querysetsFromBackJson[i]["best_dlift_res"] === null) {
+                                    let textitDl = document.createTextNode("");
+                                    newCellititDl.appendChild(textitDl);
+                                } else {
+                                    let textitDl = document.createTextNode(querysetsFromBackJson[i]["best_dlift_res"]);
+                                    newCellititDl.appendChild(textitDl);
+                                }
+                                let newCellIt = newRow.insertCell();
+                                if (querysetsFromBackJson[i]["best_sum_res"] === null) {
+                                    let textIt = document.createTextNode("");
+                                    newCellIt.appendChild(textIt);
+                                } else {
+                                    let textIt = document.createTextNode(querysetsFromBackJson[i]["best_sum_res"]);
+                                    newCellIt.appendChild(textIt);
+                                }
+                            } else {
+                                let newCellsquatRes1 = newRow.insertCell();
+                                if (querysetsFromBackJson[i]["first_attempt_squat_res_ek"] === null) {
+                                    let textsquatRes1 = document.createTextNode("");
+                                    newCellsquatRes1.appendChild(textsquatRes1);
+                                } else {
+                                    let textsquatRes1 = document.createTextNode(querysetsFromBackJson[i]["first_attempt_squat_res_ek"]);
+                                    newCellsquatRes1.appendChild(textsquatRes1);
+                                    if (querysetsFromBackJson[i]["first_attempt_squat_off_ek"] !== null) {
+                                        if (querysetsFromBackJson[i]["first_attempt_squat_off_ek"] === "0" || querysetsFromBackJson[i]["first_attempt_squat_off_ek"] === "1") {
+                                            newCellsquatRes1.style.backgroundColor = "#ffa0a0";
+                                        } else if (querysetsFromBackJson[i]["first_attempt_squat_off_ek"] === "2" || querysetsFromBackJson[i]["first_attempt_squat_off_ek"] === "3") {
+                                            newCellsquatRes1.style.backgroundColor = "#aaffaa";
+                                        }
+                                    }
+                                }
+                                let newCellsquatRes2 = newRow.insertCell();
+                                if (querysetsFromBackJson[i]["second_attempt_squat_res_ek"] === null) {
+                                    let textsquatRes2 = document.createTextNode("");
+                                    newCellsquatRes2.appendChild(textsquatRes2);
+                                } else {
+                                    let textsquatRes2 = document.createTextNode(querysetsFromBackJson[i]["second_attempt_squat_res_ek"]);
+                                    newCellsquatRes2.appendChild(textsquatRes2);
+                                    if (querysetsFromBackJson[i]["second_attempt_squat_off_ek"] !== null) {
+                                        if (querysetsFromBackJson[i]["second_attempt_squat_off_ek"] === "0" || querysetsFromBackJson[i]["second_attempt_squat_off_ek"] === "1") {
+                                            newCellsquatRes2.style.backgroundColor = "#ffa0a0";
+                                        } else if (querysetsFromBackJson[i]["second_attempt_squat_off_ek"] === "2" || querysetsFromBackJson[i]["second_attempt_squat_off_ek"] === "3") {
+                                            newCellsquatRes2.style.backgroundColor = "#aaffaa";
+                                        }
+                                    }
+                                }
+                                let newCellsquatRes3 = newRow.insertCell();
+                                if (querysetsFromBackJson[i]["third_attempt_squat_res_ek"] === null) {
+                                    let textsquatRes3 = document.createTextNode("");
+                                    newCellsquatRes3.appendChild(textsquatRes3);
+                                } else {
+                                    let textsquatRes3 = document.createTextNode(querysetsFromBackJson[i]["third_attempt_squat_res_ek"]);
+                                    newCellsquatRes3.appendChild(textsquatRes3);
+                                    if (querysetsFromBackJson[i]["third_attempt_squat_off_ek"] !== null) {
+                                        if (querysetsFromBackJson[i]["third_attempt_squat_off_ek"] === "0" || querysetsFromBackJson[i]["third_attempt_squat_off_ek"] === "1") {
+                                            newCellsquatRes3.style.backgroundColor = "#ffa0a0";
+                                        } else if (querysetsFromBackJson[i]["third_attempt_squat_off_ek"] === "2" || querysetsFromBackJson[i]["third_attempt_squat_off_ek"] === "3") {
+                                            newCellsquatRes3.style.backgroundColor = "#aaffaa";
+                                        }
+                                    }
+                                }
+                                let newCellbpRes1 = newRow.insertCell();
+                                if (querysetsFromBackJson[i]["first_attempt_bpress_res_ek"] === null) {
+                                    let textbpRes1 = document.createTextNode("");
+                                    newCellbpRes1.appendChild(textbpRes1);
+                                } else {
+                                    let textbpRes1 = document.createTextNode(querysetsFromBackJson[i]["first_attempt_bpress_res_ek"]);
+                                    newCellbpRes1.appendChild(textbpRes1);
+                                    if (querysetsFromBackJson[i]["first_attempt_bpress_off_ek"] !== null) {
+                                        if (querysetsFromBackJson[i]["first_attempt_bpress_off_ek"] === "0" || querysetsFromBackJson[i]["first_attempt_bpress_off_ek"] === "1") {
+                                            newCellbpRes1.style.backgroundColor = "#ffa0a0";
+                                        } else if (querysetsFromBackJson[i]["first_attempt_bpress_off_ek"] === "2" || querysetsFromBackJson[i]["first_attempt_bpress_off_ek"] === "3") {
+                                            newCellbpRes1.style.backgroundColor = "#aaffaa";
+                                        }
+                                    }
+                                }
+                                let newCellbpRes2 = newRow.insertCell();
+                                if (querysetsFromBackJson[i]["second_attempt_bpress_res_ek"] === null) {
+                                    let textbpRes2 = document.createTextNode("");
+                                    newCellbpRes2.appendChild(textbpRes2);
+                                } else {
+                                    let textbpRes2 = document.createTextNode(querysetsFromBackJson[i]["second_attempt_bpress_res_ek"]);
+                                    newCellbpRes2.appendChild(textbpRes2);
+                                    if (querysetsFromBackJson[i]["second_attempt_bpress_off_ek"] !== null) {
+                                        if (querysetsFromBackJson[i]["second_attempt_bpress_off_ek"] === "0" || querysetsFromBackJson[i]["second_attempt_bpress_off_ek"] === "1") {
+                                            newCellbpRes2.style.backgroundColor = "#ffa0a0";
+                                        } else if (querysetsFromBackJson[i]["second_attempt_bpress_off_ek"] === "2" || querysetsFromBackJson[i]["second_attempt_bpress_off_ek"] === "3") {
+                                            newCellbpRes2.style.backgroundColor = "#aaffaa";
+                                        }
+                                    }
+                                }
+                                let newCellbpRes3 = newRow.insertCell();
+                                if (querysetsFromBackJson[i]["third_attempt_bpress_res_ek"] === null) {
+                                    let textbpRes3 = document.createTextNode("");
+                                    newCellbpRes3.appendChild(textbpRes3);
+                                } else {
+                                    let textbpRes3 = document.createTextNode(querysetsFromBackJson[i]["third_attempt_bpress_res_ek"]);
+                                    newCellbpRes3.appendChild(textbpRes3);
+                                    if (querysetsFromBackJson[i]["third_attempt_bpress_off_ek"] !== null) {
+                                        if (querysetsFromBackJson[i]["third_attempt_bpress_off_ek"] === "0" || querysetsFromBackJson[i]["third_attempt_bpress_off_ek"] === "1") {
+                                            newCellbpRes3.style.backgroundColor = "#ffa0a0";
+                                        } else if (querysetsFromBackJson[i]["third_attempt_bpress_off_ek"] === "2" || querysetsFromBackJson[i]["third_attempt_bpress_off_ek"] === "3") {
+                                            newCellbpRes3.style.backgroundColor = "#aaffaa";
+                                        }
+                                    }
+                                }
+                                let newCelldlRes1 = newRow.insertCell();
+                                if (querysetsFromBackJson[i]["first_attempt_dlift_res_ek"] === null) {
+                                    let textdlRes1 = document.createTextNode("");
+                                    newCelldlRes1.appendChild(textdlRes1);
+                                } else {
+                                    let textdlRes1 = document.createTextNode(querysetsFromBackJson[i]["first_attempt_dlift_res_ek"]);
+                                    newCelldlRes1.appendChild(textdlRes1);
+                                    if (querysetsFromBackJson[i]["first_attempt_dlift_off_ek"] !== null) {
+                                        if (querysetsFromBackJson[i]["first_attempt_dlift_off_ek"] === "0" || querysetsFromBackJson[i]["first_attempt_dlift_off_ek"] === "1") {
+                                            newCelldlRes1.style.backgroundColor = "#ffa0a0";
+                                        } else if (querysetsFromBackJson[i]["first_attempt_dlift_off_ek"] === "2" || querysetsFromBackJson[i]["first_attempt_dlift_off_ek"] === "3") {
+                                            newCelldlRes1.style.backgroundColor = "#aaffaa";
+                                        }
+                                    }
+                                }
+                                let newCelldlRes2 = newRow.insertCell();
+                                if (querysetsFromBackJson[i]["second_attempt_dlift_res_ek"] === null) {
+                                    let textdlRes2 = document.createTextNode("");
+                                    newCelldlRes2.appendChild(textdlRes2);
+                                } else {
+                                    let textdlRes2 = document.createTextNode(querysetsFromBackJson[i]["second_attempt_dlift_res_ek"]);
+                                    newCelldlRes2.appendChild(textdlRes2);
+                                    if (querysetsFromBackJson[i]["second_attempt_dlift_off_ek"] !== null) {
+                                        if (querysetsFromBackJson[i]["second_attempt_dlift_off_ek"] === "0" || querysetsFromBackJson[i]["second_attempt_dlift_off_ek"] === "1") {
+                                            newCelldlRes2.style.backgroundColor = "#ffa0a0";
+                                        } else if (querysetsFromBackJson[i]["second_attempt_dlift_off_ek"] === "2" || querysetsFromBackJson[i]["second_attempt_dlift_off_ek"] === "3") {
+                                            newCelldlRes2.style.backgroundColor = "#aaffaa";
+                                        }
+                                    }
+                                }
+                                let newCelldlRes3 = newRow.insertCell();
+                                if (querysetsFromBackJson[i]["third_attempt_dlift_res_ek"] === null) {
+                                    let textdlRes3 = document.createTextNode("");
+                                    newCelldlRes3.appendChild(textdlRes3);
+                                } else {
+                                    let textdlRes3 = document.createTextNode(querysetsFromBackJson[i]["third_attempt_dlift_res_ek"]);
+                                    newCelldlRes3.appendChild(textdlRes3);
+                                    if (querysetsFromBackJson[i]["third_attempt_dlift_off_ek"] !== null) {
+                                        if (querysetsFromBackJson[i]["third_attempt_dlift_off_ek"] === "0" || querysetsFromBackJson[i]["third_attempt_dlift_off_ek"] === "1") {
+                                            newCelldlRes3.style.backgroundColor = "#ffa0a0";
+                                        } else if (querysetsFromBackJson[i]["third_attempt_dlift_off_ek"] === "2" || querysetsFromBackJson[i]["third_attempt_dlift_off_ek"] === "3") {
+                                            newCelldlRes3.style.backgroundColor = "#aaffaa";
+                                        }
+                                    }
+                                }
+                                let newCellitSquat = newRow.insertCell();
+                                if (querysetsFromBackJson[i]["best_squat_res_ek"] === null) {
+                                    let textitSquat = document.createTextNode("");
+                                    newCellitSquat.appendChild(textitSquat);
+                                } else {
+                                    let textitSquat = document.createTextNode(querysetsFromBackJson[i]["best_squat_res_ek"]);
+                                    newCellitSquat.appendChild(textitSquat);
+                                }
+                                let newCellitBp = newRow.insertCell();
+                                if (querysetsFromBackJson[i]["best_bpress_res_ek"] === null) {
+                                    let textitBp = document.createTextNode("");
+                                    newCellitBp.appendChild(textitBp);
+                                } else {
+                                    let textitBp = document.createTextNode(querysetsFromBackJson[i]["best_bpress_res_ek"]);
+                                    newCellitBp.appendChild(textitBp);
+                                }
+                                let newCellititDl = newRow.insertCell();
+                                if (querysetsFromBackJson[i]["best_dlift_res_ek"] === null) {
+                                    let textitDl = document.createTextNode("");
+                                    newCellititDl.appendChild(textitDl);
+                                } else {
+                                    let textitDl = document.createTextNode(querysetsFromBackJson[i]["best_dlift_res_ek"]);
+                                    newCellititDl.appendChild(textitDl);
+                                }
+                                let newCellIt = newRow.insertCell();
+                                if (querysetsFromBackJson[i]["best_sum_res_ek"] === null) {
+                                    let textIt = document.createTextNode("");
+                                    newCellIt.appendChild(textIt);
+                                } else {
+                                    let textIt = document.createTextNode(querysetsFromBackJson[i]["best_sum_res_ek"]);
+                                    newCellIt.appendChild(textIt);
+                                }
                             }
-                            // console.log("got");
-                            // // massTable.style.height = "100vh";
-                            // console.log(getComputedStyle(massTable).fontSize)
-                            // function missFz() {
-                            //     // console.log(getComputedStyle(massTable).fontSize)
-                            //     // massTable.style.fontSize = parseFloat(getComputedStyle(massTable).fontSize) - 1 + "px"
-                            //     // console.log(getComputedStyle(massTable).fontSize)
-                            //     massTable.style.height = "100vh"
-                            // }
-                            // window.onresize = missFz()
                         }
+
+
+
+
+                        // if (querysetsFromBack !== JSON.parse(myxmlhttp.response).cur_flow_competitors_json) {
+                        //     querysetsFromBack = JSON.parse(myxmlhttp.response).cur_flow_competitors_json;
+                        //     let querysetsFromBackJson = JSON.parse(querysetsFromBack);
+                        //     while (massTable.rows.length > 1) {
+                        //         massTable.deleteRow(-1);
+                        //     }
+                        //     console.log(querysetsFromBackJson)
+                        //     // console.log(querysetsFromBackJson[0]["fields"])
+                        //     for (let i = 0; i < querysetsFromBackJson.length; i ++) {
+                        //         let newRow = massTable.insertRow();
+                        //         let newCellFi = newRow.insertCell();
+                        //         let textFi = document.createTextNode(`${querysetsFromBackJson[i]["fields"]["competitor"][0]} ${querysetsFromBackJson[i]["fields"]["competitor"][1]}`);
+                        //         newCellFi.appendChild(textFi);
+                        //         let newCellWeight = newRow.insertCell();
+                        //         let textWeight = document.createTextNode(querysetsFromBackJson[i]["fields"]["competitor_weight"]);
+                        //         newCellWeight.appendChild(textWeight);
+                        //         let compSTypes = querysetsFromBackJson[i]["fields"]["competitor"][2];
+                        //         if (compSTypes.includes("Троеборье классическое") || compSTypes.includes("Жим лёжа (без экип.)")) {
+                        //             let newCellsquatRes1 = newRow.insertCell();
+                        //             if (querysetsFromBackJson[i]["fields"]["first_attempt_squat_res"] === null) {
+                        //                 let textsquatRes1 = document.createTextNode("");
+                        //                 newCellsquatRes1.appendChild(textsquatRes1);
+                        //             } else {
+                        //                 let textsquatRes1 = document.createTextNode(querysetsFromBackJson[i]["fields"]["first_attempt_squat_res"]);
+                        //                 newCellsquatRes1.appendChild(textsquatRes1);
+                        //                 if (querysetsFromBackJson[i]["fields"]["first_attempt_squat_off"] !== null) {
+                        //                     if (querysetsFromBackJson[i]["fields"]["first_attempt_squat_off"] === "0" || querysetsFromBackJson[i]["fields"]["first_attempt_squat_off"] === "1") {
+                        //                         newCellsquatRes1.style.backgroundColor = "#ffa0a0";
+                        //                     } else if (querysetsFromBackJson[i]["fields"]["first_attempt_squat_off"] === "2" || querysetsFromBackJson[i]["fields"]["first_attempt_squat_off"] === "3") {
+                        //                         newCellsquatRes1.style.backgroundColor = "#aaffaa";
+                        //                     }
+                        //                 }
+                        //             }
+                        //             let newCellsquatRes2 = newRow.insertCell();
+                        //             if (querysetsFromBackJson[i]["fields"]["second_attempt_squat_res"] === null) {
+                        //                 let textsquatRes2 = document.createTextNode("");
+                        //                 newCellsquatRes2.appendChild(textsquatRes2);
+                        //             } else {
+                        //                 let textsquatRes2 = document.createTextNode(querysetsFromBackJson[i]["fields"]["second_attempt_squat_res"]);
+                        //                 newCellsquatRes2.appendChild(textsquatRes2);
+                        //                 if (querysetsFromBackJson[i]["fields"]["second_attempt_squat_off"] !== null) {
+                        //                     if (querysetsFromBackJson[i]["fields"]["second_attempt_squat_off"] === "0" || querysetsFromBackJson[i]["fields"]["second_attempt_squat_off"] === "1") {
+                        //                         newCellsquatRes2.style.backgroundColor = "#ffa0a0";
+                        //                     } else if (querysetsFromBackJson[i]["fields"]["second_attempt_squat_off"] === "2" || querysetsFromBackJson[i]["fields"]["second_attempt_squat_off"] === "3") {
+                        //                         newCellsquatRes2.style.backgroundColor = "#aaffaa";
+                        //                     }
+                        //                 }
+                        //             }
+                        //             let newCellsquatRes3 = newRow.insertCell();
+                        //             if (querysetsFromBackJson[i]["fields"]["third_attempt_squat_res"] === null) {
+                        //                 let textsquatRes3 = document.createTextNode("");
+                        //                 newCellsquatRes3.appendChild(textsquatRes3);
+                        //             } else {
+                        //                 let textsquatRes3 = document.createTextNode(querysetsFromBackJson[i]["fields"]["third_attempt_squat_res"]);
+                        //                 newCellsquatRes3.appendChild(textsquatRes3);
+                        //                 if (querysetsFromBackJson[i]["fields"]["third_attempt_squat_off"] !== null) {
+                        //                     if (querysetsFromBackJson[i]["fields"]["third_attempt_squat_off"] === "0" || querysetsFromBackJson[i]["fields"]["third_attempt_squat_off"] === "1") {
+                        //                         newCellsquatRes3.style.backgroundColor = "#ffa0a0";
+                        //                     } else if (querysetsFromBackJson[i]["fields"]["third_attempt_squat_off"] === "2" || querysetsFromBackJson[i]["fields"]["third_attempt_squat_off"] === "3") {
+                        //                         newCellsquatRes3.style.backgroundColor = "#aaffaa";
+                        //                     }
+                        //                 }
+                        //             }
+                        //             let newCellbpRes1 = newRow.insertCell();
+                        //             if (querysetsFromBackJson[i]["fields"]["first_attempt_bpress_res"] === null) {
+                        //                 let textbpRes1 = document.createTextNode("");
+                        //                 newCellbpRes1.appendChild(textbpRes1);
+                        //             } else {
+                        //                 let textbpRes1 = document.createTextNode(querysetsFromBackJson[i]["fields"]["first_attempt_bpress_res"]);
+                        //                 newCellbpRes1.appendChild(textbpRes1);
+                        //                 if (querysetsFromBackJson[i]["fields"]["first_attempt_bpress_off"] !== null) {
+                        //                     if (querysetsFromBackJson[i]["fields"]["first_attempt_bpress_off"] === "0" || querysetsFromBackJson[i]["fields"]["first_attempt_bpress_off"] === "1") {
+                        //                         newCellbpRes1.style.backgroundColor = "#ffa0a0";
+                        //                     } else if (querysetsFromBackJson[i]["fields"]["first_attempt_bpress_off"] === "2" || querysetsFromBackJson[i]["fields"]["first_attempt_bpress_off"] === "3") {
+                        //                         newCellbpRes1.style.backgroundColor = "#aaffaa";
+                        //                     }
+                        //                 }
+                        //             }
+                        //             let newCellbpRes2 = newRow.insertCell();
+                        //             if (querysetsFromBackJson[i]["fields"]["second_attempt_bpress_res"] === null) {
+                        //                 let textbpRes2 = document.createTextNode("");
+                        //                 newCellbpRes2.appendChild(textbpRes2);
+                        //             } else {
+                        //                 let textbpRes2 = document.createTextNode(querysetsFromBackJson[i]["fields"]["second_attempt_bpress_res"]);
+                        //                 newCellbpRes2.appendChild(textbpRes2);
+                        //                 if (querysetsFromBackJson[i]["fields"]["second_attempt_bpress_off"] !== null) {
+                        //                     if (querysetsFromBackJson[i]["fields"]["second_attempt_bpress_off"] === "0" || querysetsFromBackJson[i]["fields"]["second_attempt_bpress_off"] === "1") {
+                        //                         newCellbpRes2.style.backgroundColor = "#ffa0a0";
+                        //                     } else if (querysetsFromBackJson[i]["fields"]["second_attempt_bpress_off"] === "2" || querysetsFromBackJson[i]["fields"]["second_attempt_bpress_off"] === "3") {
+                        //                         newCellbpRes2.style.backgroundColor = "#aaffaa";
+                        //                     }
+                        //                 }
+                        //             }
+                        //             let newCellbpRes3 = newRow.insertCell();
+                        //             if (querysetsFromBackJson[i]["fields"]["third_attempt_bpress_res"] === null) {
+                        //                 let textbpRes3 = document.createTextNode("");
+                        //                 newCellbpRes3.appendChild(textbpRes3);
+                        //             } else {
+                        //                 let textbpRes3 = document.createTextNode(querysetsFromBackJson[i]["fields"]["third_attempt_bpress_res"]);
+                        //                 newCellbpRes3.appendChild(textbpRes3);
+                        //                 if (querysetsFromBackJson[i]["fields"]["third_attempt_bpress_off"] !== null) {
+                        //                     if (querysetsFromBackJson[i]["fields"]["third_attempt_bpress_off"] === "0" || querysetsFromBackJson[i]["fields"]["third_attempt_bpress_off"] === "1") {
+                        //                         newCellbpRes3.style.backgroundColor = "#ffa0a0";
+                        //                     } else if (querysetsFromBackJson[i]["fields"]["third_attempt_bpress_off"] === "2" || querysetsFromBackJson[i]["fields"]["third_attempt_bpress_off"] === "3") {
+                        //                         newCellbpRes3.style.backgroundColor = "#aaffaa";
+                        //                     }
+                        //                 }
+                        //             }
+                        //             let newCelldlRes1 = newRow.insertCell();
+                        //             if (querysetsFromBackJson[i]["fields"]["first_attempt_dlift_res"] === null) {
+                        //                 let textdlRes1 = document.createTextNode("");
+                        //                 newCelldlRes1.appendChild(textdlRes1);
+                        //             } else {
+                        //                 let textdlRes1 = document.createTextNode(querysetsFromBackJson[i]["fields"]["first_attempt_dlift_res"]);
+                        //                 newCelldlRes1.appendChild(textdlRes1);
+                        //                 if (querysetsFromBackJson[i]["fields"]["first_attempt_dlift_off"] !== null) {
+                        //                     if (querysetsFromBackJson[i]["fields"]["first_attempt_dlift_off"] === "0" || querysetsFromBackJson[i]["fields"]["first_attempt_dlift_off"] === "1") {
+                        //                         newCelldlRes1.style.backgroundColor = "#ffa0a0";
+                        //                     } else if (querysetsFromBackJson[i]["fields"]["first_attempt_dlift_off"] === "2" || querysetsFromBackJson[i]["fields"]["first_attempt_dlift_off"] === "3") {
+                        //                         newCelldlRes1.style.backgroundColor = "#aaffaa";
+                        //                     }
+                        //                 }
+                        //             }
+                        //             let newCelldlRes2 = newRow.insertCell();
+                        //             if (querysetsFromBackJson[i]["fields"]["second_attempt_dlift_res"] === null) {
+                        //                 let textdlRes2 = document.createTextNode("");
+                        //                 newCelldlRes2.appendChild(textdlRes2);
+                        //             } else {
+                        //                 let textdlRes2 = document.createTextNode(querysetsFromBackJson[i]["fields"]["second_attempt_dlift_res"]);
+                        //                 newCelldlRes2.appendChild(textdlRes2);
+                        //                 if (querysetsFromBackJson[i]["fields"]["second_attempt_dlift_off"] !== null) {
+                        //                     if (querysetsFromBackJson[i]["fields"]["second_attempt_dlift_off"] === "0" || querysetsFromBackJson[i]["fields"]["second_attempt_dlift_off"] === "1") {
+                        //                         newCelldlRes2.style.backgroundColor = "#ffa0a0";
+                        //                     } else if (querysetsFromBackJson[i]["fields"]["second_attempt_dlift_off"] === "2" || querysetsFromBackJson[i]["fields"]["second_attempt_dlift_off"] === "3") {
+                        //                         newCelldlRes2.style.backgroundColor = "#aaffaa";
+                        //                     }
+                        //                 }
+                        //             }
+                        //             let newCelldlRes3 = newRow.insertCell();
+                        //             if (querysetsFromBackJson[i]["fields"]["third_attempt_dlift_res"] === null) {
+                        //                 let textdlRes3 = document.createTextNode("");
+                        //                 newCelldlRes3.appendChild(textdlRes3);
+                        //             } else {
+                        //                 let textdlRes3 = document.createTextNode(querysetsFromBackJson[i]["fields"]["third_attempt_dlift_res"]);
+                        //                 newCelldlRes3.appendChild(textdlRes3);
+                        //                 if (querysetsFromBackJson[i]["fields"]["third_attempt_dlift_off"] !== null) {
+                        //                     if (querysetsFromBackJson[i]["fields"]["third_attempt_dlift_off"] === "0" || querysetsFromBackJson[i]["fields"]["third_attempt_dlift_off"] === "1") {
+                        //                         newCelldlRes3.style.backgroundColor = "#ffa0a0";
+                        //                     } else if (querysetsFromBackJson[i]["fields"]["third_attempt_dlift_off"] === "2" || querysetsFromBackJson[i]["fields"]["third_attempt_dlift_off"] === "3") {
+                        //                         newCelldlRes3.style.backgroundColor = "#aaffaa";
+                        //                     }
+                        //                 }
+                        //             }
+                        //             let newCellitSquat = newRow.insertCell();
+                        //             if (querysetsFromBackJson[i]["fields"]["best_squat_res"] === null) {
+                        //                 let textitSquat = document.createTextNode("");
+                        //                 newCellitSquat.appendChild(textitSquat);
+                        //             } else {
+                        //                 let textitSquat = document.createTextNode(querysetsFromBackJson[i]["fields"]["best_squat_res"]);
+                        //                 newCellitSquat.appendChild(textitSquat);
+                        //             }
+                        //             let newCellitBp = newRow.insertCell();
+                        //             if (querysetsFromBackJson[i]["fields"]["best_bpress_res"] === null) {
+                        //                 let textitBp = document.createTextNode("");
+                        //                 newCellitBp.appendChild(textitBp);
+                        //             } else {
+                        //                 let textitBp = document.createTextNode(querysetsFromBackJson[i]["fields"]["best_bpress_res"]);
+                        //                 newCellitBp.appendChild(textitBp);
+                        //             }
+                        //             let newCellititDl = newRow.insertCell();
+                        //             if (querysetsFromBackJson[i]["fields"]["best_dlift_res"] === null) {
+                        //                 let textitDl = document.createTextNode("");
+                        //                 newCellititDl.appendChild(textitDl);
+                        //             } else {
+                        //                 let textitDl = document.createTextNode(querysetsFromBackJson[i]["fields"]["best_dlift_res"]);
+                        //                 newCellititDl.appendChild(textitDl);
+                        //             }
+                        //             let newCellIt = newRow.insertCell();
+                        //             if (querysetsFromBackJson[i]["fields"]["best_sum_res"] === null) {
+                        //                 let textIt = document.createTextNode("");
+                        //                 newCellIt.appendChild(textIt);
+                        //             } else {
+                        //                 let textIt = document.createTextNode(querysetsFromBackJson[i]["fields"]["best_sum_res"]);
+                        //                 newCellIt.appendChild(textIt);
+                        //             }
+                        //         } else {
+                        //             let newCellsquatRes1 = newRow.insertCell();
+                        //             if (querysetsFromBackJson[i]["fields"]["first_attempt_squat_res_ek"] === null) {
+                        //                 let textsquatRes1 = document.createTextNode("");
+                        //                 newCellsquatRes1.appendChild(textsquatRes1);
+                        //             } else {
+                        //                 let textsquatRes1 = document.createTextNode(querysetsFromBackJson[i]["fields"]["first_attempt_squat_res_ek"]);
+                        //                 newCellsquatRes1.appendChild(textsquatRes1);
+                        //                 if (querysetsFromBackJson[i]["fields"]["first_attempt_squat_off_ek"] !== null) {
+                        //                     if (querysetsFromBackJson[i]["fields"]["first_attempt_squat_off_ek"] === "0" || querysetsFromBackJson[i]["fields"]["first_attempt_squat_off_ek"] === "1") {
+                        //                         newCellsquatRes1.style.backgroundColor = "#ffa0a0";
+                        //                     } else if (querysetsFromBackJson[i]["fields"]["first_attempt_squat_off_ek"] === "2" || querysetsFromBackJson[i]["fields"]["first_attempt_squat_off_ek"] === "3") {
+                        //                         newCellsquatRes1.style.backgroundColor = "#aaffaa";
+                        //                     }
+                        //                 }
+                        //             }
+                        //             let newCellsquatRes2 = newRow.insertCell();
+                        //             if (querysetsFromBackJson[i]["fields"]["second_attempt_squat_res_ek"] === null) {
+                        //                 let textsquatRes2 = document.createTextNode("");
+                        //                 newCellsquatRes2.appendChild(textsquatRes2);
+                        //             } else {
+                        //                 let textsquatRes2 = document.createTextNode(querysetsFromBackJson[i]["fields"]["second_attempt_squat_res_ek"]);
+                        //                 newCellsquatRes2.appendChild(textsquatRes2);
+                        //                 if (querysetsFromBackJson[i]["fields"]["second_attempt_squat_off_ek"] !== null) {
+                        //                     if (querysetsFromBackJson[i]["fields"]["second_attempt_squat_off_ek"] === "0" || querysetsFromBackJson[i]["fields"]["second_attempt_squat_off_ek"] === "1") {
+                        //                         newCellsquatRes2.style.backgroundColor = "#ffa0a0";
+                        //                     } else if (querysetsFromBackJson[i]["fields"]["second_attempt_squat_off_ek"] === "2" || querysetsFromBackJson[i]["fields"]["second_attempt_squat_off_ek"] === "3") {
+                        //                         newCellsquatRes2.style.backgroundColor = "#aaffaa";
+                        //                     }
+                        //                 }
+                        //             }
+                        //             let newCellsquatRes3 = newRow.insertCell();
+                        //             if (querysetsFromBackJson[i]["fields"]["third_attempt_squat_res_ek"] === null) {
+                        //                 let textsquatRes3 = document.createTextNode("");
+                        //                 newCellsquatRes3.appendChild(textsquatRes3);
+                        //             } else {
+                        //                 let textsquatRes3 = document.createTextNode(querysetsFromBackJson[i]["fields"]["third_attempt_squat_res_ek"]);
+                        //                 newCellsquatRes3.appendChild(textsquatRes3);
+                        //                 if (querysetsFromBackJson[i]["fields"]["third_attempt_squat_off_ek"] !== null) {
+                        //                     if (querysetsFromBackJson[i]["fields"]["third_attempt_squat_off_ek"] === "0" || querysetsFromBackJson[i]["fields"]["third_attempt_squat_off_ek"] === "1") {
+                        //                         newCellsquatRes3.style.backgroundColor = "#ffa0a0";
+                        //                     } else if (querysetsFromBackJson[i]["fields"]["third_attempt_squat_off_ek"] === "2" || querysetsFromBackJson[i]["fields"]["third_attempt_squat_off_ek"] === "3") {
+                        //                         newCellsquatRes3.style.backgroundColor = "#aaffaa";
+                        //                     }
+                        //                 }
+                        //             }
+                        //             let newCellbpRes1 = newRow.insertCell();
+                        //             if (querysetsFromBackJson[i]["fields"]["first_attempt_bpress_res_ek"] === null) {
+                        //                 let textbpRes1 = document.createTextNode("");
+                        //                 newCellbpRes1.appendChild(textbpRes1);
+                        //             } else {
+                        //                 let textbpRes1 = document.createTextNode(querysetsFromBackJson[i]["fields"]["first_attempt_bpress_res_ek"]);
+                        //                 newCellbpRes1.appendChild(textbpRes1);
+                        //                 if (querysetsFromBackJson[i]["fields"]["first_attempt_bpress_off_ek"] !== null) {
+                        //                     if (querysetsFromBackJson[i]["fields"]["first_attempt_bpress_off_ek"] === "0" || querysetsFromBackJson[i]["fields"]["first_attempt_bpress_off_ek"] === "1") {
+                        //                         newCellbpRes1.style.backgroundColor = "#ffa0a0";
+                        //                     } else if (querysetsFromBackJson[i]["fields"]["first_attempt_bpress_off_ek"] === "2" || querysetsFromBackJson[i]["fields"]["first_attempt_bpress_off_ek"] === "3") {
+                        //                         newCellbpRes1.style.backgroundColor = "#aaffaa";
+                        //                     }
+                        //                 }
+                        //             }
+                        //             let newCellbpRes2 = newRow.insertCell();
+                        //             if (querysetsFromBackJson[i]["fields"]["second_attempt_bpress_res_ek"] === null) {
+                        //                 let textbpRes2 = document.createTextNode("");
+                        //                 newCellbpRes2.appendChild(textbpRes2);
+                        //             } else {
+                        //                 let textbpRes2 = document.createTextNode(querysetsFromBackJson[i]["fields"]["second_attempt_bpress_res_ek"]);
+                        //                 newCellbpRes2.appendChild(textbpRes2);
+                        //                 if (querysetsFromBackJson[i]["fields"]["second_attempt_bpress_off_ek"] !== null) {
+                        //                     if (querysetsFromBackJson[i]["fields"]["second_attempt_bpress_off_ek"] === "0" || querysetsFromBackJson[i]["fields"]["second_attempt_bpress_off_ek"] === "1") {
+                        //                         newCellbpRes2.style.backgroundColor = "#ffa0a0";
+                        //                     } else if (querysetsFromBackJson[i]["fields"]["second_attempt_bpress_off_ek"] === "2" || querysetsFromBackJson[i]["fields"]["second_attempt_bpress_off_ek"] === "3") {
+                        //                         newCellbpRes2.style.backgroundColor = "#aaffaa";
+                        //                     }
+                        //                 }
+                        //             }
+                        //             let newCellbpRes3 = newRow.insertCell();
+                        //             if (querysetsFromBackJson[i]["fields"]["third_attempt_bpress_res_ek"] === null) {
+                        //                 let textbpRes3 = document.createTextNode("");
+                        //                 newCellbpRes3.appendChild(textbpRes3);
+                        //             } else {
+                        //                 let textbpRes3 = document.createTextNode(querysetsFromBackJson[i]["fields"]["third_attempt_bpress_res_ek"]);
+                        //                 newCellbpRes3.appendChild(textbpRes3);
+                        //                 if (querysetsFromBackJson[i]["fields"]["third_attempt_bpress_off_ek"] !== null) {
+                        //                     if (querysetsFromBackJson[i]["fields"]["third_attempt_bpress_off_ek"] === "0" || querysetsFromBackJson[i]["fields"]["third_attempt_bpress_off_ek"] === "1") {
+                        //                         newCellbpRes3.style.backgroundColor = "#ffa0a0";
+                        //                     } else if (querysetsFromBackJson[i]["fields"]["third_attempt_bpress_off_ek"] === "2" || querysetsFromBackJson[i]["fields"]["third_attempt_bpress_off_ek"] === "3") {
+                        //                         newCellbpRes3.style.backgroundColor = "#aaffaa";
+                        //                     }
+                        //                 }
+                        //             }
+                        //             let newCelldlRes1 = newRow.insertCell();
+                        //             if (querysetsFromBackJson[i]["fields"]["first_attempt_dlift_res_ek"] === null) {
+                        //                 let textdlRes1 = document.createTextNode("");
+                        //                 newCelldlRes1.appendChild(textdlRes1);
+                        //             } else {
+                        //                 let textdlRes1 = document.createTextNode(querysetsFromBackJson[i]["fields"]["first_attempt_dlift_res_ek"]);
+                        //                 newCelldlRes1.appendChild(textdlRes1);
+                        //                 if (querysetsFromBackJson[i]["fields"]["first_attempt_dlift_off_ek"] !== null) {
+                        //                     if (querysetsFromBackJson[i]["fields"]["first_attempt_dlift_off_ek"] === "0" || querysetsFromBackJson[i]["fields"]["first_attempt_dlift_off_ek"] === "1") {
+                        //                         newCelldlRes1.style.backgroundColor = "#ffa0a0";
+                        //                     } else if (querysetsFromBackJson[i]["fields"]["first_attempt_dlift_off_ek"] === "2" || querysetsFromBackJson[i]["fields"]["first_attempt_dlift_off_ek"] === "3") {
+                        //                         newCelldlRes1.style.backgroundColor = "#aaffaa";
+                        //                     }
+                        //                 }
+                        //             }
+                        //             let newCelldlRes2 = newRow.insertCell();
+                        //             if (querysetsFromBackJson[i]["fields"]["second_attempt_dlift_res_ek"] === null) {
+                        //                 let textdlRes2 = document.createTextNode("");
+                        //                 newCelldlRes2.appendChild(textdlRes2);
+                        //             } else {
+                        //                 let textdlRes2 = document.createTextNode(querysetsFromBackJson[i]["fields"]["second_attempt_dlift_res_ek"]);
+                        //                 newCelldlRes2.appendChild(textdlRes2);
+                        //                 if (querysetsFromBackJson[i]["fields"]["second_attempt_dlift_off_ek"] !== null) {
+                        //                     if (querysetsFromBackJson[i]["fields"]["second_attempt_dlift_off_ek"] === "0" || querysetsFromBackJson[i]["fields"]["second_attempt_dlift_off_ek"] === "1") {
+                        //                         newCelldlRes2.style.backgroundColor = "#ffa0a0";
+                        //                     } else if (querysetsFromBackJson[i]["fields"]["second_attempt_dlift_off_ek"] === "2" || querysetsFromBackJson[i]["fields"]["second_attempt_dlift_off_ek"] === "3") {
+                        //                         newCelldlRes2.style.backgroundColor = "#aaffaa";
+                        //                     }
+                        //                 }
+                        //             }
+                        //             let newCelldlRes3 = newRow.insertCell();
+                        //             if (querysetsFromBackJson[i]["fields"]["third_attempt_dlift_res_ek"] === null) {
+                        //                 let textdlRes3 = document.createTextNode("");
+                        //                 newCelldlRes3.appendChild(textdlRes3);
+                        //             } else {
+                        //                 let textdlRes3 = document.createTextNode(querysetsFromBackJson[i]["fields"]["third_attempt_dlift_res_ek"]);
+                        //                 newCelldlRes3.appendChild(textdlRes3);
+                        //                 if (querysetsFromBackJson[i]["fields"]["third_attempt_dlift_off_ek"] !== null) {
+                        //                     if (querysetsFromBackJson[i]["fields"]["third_attempt_dlift_off_ek"] === "0" || querysetsFromBackJson[i]["fields"]["third_attempt_dlift_off_ek"] === "1") {
+                        //                         newCelldlRes3.style.backgroundColor = "#ffa0a0";
+                        //                     } else if (querysetsFromBackJson[i]["fields"]["third_attempt_dlift_off_ek"] === "2" || querysetsFromBackJson[i]["fields"]["third_attempt_dlift_off_ek"] === "3") {
+                        //                         newCelldlRes3.style.backgroundColor = "#aaffaa";
+                        //                     }
+                        //                 }
+                        //             }
+                        //             let newCellitSquat = newRow.insertCell();
+                        //             if (querysetsFromBackJson[i]["fields"]["best_squat_res_ek"] === null) {
+                        //                 let textitSquat = document.createTextNode("");
+                        //                 newCellitSquat.appendChild(textitSquat);
+                        //             } else {
+                        //                 let textitSquat = document.createTextNode(querysetsFromBackJson[i]["fields"]["best_squat_res_ek"]);
+                        //                 newCellitSquat.appendChild(textitSquat);
+                        //             }
+                        //             let newCellitBp = newRow.insertCell();
+                        //             if (querysetsFromBackJson[i]["fields"]["best_bpress_res_ek"] === null) {
+                        //                 let textitBp = document.createTextNode("");
+                        //                 newCellitBp.appendChild(textitBp);
+                        //             } else {
+                        //                 let textitBp = document.createTextNode(querysetsFromBackJson[i]["fields"]["best_bpress_res_ek"]);
+                        //                 newCellitBp.appendChild(textitBp);
+                        //             }
+                        //             let newCellititDl = newRow.insertCell();
+                        //             if (querysetsFromBackJson[i]["fields"]["best_dlift_res_ek"] === null) {
+                        //                 let textitDl = document.createTextNode("");
+                        //                 newCellititDl.appendChild(textitDl);
+                        //             } else {
+                        //                 let textitDl = document.createTextNode(querysetsFromBackJson[i]["fields"]["best_dlift_res_ek"]);
+                        //                 newCellititDl.appendChild(textitDl);
+                        //             }
+                        //             let newCellIt = newRow.insertCell();
+                        //             if (querysetsFromBackJson[i]["fields"]["best_sum_res_ek"] === null) {
+                        //                 let textIt = document.createTextNode("");
+                        //                 newCellIt.appendChild(textIt);
+                        //             } else {
+                        //                 let textIt = document.createTextNode(querysetsFromBackJson[i]["fields"]["best_sum_res_ek"]);
+                        //                 newCellIt.appendChild(textIt);
+                        //             }
+                        //         }
+                        //     }
+                        // }
                     }
 
+                    // if (JSON.parse(myxmlhttp.response).cur_flow_competitors_json) {
+                    //     if (querysetsFromBack !== JSON.parse(myxmlhttp.response).cur_flow_competitors_json) {
+                    //         querysetsFromBack = JSON.parse(myxmlhttp.response).cur_flow_competitors_json;
+                    //         let querysetsFromBackJson = JSON.parse(querysetsFromBack);
+                    //         while (massTable.rows.length > 1) {
+                    //             massTable.deleteRow(-1);
+                    //         }
+                    //         console.log(querysetsFromBackJson)
+                    //         for (let i = 0; i < querysetsFromBackJson.length; i ++) {
+                    //             let newRow = massTable.insertRow();
+                    //             let newCellFi = newRow.insertCell();
+                    //             let textFi = document.createTextNode(`${querysetsFromBackJson[i]["fields"]["competitor"][0]} ${querysetsFromBackJson[i]["fields"]["competitor"][1]}`);
+                    //             newCellFi.appendChild(textFi);
+                    //             let newCellWeight = newRow.insertCell();
+                    //             let textWeight = document.createTextNode(querysetsFromBackJson[i]["fields"]["competitor_weight"]);
+                    //             newCellWeight.appendChild(textWeight);
+                    //             let compSTypes = querysetsFromBackJson[i]["fields"]["competitor"][2];
+                    //             if (compSTypes.includes("Троеборье классическое") || compSTypes.includes("Жим лёжа (без экип.)")) {
+                    //                 let newCellsquatRes1 = newRow.insertCell();
+                    //                 if (querysetsFromBackJson[i]["fields"]["first_attempt_squat_res"] === null) {
+                    //                     let textsquatRes1 = document.createTextNode("");
+                    //                     newCellsquatRes1.appendChild(textsquatRes1);
+                    //                 } else {
+                    //                     let textsquatRes1 = document.createTextNode(querysetsFromBackJson[i]["fields"]["first_attempt_squat_res"]);
+                    //                     newCellsquatRes1.appendChild(textsquatRes1);
+                    //                     if (querysetsFromBackJson[i]["fields"]["first_attempt_squat_off"] !== null) {
+                    //                         if (querysetsFromBackJson[i]["fields"]["first_attempt_squat_off"] === "0" || querysetsFromBackJson[i]["fields"]["first_attempt_squat_off"] === "1") {
+                    //                             newCellsquatRes1.style.backgroundColor = "#ffa0a0";
+                    //                         } else if (querysetsFromBackJson[i]["fields"]["first_attempt_squat_off"] === "2" || querysetsFromBackJson[i]["fields"]["first_attempt_squat_off"] === "3") {
+                    //                             newCellsquatRes1.style.backgroundColor = "#aaffaa";
+                    //                         }
+                    //                     }
+                    //                 }
+                    //                 let newCellsquatRes2 = newRow.insertCell();
+                    //                 if (querysetsFromBackJson[i]["fields"]["second_attempt_squat_res"] === null) {
+                    //                     let textsquatRes2 = document.createTextNode("");
+                    //                     newCellsquatRes2.appendChild(textsquatRes2);
+                    //                 } else {
+                    //                     let textsquatRes2 = document.createTextNode(querysetsFromBackJson[i]["fields"]["second_attempt_squat_res"]);
+                    //                     newCellsquatRes2.appendChild(textsquatRes2);
+                    //                     if (querysetsFromBackJson[i]["fields"]["second_attempt_squat_off"] !== null) {
+                    //                         if (querysetsFromBackJson[i]["fields"]["second_attempt_squat_off"] === "0" || querysetsFromBackJson[i]["fields"]["second_attempt_squat_off"] === "1") {
+                    //                             newCellsquatRes2.style.backgroundColor = "#ffa0a0";
+                    //                         } else if (querysetsFromBackJson[i]["fields"]["second_attempt_squat_off"] === "2" || querysetsFromBackJson[i]["fields"]["second_attempt_squat_off"] === "3") {
+                    //                             newCellsquatRes2.style.backgroundColor = "#aaffaa";
+                    //                         }
+                    //                     }
+                    //                 }
+                    //                 let newCellsquatRes3 = newRow.insertCell();
+                    //                 if (querysetsFromBackJson[i]["fields"]["third_attempt_squat_res"] === null) {
+                    //                     let textsquatRes3 = document.createTextNode("");
+                    //                     newCellsquatRes3.appendChild(textsquatRes3);
+                    //                 } else {
+                    //                     let textsquatRes3 = document.createTextNode(querysetsFromBackJson[i]["fields"]["third_attempt_squat_res"]);
+                    //                     newCellsquatRes3.appendChild(textsquatRes3);
+                    //                     if (querysetsFromBackJson[i]["fields"]["third_attempt_squat_off"] !== null) {
+                    //                         if (querysetsFromBackJson[i]["fields"]["third_attempt_squat_off"] === "0" || querysetsFromBackJson[i]["fields"]["third_attempt_squat_off"] === "1") {
+                    //                             newCellsquatRes3.style.backgroundColor = "#ffa0a0";
+                    //                         } else if (querysetsFromBackJson[i]["fields"]["third_attempt_squat_off"] === "2" || querysetsFromBackJson[i]["fields"]["third_attempt_squat_off"] === "3") {
+                    //                             newCellsquatRes3.style.backgroundColor = "#aaffaa";
+                    //                         }
+                    //                     }
+                    //                 }
+                    //                 let newCellbpRes1 = newRow.insertCell();
+                    //                 if (querysetsFromBackJson[i]["fields"]["first_attempt_bpress_res"] === null) {
+                    //                     let textbpRes1 = document.createTextNode("");
+                    //                     newCellbpRes1.appendChild(textbpRes1);
+                    //                 } else {
+                    //                     let textbpRes1 = document.createTextNode(querysetsFromBackJson[i]["fields"]["first_attempt_bpress_res"]);
+                    //                     newCellbpRes1.appendChild(textbpRes1);
+                    //                     if (querysetsFromBackJson[i]["fields"]["first_attempt_bpress_off"] !== null) {
+                    //                         if (querysetsFromBackJson[i]["fields"]["first_attempt_bpress_off"] === "0" || querysetsFromBackJson[i]["fields"]["first_attempt_bpress_off"] === "1") {
+                    //                             newCellbpRes1.style.backgroundColor = "#ffa0a0";
+                    //                         } else if (querysetsFromBackJson[i]["fields"]["first_attempt_bpress_off"] === "2" || querysetsFromBackJson[i]["fields"]["first_attempt_bpress_off"] === "3") {
+                    //                             newCellbpRes1.style.backgroundColor = "#aaffaa";
+                    //                         }
+                    //                     }
+                    //                 }
+                    //                 let newCellbpRes2 = newRow.insertCell();
+                    //                 if (querysetsFromBackJson[i]["fields"]["second_attempt_bpress_res"] === null) {
+                    //                     let textbpRes2 = document.createTextNode("");
+                    //                     newCellbpRes2.appendChild(textbpRes2);
+                    //                 } else {
+                    //                     let textbpRes2 = document.createTextNode(querysetsFromBackJson[i]["fields"]["second_attempt_bpress_res"]);
+                    //                     newCellbpRes2.appendChild(textbpRes2);
+                    //                     if (querysetsFromBackJson[i]["fields"]["second_attempt_bpress_off"] !== null) {
+                    //                         if (querysetsFromBackJson[i]["fields"]["second_attempt_bpress_off"] === "0" || querysetsFromBackJson[i]["fields"]["second_attempt_bpress_off"] === "1") {
+                    //                             newCellbpRes2.style.backgroundColor = "#ffa0a0";
+                    //                         } else if (querysetsFromBackJson[i]["fields"]["second_attempt_bpress_off"] === "2" || querysetsFromBackJson[i]["fields"]["second_attempt_bpress_off"] === "3") {
+                    //                             newCellbpRes2.style.backgroundColor = "#aaffaa";
+                    //                         }
+                    //                     }
+                    //                 }
+                    //                 let newCellbpRes3 = newRow.insertCell();
+                    //                 if (querysetsFromBackJson[i]["fields"]["third_attempt_bpress_res"] === null) {
+                    //                     let textbpRes3 = document.createTextNode("");
+                    //                     newCellbpRes3.appendChild(textbpRes3);
+                    //                 } else {
+                    //                     let textbpRes3 = document.createTextNode(querysetsFromBackJson[i]["fields"]["third_attempt_bpress_res"]);
+                    //                     newCellbpRes3.appendChild(textbpRes3);
+                    //                     if (querysetsFromBackJson[i]["fields"]["third_attempt_bpress_off"] !== null) {
+                    //                         if (querysetsFromBackJson[i]["fields"]["third_attempt_bpress_off"] === "0" || querysetsFromBackJson[i]["fields"]["third_attempt_bpress_off"] === "1") {
+                    //                             newCellbpRes3.style.backgroundColor = "#ffa0a0";
+                    //                         } else if (querysetsFromBackJson[i]["fields"]["third_attempt_bpress_off"] === "2" || querysetsFromBackJson[i]["fields"]["third_attempt_bpress_off"] === "3") {
+                    //                             newCellbpRes3.style.backgroundColor = "#aaffaa";
+                    //                         }
+                    //                     }
+                    //                 }
+                    //                 let newCelldlRes1 = newRow.insertCell();
+                    //                 if (querysetsFromBackJson[i]["fields"]["first_attempt_dlift_res"] === null) {
+                    //                     let textdlRes1 = document.createTextNode("");
+                    //                     newCelldlRes1.appendChild(textdlRes1);
+                    //                 } else {
+                    //                     let textdlRes1 = document.createTextNode(querysetsFromBackJson[i]["fields"]["first_attempt_dlift_res"]);
+                    //                     newCelldlRes1.appendChild(textdlRes1);
+                    //                     if (querysetsFromBackJson[i]["fields"]["first_attempt_dlift_off"] !== null) {
+                    //                         if (querysetsFromBackJson[i]["fields"]["first_attempt_dlift_off"] === "0" || querysetsFromBackJson[i]["fields"]["first_attempt_dlift_off"] === "1") {
+                    //                             newCelldlRes1.style.backgroundColor = "#ffa0a0";
+                    //                         } else if (querysetsFromBackJson[i]["fields"]["first_attempt_dlift_off"] === "2" || querysetsFromBackJson[i]["fields"]["first_attempt_dlift_off"] === "3") {
+                    //                             newCelldlRes1.style.backgroundColor = "#aaffaa";
+                    //                         }
+                    //                     }
+                    //                 }
+                    //                 let newCelldlRes2 = newRow.insertCell();
+                    //                 if (querysetsFromBackJson[i]["fields"]["second_attempt_dlift_res"] === null) {
+                    //                     let textdlRes2 = document.createTextNode("");
+                    //                     newCelldlRes2.appendChild(textdlRes2);
+                    //                 } else {
+                    //                     let textdlRes2 = document.createTextNode(querysetsFromBackJson[i]["fields"]["second_attempt_dlift_res"]);
+                    //                     newCelldlRes2.appendChild(textdlRes2);
+                    //                     if (querysetsFromBackJson[i]["fields"]["second_attempt_dlift_off"] !== null) {
+                    //                         if (querysetsFromBackJson[i]["fields"]["second_attempt_dlift_off"] === "0" || querysetsFromBackJson[i]["fields"]["second_attempt_dlift_off"] === "1") {
+                    //                             newCelldlRes2.style.backgroundColor = "#ffa0a0";
+                    //                         } else if (querysetsFromBackJson[i]["fields"]["second_attempt_dlift_off"] === "2" || querysetsFromBackJson[i]["fields"]["second_attempt_dlift_off"] === "3") {
+                    //                             newCelldlRes2.style.backgroundColor = "#aaffaa";
+                    //                         }
+                    //                     }
+                    //                 }
+                    //                 let newCelldlRes3 = newRow.insertCell();
+                    //                 if (querysetsFromBackJson[i]["fields"]["third_attempt_dlift_res"] === null) {
+                    //                     let textdlRes3 = document.createTextNode("");
+                    //                     newCelldlRes3.appendChild(textdlRes3);
+                    //                 } else {
+                    //                     let textdlRes3 = document.createTextNode(querysetsFromBackJson[i]["fields"]["third_attempt_dlift_res"]);
+                    //                     newCelldlRes3.appendChild(textdlRes3);
+                    //                     if (querysetsFromBackJson[i]["fields"]["third_attempt_dlift_off"] !== null) {
+                    //                         if (querysetsFromBackJson[i]["fields"]["third_attempt_dlift_off"] === "0" || querysetsFromBackJson[i]["fields"]["third_attempt_dlift_off"] === "1") {
+                    //                             newCelldlRes3.style.backgroundColor = "#ffa0a0";
+                    //                         } else if (querysetsFromBackJson[i]["fields"]["third_attempt_dlift_off"] === "2" || querysetsFromBackJson[i]["fields"]["third_attempt_dlift_off"] === "3") {
+                    //                             newCelldlRes3.style.backgroundColor = "#aaffaa";
+                    //                         }
+                    //                     }
+                    //                 }
+                    //                 let newCellitSquat = newRow.insertCell();
+                    //                 if (querysetsFromBackJson[i]["fields"]["best_squat_res"] === null) {
+                    //                     let textitSquat = document.createTextNode("");
+                    //                     newCellitSquat.appendChild(textitSquat);
+                    //                 } else {
+                    //                     let textitSquat = document.createTextNode(querysetsFromBackJson[i]["fields"]["best_squat_res"]);
+                    //                     newCellitSquat.appendChild(textitSquat);
+                    //                 }
+                    //                 let newCellitBp = newRow.insertCell();
+                    //                 if (querysetsFromBackJson[i]["fields"]["best_bpress_res"] === null) {
+                    //                     let textitBp = document.createTextNode("");
+                    //                     newCellitBp.appendChild(textitBp);
+                    //                 } else {
+                    //                     let textitBp = document.createTextNode(querysetsFromBackJson[i]["fields"]["best_bpress_res"]);
+                    //                     newCellitBp.appendChild(textitBp);
+                    //                 }
+                    //                 let newCellititDl = newRow.insertCell();
+                    //                 if (querysetsFromBackJson[i]["fields"]["best_dlift_res"] === null) {
+                    //                     let textitDl = document.createTextNode("");
+                    //                     newCellititDl.appendChild(textitDl);
+                    //                 } else {
+                    //                     let textitDl = document.createTextNode(querysetsFromBackJson[i]["fields"]["best_dlift_res"]);
+                    //                     newCellititDl.appendChild(textitDl);
+                    //                 }
+                    //                 let newCellIt = newRow.insertCell();
+                    //                 if (querysetsFromBackJson[i]["fields"]["best_sum_res"] === null) {
+                    //                     let textIt = document.createTextNode("");
+                    //                     newCellIt.appendChild(textIt);
+                    //                 } else {
+                    //                     let textIt = document.createTextNode(querysetsFromBackJson[i]["fields"]["best_sum_res"]);
+                    //                     newCellIt.appendChild(textIt);
+                    //                 }
+                    //             } else {
+                    //                 let newCellsquatRes1 = newRow.insertCell();
+                    //                 if (querysetsFromBackJson[i]["fields"]["first_attempt_squat_res_ek"] === null) {
+                    //                     let textsquatRes1 = document.createTextNode("");
+                    //                     newCellsquatRes1.appendChild(textsquatRes1);
+                    //                 } else {
+                    //                     let textsquatRes1 = document.createTextNode(querysetsFromBackJson[i]["fields"]["first_attempt_squat_res_ek"]);
+                    //                     newCellsquatRes1.appendChild(textsquatRes1);
+                    //                     if (querysetsFromBackJson[i]["fields"]["first_attempt_squat_off_ek"] !== null) {
+                    //                         if (querysetsFromBackJson[i]["fields"]["first_attempt_squat_off_ek"] === "0" || querysetsFromBackJson[i]["fields"]["first_attempt_squat_off_ek"] === "1") {
+                    //                             newCellsquatRes1.style.backgroundColor = "#ffa0a0";
+                    //                         } else if (querysetsFromBackJson[i]["fields"]["first_attempt_squat_off_ek"] === "2" || querysetsFromBackJson[i]["fields"]["first_attempt_squat_off_ek"] === "3") {
+                    //                             newCellsquatRes1.style.backgroundColor = "#aaffaa";
+                    //                         }
+                    //                     }
+                    //                 }
+                    //                 let newCellsquatRes2 = newRow.insertCell();
+                    //                 if (querysetsFromBackJson[i]["fields"]["second_attempt_squat_res_ek"] === null) {
+                    //                     let textsquatRes2 = document.createTextNode("");
+                    //                     newCellsquatRes2.appendChild(textsquatRes2);
+                    //                 } else {
+                    //                     let textsquatRes2 = document.createTextNode(querysetsFromBackJson[i]["fields"]["second_attempt_squat_res_ek"]);
+                    //                     newCellsquatRes2.appendChild(textsquatRes2);
+                    //                     if (querysetsFromBackJson[i]["fields"]["second_attempt_squat_off_ek"] !== null) {
+                    //                         if (querysetsFromBackJson[i]["fields"]["second_attempt_squat_off_ek"] === "0" || querysetsFromBackJson[i]["fields"]["second_attempt_squat_off_ek"] === "1") {
+                    //                             newCellsquatRes2.style.backgroundColor = "#ffa0a0";
+                    //                         } else if (querysetsFromBackJson[i]["fields"]["second_attempt_squat_off_ek"] === "2" || querysetsFromBackJson[i]["fields"]["second_attempt_squat_off_ek"] === "3") {
+                    //                             newCellsquatRes2.style.backgroundColor = "#aaffaa";
+                    //                         }
+                    //                     }
+                    //                 }
+                    //                 let newCellsquatRes3 = newRow.insertCell();
+                    //                 if (querysetsFromBackJson[i]["fields"]["third_attempt_squat_res_ek"] === null) {
+                    //                     let textsquatRes3 = document.createTextNode("");
+                    //                     newCellsquatRes3.appendChild(textsquatRes3);
+                    //                 } else {
+                    //                     let textsquatRes3 = document.createTextNode(querysetsFromBackJson[i]["fields"]["third_attempt_squat_res_ek"]);
+                    //                     newCellsquatRes3.appendChild(textsquatRes3);
+                    //                     if (querysetsFromBackJson[i]["fields"]["third_attempt_squat_off_ek"] !== null) {
+                    //                         if (querysetsFromBackJson[i]["fields"]["third_attempt_squat_off_ek"] === "0" || querysetsFromBackJson[i]["fields"]["third_attempt_squat_off_ek"] === "1") {
+                    //                             newCellsquatRes3.style.backgroundColor = "#ffa0a0";
+                    //                         } else if (querysetsFromBackJson[i]["fields"]["third_attempt_squat_off_ek"] === "2" || querysetsFromBackJson[i]["fields"]["third_attempt_squat_off_ek"] === "3") {
+                    //                             newCellsquatRes3.style.backgroundColor = "#aaffaa";
+                    //                         }
+                    //                     }
+                    //                 }
+                    //                 let newCellbpRes1 = newRow.insertCell();
+                    //                 if (querysetsFromBackJson[i]["fields"]["first_attempt_bpress_res_ek"] === null) {
+                    //                     let textbpRes1 = document.createTextNode("");
+                    //                     newCellbpRes1.appendChild(textbpRes1);
+                    //                 } else {
+                    //                     let textbpRes1 = document.createTextNode(querysetsFromBackJson[i]["fields"]["first_attempt_bpress_res_ek"]);
+                    //                     newCellbpRes1.appendChild(textbpRes1);
+                    //                     if (querysetsFromBackJson[i]["fields"]["first_attempt_bpress_off_ek"] !== null) {
+                    //                         if (querysetsFromBackJson[i]["fields"]["first_attempt_bpress_off_ek"] === "0" || querysetsFromBackJson[i]["fields"]["first_attempt_bpress_off_ek"] === "1") {
+                    //                             newCellbpRes1.style.backgroundColor = "#ffa0a0";
+                    //                         } else if (querysetsFromBackJson[i]["fields"]["first_attempt_bpress_off_ek"] === "2" || querysetsFromBackJson[i]["fields"]["first_attempt_bpress_off_ek"] === "3") {
+                    //                             newCellbpRes1.style.backgroundColor = "#aaffaa";
+                    //                         }
+                    //                     }
+                    //                 }
+                    //                 let newCellbpRes2 = newRow.insertCell();
+                    //                 if (querysetsFromBackJson[i]["fields"]["second_attempt_bpress_res_ek"] === null) {
+                    //                     let textbpRes2 = document.createTextNode("");
+                    //                     newCellbpRes2.appendChild(textbpRes2);
+                    //                 } else {
+                    //                     let textbpRes2 = document.createTextNode(querysetsFromBackJson[i]["fields"]["second_attempt_bpress_res_ek"]);
+                    //                     newCellbpRes2.appendChild(textbpRes2);
+                    //                     if (querysetsFromBackJson[i]["fields"]["second_attempt_bpress_off_ek"] !== null) {
+                    //                         if (querysetsFromBackJson[i]["fields"]["second_attempt_bpress_off_ek"] === "0" || querysetsFromBackJson[i]["fields"]["second_attempt_bpress_off_ek"] === "1") {
+                    //                             newCellbpRes2.style.backgroundColor = "#ffa0a0";
+                    //                         } else if (querysetsFromBackJson[i]["fields"]["second_attempt_bpress_off_ek"] === "2" || querysetsFromBackJson[i]["fields"]["second_attempt_bpress_off_ek"] === "3") {
+                    //                             newCellbpRes2.style.backgroundColor = "#aaffaa";
+                    //                         }
+                    //                     }
+                    //                 }
+                    //                 let newCellbpRes3 = newRow.insertCell();
+                    //                 if (querysetsFromBackJson[i]["fields"]["third_attempt_bpress_res_ek"] === null) {
+                    //                     let textbpRes3 = document.createTextNode("");
+                    //                     newCellbpRes3.appendChild(textbpRes3);
+                    //                 } else {
+                    //                     let textbpRes3 = document.createTextNode(querysetsFromBackJson[i]["fields"]["third_attempt_bpress_res_ek"]);
+                    //                     newCellbpRes3.appendChild(textbpRes3);
+                    //                     if (querysetsFromBackJson[i]["fields"]["third_attempt_bpress_off_ek"] !== null) {
+                    //                         if (querysetsFromBackJson[i]["fields"]["third_attempt_bpress_off_ek"] === "0" || querysetsFromBackJson[i]["fields"]["third_attempt_bpress_off_ek"] === "1") {
+                    //                             newCellbpRes3.style.backgroundColor = "#ffa0a0";
+                    //                         } else if (querysetsFromBackJson[i]["fields"]["third_attempt_bpress_off_ek"] === "2" || querysetsFromBackJson[i]["fields"]["third_attempt_bpress_off_ek"] === "3") {
+                    //                             newCellbpRes3.style.backgroundColor = "#aaffaa";
+                    //                         }
+                    //                     }
+                    //                 }
+                    //                 let newCelldlRes1 = newRow.insertCell();
+                    //                 if (querysetsFromBackJson[i]["fields"]["first_attempt_dlift_res_ek"] === null) {
+                    //                     let textdlRes1 = document.createTextNode("");
+                    //                     newCelldlRes1.appendChild(textdlRes1);
+                    //                 } else {
+                    //                     let textdlRes1 = document.createTextNode(querysetsFromBackJson[i]["fields"]["first_attempt_dlift_res_ek"]);
+                    //                     newCelldlRes1.appendChild(textdlRes1);
+                    //                     if (querysetsFromBackJson[i]["fields"]["first_attempt_dlift_off_ek"] !== null) {
+                    //                         if (querysetsFromBackJson[i]["fields"]["first_attempt_dlift_off_ek"] === "0" || querysetsFromBackJson[i]["fields"]["first_attempt_dlift_off_ek"] === "1") {
+                    //                             newCelldlRes1.style.backgroundColor = "#ffa0a0";
+                    //                         } else if (querysetsFromBackJson[i]["fields"]["first_attempt_dlift_off_ek"] === "2" || querysetsFromBackJson[i]["fields"]["first_attempt_dlift_off_ek"] === "3") {
+                    //                             newCelldlRes1.style.backgroundColor = "#aaffaa";
+                    //                         }
+                    //                     }
+                    //                 }
+                    //                 let newCelldlRes2 = newRow.insertCell();
+                    //                 if (querysetsFromBackJson[i]["fields"]["second_attempt_dlift_res_ek"] === null) {
+                    //                     let textdlRes2 = document.createTextNode("");
+                    //                     newCelldlRes2.appendChild(textdlRes2);
+                    //                 } else {
+                    //                     let textdlRes2 = document.createTextNode(querysetsFromBackJson[i]["fields"]["second_attempt_dlift_res_ek"]);
+                    //                     newCelldlRes2.appendChild(textdlRes2);
+                    //                     if (querysetsFromBackJson[i]["fields"]["second_attempt_dlift_off_ek"] !== null) {
+                    //                         if (querysetsFromBackJson[i]["fields"]["second_attempt_dlift_off_ek"] === "0" || querysetsFromBackJson[i]["fields"]["second_attempt_dlift_off_ek"] === "1") {
+                    //                             newCelldlRes2.style.backgroundColor = "#ffa0a0";
+                    //                         } else if (querysetsFromBackJson[i]["fields"]["second_attempt_dlift_off_ek"] === "2" || querysetsFromBackJson[i]["fields"]["second_attempt_dlift_off_ek"] === "3") {
+                    //                             newCelldlRes2.style.backgroundColor = "#aaffaa";
+                    //                         }
+                    //                     }
+                    //                 }
+                    //                 let newCelldlRes3 = newRow.insertCell();
+                    //                 if (querysetsFromBackJson[i]["fields"]["third_attempt_dlift_res_ek"] === null) {
+                    //                     let textdlRes3 = document.createTextNode("");
+                    //                     newCelldlRes3.appendChild(textdlRes3);
+                    //                 } else {
+                    //                     let textdlRes3 = document.createTextNode(querysetsFromBackJson[i]["fields"]["third_attempt_dlift_res_ek"]);
+                    //                     newCelldlRes3.appendChild(textdlRes3);
+                    //                     if (querysetsFromBackJson[i]["fields"]["third_attempt_dlift_off_ek"] !== null) {
+                    //                         if (querysetsFromBackJson[i]["fields"]["third_attempt_dlift_off_ek"] === "0" || querysetsFromBackJson[i]["fields"]["third_attempt_dlift_off_ek"] === "1") {
+                    //                             newCelldlRes3.style.backgroundColor = "#ffa0a0";
+                    //                         } else if (querysetsFromBackJson[i]["fields"]["third_attempt_dlift_off_ek"] === "2" || querysetsFromBackJson[i]["fields"]["third_attempt_dlift_off_ek"] === "3") {
+                    //                             newCelldlRes3.style.backgroundColor = "#aaffaa";
+                    //                         }
+                    //                     }
+                    //                 }
+                    //                 let newCellitSquat = newRow.insertCell();
+                    //                 if (querysetsFromBackJson[i]["fields"]["best_squat_res_ek"] === null) {
+                    //                     let textitSquat = document.createTextNode("");
+                    //                     newCellitSquat.appendChild(textitSquat);
+                    //                 } else {
+                    //                     let textitSquat = document.createTextNode(querysetsFromBackJson[i]["fields"]["best_squat_res_ek"]);
+                    //                     newCellitSquat.appendChild(textitSquat);
+                    //                 }
+                    //                 let newCellitBp = newRow.insertCell();
+                    //                 if (querysetsFromBackJson[i]["fields"]["best_bpress_res_ek"] === null) {
+                    //                     let textitBp = document.createTextNode("");
+                    //                     newCellitBp.appendChild(textitBp);
+                    //                 } else {
+                    //                     let textitBp = document.createTextNode(querysetsFromBackJson[i]["fields"]["best_bpress_res_ek"]);
+                    //                     newCellitBp.appendChild(textitBp);
+                    //                 }
+                    //                 let newCellititDl = newRow.insertCell();
+                    //                 if (querysetsFromBackJson[i]["fields"]["best_dlift_res_ek"] === null) {
+                    //                     let textitDl = document.createTextNode("");
+                    //                     newCellititDl.appendChild(textitDl);
+                    //                 } else {
+                    //                     let textitDl = document.createTextNode(querysetsFromBackJson[i]["fields"]["best_dlift_res_ek"]);
+                    //                     newCellititDl.appendChild(textitDl);
+                    //                 }
+                    //                 let newCellIt = newRow.insertCell();
+                    //                 if (querysetsFromBackJson[i]["fields"]["best_sum_res_ek"] === null) {
+                    //                     let textIt = document.createTextNode("");
+                    //                     newCellIt.appendChild(textIt);
+                    //                 } else {
+                    //                     let textIt = document.createTextNode(querysetsFromBackJson[i]["fields"]["best_sum_res_ek"]);
+                    //                     newCellIt.appendChild(textIt);
+                    //                 }
+                    //             }
+                    //         }
+                    //         // console.log("got");
+                    //         // // massTable.style.height = "100vh";
+                    //         // console.log(getComputedStyle(massTable).fontSize)
+                    //         // function missFz() {
+                    //         //     // console.log(getComputedStyle(massTable).fontSize)
+                    //         //     // massTable.style.fontSize = parseFloat(getComputedStyle(massTable).fontSize) - 1 + "px"
+                    //         //     // console.log(getComputedStyle(massTable).fontSize)
+                    //         //     massTable.style.height = "100vh"
+                    //         // }
+                    //         // window.onresize = missFz()
+                    //     }
+                    // }
+
                     if (JSON.parse(myxmlhttp.response).cur_transl_pk) {
+                        if (curtranslPk === JSON.parse(myxmlhttp.response).cur_transl_pk && curStateTimer !== JSON.parse(myxmlhttp.response).timer_state) {
+                            if (JSON.parse(myxmlhttp.response).timer_state === "start") {
+                                curStateTimer = "start";
+                                startTimerComp(duration, timerp);
+                            } else if (JSON.parse(myxmlhttp.response).timer_state === "stop") {
+                                curStateTimer = "stop";
+                                stopTimerComp();
+                                clearTimerValues();
+                            }
+                        }
                         if (curtranslPk !== JSON.parse(myxmlhttp.response).cur_transl_pk && JSON.parse(myxmlhttp.response).competitor_ordered_weight_offset.length === 0) {
-                            startTimerComp(duration, timerp);
+                            // start timer when get translation
+                            // startTimerComp(duration, timerp);
+                            pillarHeight = JSON.parse(myxmlhttp.response).pillar_height;
                             curtranslPk = JSON.parse(myxmlhttp.response).cur_transl_pk;
                             competitorEx = JSON.parse(myxmlhttp.response).competitor_exercise;
                             competitorExAtt = JSON.parse(myxmlhttp.response).competitor_exercise_attempt;
                             competitorFi = JSON.parse(myxmlhttp.response).competitor_fi;
                             competitorWc = JSON.parse(myxmlhttp.response).competitor_weight_cat;
                             competitorOw = JSON.parse(myxmlhttp.response).competitor_ordered_weight;
+                            console.log(competitorOw)
+                            let twentyFive = '';
+                            let twenty = '';
+                            let fifteen = '';
+                            let ten = '';
+                            let five = '';
+                            let twoAndHalf = '';
+                            let oneAndTwentyFive = '';
+                            let twoLocks = true;
+                            let remainder = '';
+                            if (Number(competitorOw) > 25) {
+                                let pancakes = Number(competitorOw) - 25;
+                                if (Math.floor(pancakes / 50) > 0) {
+                                    twentyFive = Math.floor(pancakes / 50);
+                                    remainder = pancakes % 50;
+                                    if (Math.floor(remainder / 40) > 0) {
+                                        twenty = Math.floor(remainder / 40);
+                                        remainder = remainder % 40;
+                                        if (Math.floor(remainder / 30) > 0) {
+                                            fifteen = Math.floor(remainder / 30);
+                                            remainder = remainder % 30;
+                                            if (Math.floor(remainder / 20) > 0) {
+                                                ten = Math.floor(remainder / 20);
+                                                remainder = remainder % 20;
+                                                if (Math.floor(remainder / 10) > 0) {
+                                                    five = Math.floor(remainder / 10);
+                                                    remainder = remainder % 10;
+                                                    if (Math.floor(remainder / 5) > 0) {
+                                                        twoAndHalf = Math.floor(remainder / 5);
+                                                        remainder = remainder % 5;
+                                                        if (Math.floor(remainder / 2.5) > 0) {
+                                                            oneAndTwentyFive = Math.floor(remainder / 2.5);
+                                                        }
+                                                    } else {
+                                                        if (Math.floor(remainder / 2.5) > 0) {
+                                                            oneAndTwentyFive = Math.floor(remainder / 2.5);
+                                                        }
+                                                    }
+                                                } else {
+                                                    if (Math.floor(remainder / 5) > 0) {
+                                                        twoAndHalf = Math.floor(remainder / 5);
+                                                        remainder = remainder % 5;
+                                                        if (Math.floor(remainder / 2.5) > 0) {
+                                                            oneAndTwentyFive = Math.floor(remainder / 2.5);
+                                                        }
+                                                    } else {
+                                                        if (Math.floor(remainder / 2.5) > 0) {
+                                                            oneAndTwentyFive = Math.floor(remainder / 2.5);
+                                                        }
+                                                    }
+                                                }
+                                            } else {
+                                                if (Math.floor(remainder / 10) > 0) {
+                                                    five = Math.floor(remainder / 10);
+                                                    remainder = remainder % 10;
+                                                    if (Math.floor(remainder / 5) > 0) {
+                                                        twoAndHalf = Math.floor(remainder / 5);
+                                                        remainder = remainder % 5;
+                                                        if (Math.floor(remainder / 2.5) > 0) {
+                                                            oneAndTwentyFive = Math.floor(remainder / 2.5);
+                                                        }
+                                                    } else {
+                                                        if (Math.floor(remainder / 2.5) > 0) {
+                                                            oneAndTwentyFive = Math.floor(remainder / 2.5);
+                                                        }
+                                                    }
+                                                } else {
+                                                    if (Math.floor(remainder / 5) > 0) {
+                                                        twoAndHalf = Math.floor(remainder / 5);
+                                                        remainder = remainder % 5;
+                                                        if (Math.floor(remainder / 2.5) > 0) {
+                                                            oneAndTwentyFive = Math.floor(remainder / 2.5);
+                                                        }
+                                                    } else {
+                                                        if (Math.floor(remainder / 2.5) > 0) {
+                                                            oneAndTwentyFive = Math.floor(remainder / 2.5);
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        } else {
+                                            if (Math.floor(remainder / 20) > 0) {
+                                                ten = Math.floor(remainder / 20);
+                                                remainder = remainder % 20;
+                                                if (Math.floor(remainder / 10) > 0) {
+                                                    five = Math.floor(remainder / 10);
+                                                    remainder = remainder % 10;
+                                                    if (Math.floor(remainder / 5) > 0) {
+                                                        twoAndHalf = Math.floor(remainder / 5);
+                                                        remainder = remainder % 5;
+                                                        if (Math.floor(remainder / 2.5) > 0) {
+                                                            oneAndTwentyFive = Math.floor(remainder / 2.5);
+                                                        }
+                                                    } else {
+                                                        if (Math.floor(remainder / 2.5) > 0) {
+                                                            oneAndTwentyFive = Math.floor(remainder / 2.5);
+                                                        }
+                                                    }
+                                                } else {
+                                                    if (Math.floor(remainder / 5) > 0) {
+                                                        twoAndHalf = Math.floor(remainder / 5);
+                                                        remainder = remainder % 5;
+                                                        if (Math.floor(remainder / 2.5) > 0) {
+                                                            oneAndTwentyFive = Math.floor(remainder / 2.5);
+                                                        }
+                                                    } else {
+                                                        if (Math.floor(remainder / 2.5) > 0) {
+                                                            oneAndTwentyFive = Math.floor(remainder / 2.5);
+                                                        }
+                                                    }
+                                                }
+                                            } else {
+                                                if (Math.floor(remainder / 10) > 0) {
+                                                    five = Math.floor(remainder / 10);
+                                                    remainder = pancakes % 10;
+                                                    if (Math.floor(remainder / 5) > 0) {
+                                                        twoAndHalf = Math.floor(remainder / 5);
+                                                        remainder = remainder % 5;
+                                                        if (Math.floor(remainder / 2.5) > 0) {
+                                                            oneAndTwentyFive = Math.floor(remainder / 2.5);
+                                                        }
+                                                    } else {
+                                                        if (Math.floor(remainder / 2.5) > 0) {
+                                                            oneAndTwentyFive = Math.floor(remainder / 2.5);
+                                                        }
+                                                    }
+                                                } else {
+                                                    if (Math.floor(remainder / 5) > 0) {
+                                                        twoAndHalf = Math.floor(remainder / 5);
+                                                        remainder = remainder % 5;
+                                                        if (Math.floor(remainder / 2.5) > 0) {
+                                                            oneAndTwentyFive = Math.floor(remainder / 2.5);
+                                                        }
+                                                    } else {
+                                                        if (Math.floor(remainder / 2.5) > 0) {
+                                                            oneAndTwentyFive = Math.floor(remainder / 2.5);
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    } else {
+                                        if (Math.floor(remainder / 30) > 0) {
+                                            fifteen = Math.floor(remainder / 30);
+                                            remainder = remainder % 30;
+                                            if (Math.floor(remainder / 20) > 0) {
+                                                ten = Math.floor(remainder / 20);
+                                                remainder = remainder % 20;
+                                                if (Math.floor(remainder / 10) > 0) {
+                                                    five = Math.floor(remainder / 10);
+                                                    remainder = remainder % 10;
+                                                    if (Math.floor(remainder / 5) > 0) {
+                                                        twoAndHalf = Math.floor(remainder / 5);
+                                                        remainder = remainder % 5;
+                                                        if (Math.floor(remainder / 2.5) > 0) {
+                                                            oneAndTwentyFive = Math.floor(remainder / 2.5);
+                                                        }
+                                                    } else {
+                                                        if (Math.floor(remainder / 2.5) > 0) {
+                                                            oneAndTwentyFive = Math.floor(remainder / 2.5);
+                                                        }
+                                                    }
+                                                } else {
+                                                    if (Math.floor(remainder / 5) > 0) {
+                                                        twoAndHalf = Math.floor(remainder / 5);
+                                                        remainder = remainder % 5;
+                                                        if (Math.floor(remainder / 2.5) > 0) {
+                                                            oneAndTwentyFive = Math.floor(remainder / 2.5);
+                                                        }
+                                                    } else {
+                                                        if (Math.floor(remainder / 2.5) > 0) {
+                                                            oneAndTwentyFive = Math.floor(remainder / 2.5);
+                                                        }
+                                                    }
+                                                }
+                                            } else {
+                                                if (Math.floor(remainder / 10) > 0) {
+                                                    five = Math.floor(remainder / 10);
+                                                    remainder = remainder % 10;
+                                                    if (Math.floor(remainder / 5) > 0) {
+                                                        twoAndHalf = Math.floor(remainder / 5);
+                                                        remainder = remainder % 5;
+                                                        if (Math.floor(remainder / 2.5) > 0) {
+                                                            oneAndTwentyFive = Math.floor(remainder / 2.5);
+                                                        }
+                                                    } else {
+                                                        if (Math.floor(remainder / 2.5) > 0) {
+                                                            oneAndTwentyFive = Math.floor(remainder / 2.5);
+                                                        }
+                                                    }
+                                                } else {
+                                                    if (Math.floor(remainder / 5) > 0) {
+                                                        twoAndHalf = Math.floor(remainder / 5);
+                                                        remainder = remainder % 5;
+                                                        if (Math.floor(remainder / 2.5) > 0) {
+                                                            oneAndTwentyFive = Math.floor(remainder / 2.5);
+                                                        }
+                                                    } else {
+                                                        if (Math.floor(remainder / 2.5) > 0) {
+                                                            oneAndTwentyFive = Math.floor(remainder / 2.5);
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        } else {
+                                            if (Math.floor(remainder / 20) > 0) {
+                                                ten = Math.floor(remainder / 20);
+                                                remainder = remainder % 20;
+                                                if (Math.floor(remainder / 10) > 0) {
+                                                    five = Math.floor(remainder / 10);
+                                                    remainder = remainder % 10;
+                                                    if (Math.floor(remainder / 5) > 0) {
+                                                        twoAndHalf = Math.floor(remainder / 5);
+                                                        remainder = remainder % 5;
+                                                        if (Math.floor(remainder / 2.5) > 0) {
+                                                            oneAndTwentyFive = Math.floor(remainder / 2.5);
+                                                        }
+                                                    } else {
+                                                        if (Math.floor(remainder / 2.5) > 0) {
+                                                            oneAndTwentyFive = Math.floor(remainder / 2.5);
+                                                        }
+                                                    }
+                                                } else {
+                                                    if (Math.floor(remainder / 5) > 0) {
+                                                        twoAndHalf = Math.floor(remainder / 5);
+                                                        remainder = remainder % 5;
+                                                        if (Math.floor(remainder / 2.5) > 0) {
+                                                            oneAndTwentyFive = Math.floor(remainder / 2.5);
+                                                        }
+                                                    } else {
+                                                        if (Math.floor(remainder / 2.5) > 0) {
+                                                            oneAndTwentyFive = Math.floor(remainder / 2.5);
+                                                        }
+                                                    }
+                                                }
+                                            } else {
+                                                if (Math.floor(remainder / 10) > 0) {
+                                                    five = Math.floor(remainder / 10);
+                                                    remainder = remainder % 10;
+                                                    if (Math.floor(remainder / 5) > 0) {
+                                                        twoAndHalf = Math.floor(remainder / 5);
+                                                        remainder = remainder % 5;
+                                                        if (Math.floor(remainder / 2.5) > 0) {
+                                                            oneAndTwentyFive = Math.floor(remainder / 2.5);
+                                                        }
+                                                    } else {
+                                                        if (Math.floor(remainder / 2.5) > 0) {
+                                                            oneAndTwentyFive = Math.floor(remainder / 2.5);
+                                                        }
+                                                    }
+                                                } else {
+                                                    if (Math.floor(remainder / 5) > 0) {
+                                                        twoAndHalf = Math.floor(remainder / 5);
+                                                        remainder = remainder % 5;
+                                                        if (Math.floor(remainder / 2.5) > 0) {
+                                                            oneAndTwentyFive = Math.floor(remainder / 2.5);
+                                                        }
+                                                    } else {
+                                                        if (Math.floor(remainder / 2.5) > 0) {
+                                                            oneAndTwentyFive = Math.floor(remainder / 2.5);
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                } else {
+                                    if (Math.floor(pancakes / 40) > 0) {
+                                        twenty = Math.floor(pancakes / 40);
+                                        remainder = pancakes % 40;
+                                        if (Math.floor(remainder / 30) > 0) {
+                                            fifteen = Math.floor(remainder / 30);
+                                            remainder = remainder % 30;
+                                            if (Math.floor(remainder / 20) > 0) {
+                                                ten = Math.floor(remainder / 20);
+                                                remainder = remainder % 20;
+                                                if (Math.floor(remainder / 10) > 0) {
+                                                    five = Math.floor(remainder / 10);
+                                                    remainder = remainder % 10;
+                                                    if (Math.floor(remainder / 5) > 0) {
+                                                        twoAndHalf = Math.floor(remainder / 5);
+                                                        remainder = remainder % 5;
+                                                        if (Math.floor(remainder / 2.5) > 0) {
+                                                            oneAndTwentyFive = Math.floor(remainder / 2.5);
+                                                        }
+                                                    } else {
+                                                        if (Math.floor(remainder / 2.5) > 0) {
+                                                            oneAndTwentyFive = Math.floor(remainder / 2.5);
+                                                        }
+                                                    }
+                                                } else {
+                                                    if (Math.floor(remainder / 5) > 0) {
+                                                        twoAndHalf = Math.floor(remainder / 5);
+                                                        remainder = remainder % 5;
+                                                        if (Math.floor(remainder / 2.5) > 0) {
+                                                            oneAndTwentyFive = Math.floor(remainder / 2.5);
+                                                        }
+                                                    } else {
+                                                        if (Math.floor(remainder / 2.5) > 0) {
+                                                            oneAndTwentyFive = Math.floor(remainder / 2.5);
+                                                        }
+                                                    }
+                                                }
+                                            } else {
+                                                if (Math.floor(remainder / 10) > 0) {
+                                                    five = Math.floor(remainder / 10);
+                                                    remainder = remainder % 10;
+                                                    if (Math.floor(remainder / 5) > 0) {
+                                                        twoAndHalf = Math.floor(remainder / 5);
+                                                        remainder = remainder % 5;
+                                                        if (Math.floor(remainder / 2.5) > 0) {
+                                                            oneAndTwentyFive = Math.floor(remainder / 2.5);
+                                                        }
+                                                    } else {
+                                                        if (Math.floor(remainder / 2.5) > 0) {
+                                                            oneAndTwentyFive = Math.floor(remainder / 2.5);
+                                                        }
+                                                    }
+                                                } else {
+                                                    if (Math.floor(remainder / 5) > 0) {
+                                                        twoAndHalf = Math.floor(remainder / 5);
+                                                        remainder = remainder % 5;
+                                                        if (Math.floor(remainder / 2.5) > 0) {
+                                                            oneAndTwentyFive = Math.floor(remainder / 2.5);
+                                                        }
+                                                    } else {
+                                                        if (Math.floor(remainder / 2.5) > 0) {
+                                                            oneAndTwentyFive = Math.floor(remainder / 2.5);
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        } else {
+                                            if (Math.floor(remainder / 20) > 0) {
+                                                ten = Math.floor(remainder / 20);
+                                                remainder = remainder % 20;
+                                                if (Math.floor(remainder / 10) > 0) {
+                                                    five = Math.floor(remainder / 10);
+                                                    remainder = remainder % 10;
+                                                    if (Math.floor(remainder / 5) > 0) {
+                                                        twoAndHalf = Math.floor(remainder / 5);
+                                                        remainder = remainder % 5;
+                                                        if (Math.floor(remainder / 2.5) > 0) {
+                                                            oneAndTwentyFive = Math.floor(remainder / 2.5);
+                                                        }
+                                                    } else {
+                                                        if (Math.floor(remainder / 2.5) > 0) {
+                                                            oneAndTwentyFive = Math.floor(remainder / 2.5);
+                                                        }
+                                                    }
+                                                } else {
+                                                    if (Math.floor(remainder / 5) > 0) {
+                                                        twoAndHalf = Math.floor(remainder / 5);
+                                                        remainder = remainder % 5;
+                                                        if (Math.floor(remainder / 2.5) > 0) {
+                                                            oneAndTwentyFive = Math.floor(remainder / 2.5);
+                                                        }
+                                                    } else {
+                                                        if (Math.floor(remainder / 2.5) > 0) {
+                                                            oneAndTwentyFive = Math.floor(remainder / 2.5);
+                                                        }
+                                                    }
+                                                }
+                                            } else {
+                                                if (Math.floor(remainder / 10) > 0) {
+                                                    five = Math.floor(remainder / 10);
+                                                    remainder = pancakes % 10;
+                                                    if (Math.floor(remainder / 5) > 0) {
+                                                        twoAndHalf = Math.floor(remainder / 5);
+                                                        remainder = remainder % 5;
+                                                        if (Math.floor(remainder / 2.5) > 0) {
+                                                            oneAndTwentyFive = Math.floor(remainder / 2.5);
+                                                        }
+                                                    } else {
+                                                        if (Math.floor(remainder / 2.5) > 0) {
+                                                            oneAndTwentyFive = Math.floor(remainder / 2.5);
+                                                        }
+                                                    }
+                                                } else {
+                                                    if (Math.floor(remainder / 5) > 0) {
+                                                        twoAndHalf = Math.floor(remainder / 5);
+                                                        remainder = remainder % 5;
+                                                        if (Math.floor(remainder / 2.5) > 0) {
+                                                            oneAndTwentyFive = Math.floor(remainder / 2.5);
+                                                        }
+                                                    } else {
+                                                        if (Math.floor(remainder / 2.5) > 0) {
+                                                            oneAndTwentyFive = Math.floor(remainder / 2.5);
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    } else {
+                                        if (Math.floor(pancakes / 30) > 0) {
+                                            fifteen = Math.floor(pancakes / 30);
+                                            remainder = pancakes % 30;
+                                            if (Math.floor(remainder / 20) > 0) {
+                                                ten = Math.floor(remainder / 20);
+                                                remainder = remainder % 20;
+                                                if (Math.floor(remainder / 10) > 0) {
+                                                    five = Math.floor(remainder / 10);
+                                                    remainder = remainder % 10;
+                                                    if (Math.floor(remainder / 5) > 0) {
+                                                        twoAndHalf = Math.floor(remainder / 5);
+                                                        remainder = remainder % 5;
+                                                        if (Math.floor(remainder / 2.5) > 0) {
+                                                            oneAndTwentyFive = Math.floor(remainder / 2.5);
+                                                        }
+                                                    } else {
+                                                        if (Math.floor(remainder / 2.5) > 0) {
+                                                            oneAndTwentyFive = Math.floor(remainder / 2.5);
+                                                        }
+                                                    }
+                                                } else {
+                                                    if (Math.floor(remainder / 5) > 0) {
+                                                        twoAndHalf = Math.floor(remainder / 5);
+                                                        remainder = remainder % 5;
+                                                        if (Math.floor(remainder / 2.5) > 0) {
+                                                            oneAndTwentyFive = Math.floor(remainder / 2.5);
+                                                        }
+                                                    } else {
+                                                        if (Math.floor(remainder / 2.5) > 0) {
+                                                            oneAndTwentyFive = Math.floor(remainder / 2.5);
+                                                        }
+                                                    }
+                                                }
+                                            } else {
+                                                if (Math.floor(remainder / 10) > 0) {
+                                                    five = Math.floor(remainder / 10);
+                                                    remainder = remainder % 10;
+                                                    if (Math.floor(remainder / 5) > 0) {
+                                                        twoAndHalf = Math.floor(remainder / 5);
+                                                        remainder = remainder % 5;
+                                                        if (Math.floor(remainder / 2.5) > 0) {
+                                                            oneAndTwentyFive = Math.floor(remainder / 2.5);
+                                                        }
+                                                    } else {
+                                                        if (Math.floor(remainder / 2.5) > 0) {
+                                                            oneAndTwentyFive = Math.floor(remainder / 2.5);
+                                                        }
+                                                    }
+                                                } else {
+                                                    if (Math.floor(remainder / 5) > 0) {
+                                                        twoAndHalf = Math.floor(remainder / 5);
+                                                        remainder = remainder % 5;
+                                                        if (Math.floor(remainder / 2.5) > 0) {
+                                                            oneAndTwentyFive = Math.floor(remainder / 2.5);
+                                                        }
+                                                    } else {
+                                                        if (Math.floor(remainder / 2.5) > 0) {
+                                                            oneAndTwentyFive = Math.floor(remainder / 2.5);
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        } else {
+                                            if (Math.floor(pancakes / 20) > 0) {
+                                                ten = Math.floor(pancakes / 20);
+                                                remainder = pancakes % 20;
+                                                if (Math.floor(remainder / 10) > 0) {
+                                                    five = Math.floor(remainder / 10);
+                                                    remainder = remainder % 10;
+                                                    if (Math.floor(remainder / 5) > 0) {
+                                                        twoAndHalf = Math.floor(remainder / 5);
+                                                        remainder = remainder % 5;
+                                                        if (Math.floor(remainder / 2.5) > 0) {
+                                                            oneAndTwentyFive = Math.floor(remainder / 2.5);
+                                                        }
+                                                    } else {
+                                                        if (Math.floor(remainder / 2.5) > 0) {
+                                                            oneAndTwentyFive = Math.floor(remainder / 2.5);
+                                                        }
+                                                    }
+                                                } else {
+                                                    if (Math.floor(remainder / 5) > 0) {
+                                                        twoAndHalf = Math.floor(remainder / 5);
+                                                        remainder = remainder % 5;
+                                                        if (Math.floor(remainder / 2.5) > 0) {
+                                                            oneAndTwentyFive = Math.floor(remainder / 2.5);
+                                                        }
+                                                    } else {
+                                                        if (Math.floor(remainder / 2.5) > 0) {
+                                                            oneAndTwentyFive = Math.floor(remainder / 2.5);
+                                                        }
+                                                    }
+                                                }
+                                            } else {
+                                                if (Math.floor(pancakes / 10) > 0) {
+                                                    five = Math.floor(pancakes / 10);
+                                                    remainder = pancakes % 10;
+                                                    if (Math.floor(remainder / 5) > 0) {
+                                                        twoAndHalf = Math.floor(remainder / 5);
+                                                        remainder = remainder % 5;
+                                                        if (Math.floor(remainder / 2.5) > 0) {
+                                                            oneAndTwentyFive = Math.floor(remainder / 2.5);
+                                                        }
+                                                    } else {
+                                                        if (Math.floor(remainder / 2.5) > 0) {
+                                                            oneAndTwentyFive = Math.floor(remainder / 2.5);
+                                                        }
+                                                    }
+                                                } else {
+                                                    if (Math.floor(pancakes / 5) > 0) {
+                                                        twoAndHalf = Math.floor(pancakes / 5);
+                                                        remainder = pancakes % 5;
+                                                        if (Math.floor(remainder / 2.5) > 0) {
+                                                            oneAndTwentyFive = Math.floor(remainder / 2.5);
+                                                        }
+                                                    } else {
+                                                        if (Math.floor(pancakes / 2.5) > 0) {
+                                                            oneAndTwentyFive = Math.floor(pancakes / 2.5);
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            } else {
+                                if ((Number(competitorOw) - 25) === 0) {
+                                } else if ((Number(competitorOw) - 22.5) === 0) {
+                                    oneAndTwentyFive = 1;
+                                    twoLocks = false;
+                                } else {
+                                    twoLocks = false;
+                                }
+                            }
+                            if (twentyFive) {
+                                let twentyFiveDiv = document.createElement('span');
+                                twentyFiveDiv.classList.add('weight_show_assistants-twenty_five');
+                                twentyFiveDiv.textContent = twentyFive;
+                                blockShowAss.append(twentyFiveDiv);
+                            }
+                            if (twenty) {
+                                let twentyDiv = document.createElement('span');
+                                twentyDiv.classList.add('weight_show_assistants-twenty');
+                                twentyDiv.textContent = twenty;
+                                blockShowAss.append(twentyDiv);
+                            }
+                            if (fifteen) {
+                                let fifteenDiv = document.createElement('span');
+                                fifteenDiv.classList.add('weight_show_assistants-fifteen');
+                                fifteenDiv.textContent = fifteen;
+                                blockShowAss.append(fifteenDiv);
+                            }
+                            if (ten) {
+                                let tenDiv = document.createElement('span');
+                                tenDiv.classList.add('weight_show_assistants-ten');
+                                tenDiv.textContent = ten;
+                                blockShowAss.append(tenDiv);
+                            }
+                            if (five) {
+                                let fiveDiv = document.createElement('span');
+                                fiveDiv.classList.add('weight_show_assistants-five');
+                                fiveDiv.textContent = five;
+                                blockShowAss.append(fiveDiv);
+                            }
+                            if (twoAndHalf) {
+                                let twoAndHalfDiv = document.createElement('span');
+                                twoAndHalfDiv.classList.add('weight_show_assistants-two_half');
+                                twoAndHalfDiv.textContent = twoAndHalf;
+                                blockShowAss.append(twoAndHalfDiv);
+                            }
+                            if (oneAndTwentyFive) {
+                                let oneAndTwentyFiveDiv = document.createElement('span');
+                                oneAndTwentyFiveDiv.classList.add('weight_show_assistants-one_twenty_five');
+                                oneAndTwentyFiveDiv.textContent = oneAndTwentyFive;
+                                blockShowAss.append(oneAndTwentyFiveDiv);
+                            }
+                            if (twoLocks) {
+                                let twoLocksDiv = document.createElement('span');
+                                twoLocksDiv.classList.add('weight_show_assistants-locks');
+                                let twoLocksDivAdd = document.createElement('span');
+                                twoLocksDivAdd.classList.add('weight_show_assistants-locks_add');
+                                twoLocksDiv.append(twoLocksDivAdd);
+                                blockShowAss.append(twoLocksDiv);
+                            }
+                            if (pillarHeight) {
+                                let textBlockPillar = document.createElement('span');
+                                textBlockPillar.classList.add('weight_show_assistants-pillar');
+                                textBlockPillar.textContent = pillarHeight;
+                                blockShowAss.append(textBlockPillar);
+                            }
                             indScoreBoard.style.display = "flex";
                             indScoreWcat.textContent = competitorWc;
                             indScoreScore1.style.backgroundColor = "red";
@@ -1566,6 +2889,9 @@ ready(() => {
                     } else {
                         clearScore();
                         stopTimerComp();
+                        while (blockShowAss.firstChild) {
+                            blockShowAss.removeChild(blockShowAss.firstChild);
+                        }
                     }
 
                 } else if (myxmlhttp.status === 500) {
@@ -1580,7 +2906,8 @@ ready(() => {
             document.getElementById('score-form_btn').click();
         }
 
-        setInterval(getScore, 5000);
+        // setInterval(getScore, 5000);
+        setInterval(getScore, 2000);
 
     }
 
@@ -1626,7 +2953,7 @@ ready(() => {
                             secrPageSpanClickBtns[i].textContent = JSON.parse(xhr.response).saved_val;
                             secrPageSpanClickBtns[i].previousElementSibling.style.display = 'none';
                             secrPageSpanClickBtns[i].style.display = 'block';
-                            if (JSON.parse(xhr.response).saved_val === '' && targElementOfData.tagName === 'SELECT') {
+                            if (JSON.parse(xhr.response).saved_val === null && targElementOfData.tagName === 'SELECT') {
                                 secrPageSpanClickBtns[i].textContent = 'пусто';
                             }
                         }
@@ -1637,6 +2964,63 @@ ready(() => {
                 });
             });
         }
+    }
+
+    let startTimerBtn = document.getElementById('secr-page_show_btn-timer-p');
+    if (startTimerBtn) {
+        let modalSecr = document.getElementById('secr-page_form_modal');
+        let modalSecrClose = document.getElementById('secr-page_form_modal-close');
+        let modalSecrTextMain = document.getElementById('secr-page_form_modal-text');
+        let stopTimerBtn = document.getElementById('secr-page_show_btn-timer-s');
+        startTimerBtn.addEventListener('click', function (e) {
+            let endpoint = document.getElementById('secretary-page_form').getAttribute('action');
+            let token = document.getElementById('secretary-page_form').querySelector('[name="csrfmiddlewaretoken"]').value;
+            let sendData = 'secretarytimer=start';
+            let xhr = new XMLHttpRequest();
+            xhr.open("post", endpoint, true);
+            xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+            xhr.setRequestHeader('X-CSRFToken', token);
+            xhr.send(sendData);
+            xhr.onload = function () {
+                if (xhr.status === 200) {
+                    startTimerBtn.style.display = "none";
+                    stopTimerBtn.style.display = "flex";
+                } else if (xhr.status === 302) {
+                    modalSecr.style.display = "block";
+                    modalSecrTextMain.textContent = JSON.parse(xhr.response).error;
+                    window.onclick = function (event) {
+                        if (event.target === modalSecr) {
+                            modalSecr.style.display = "none";
+                        }
+                    }
+                    modalSecrClose.onclick = function () {
+                        modalSecr.style.display = "none";
+                    }
+                }
+            }
+            xhr.onerror = function () {
+                console.log(xhr.responseText);
+            };
+        });
+        stopTimerBtn.addEventListener('click', function (e) {
+            let endpoint = document.getElementById('secretary-page_form').getAttribute('action');
+            let token = document.getElementById('secretary-page_form').querySelector('[name="csrfmiddlewaretoken"]').value;
+            let sendData = 'secretarytimer=stop';
+            let xhr = new XMLHttpRequest();
+            xhr.open("post", endpoint, true);
+            xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+            xhr.setRequestHeader('X-CSRFToken', token);
+            xhr.send(sendData);
+            xhr.onload = function () {
+                if (xhr.status === 200) {
+                    stopTimerBtn.style.display = "none";
+                    startTimerBtn.style.display = "flex";
+                }
+            }
+            xhr.onerror = function () {
+                console.log(xhr.responseText);
+            };
+        });
     }
 
     let secrPagePlayBtns = document.querySelectorAll('.secr-page_show_btn-p');
@@ -1708,6 +3092,8 @@ ready(() => {
                                     parentTd.style.border = '1px solid #092942';
                                     secrPagePlayBtns[i].style.display = 'block';
                                     stopBtn.style.display = 'none';
+                                    document.getElementById('secr-page_show_btn-timer-s').style.display = "none";
+                                    document.getElementById('secr-page_show_btn-timer-p').style.display = "flex";
                                 }
                             }
                             xhr.onerror = function () {
@@ -1738,7 +3124,6 @@ ready(() => {
     if (scoreboardCompForm) {
         let massTable = document.querySelector('.mass_scoreboard-table');
         let querysetsFromBack = '';
-
         scoreboardCompForm.addEventListener('submit', function (e) {
             e.preventDefault();
             let thisForm = e.target;
@@ -1761,364 +3146,723 @@ ready(() => {
                 if (myxmlhttp.status === 200) {
                     // console.log("запрос")
                     if (JSON.parse(myxmlhttp.response).cur_flow_competitors_json) {
-                        if (querysetsFromBack !== JSON.parse(myxmlhttp.response).cur_flow_competitors_json) {
-                            querysetsFromBack = JSON.parse(myxmlhttp.response).cur_flow_competitors_json;
-                            let querysetsFromBackJson = JSON.parse(querysetsFromBack);
-                            while (massTable.rows.length > 1) {
-                                massTable.deleteRow(-1);
+                        console.log(JSON.parse(myxmlhttp.response).cur_flow_competitors_json)
+
+                        let querysetsFromBackJson = JSON.parse(myxmlhttp.response).cur_flow_competitors_json;
+                        while (massTable.rows.length > 1) {
+                            massTable.deleteRow(-1);
+                        }
+                        for (let i = 0; i < querysetsFromBackJson.length; i ++) {
+                            let newRow = massTable.insertRow();
+                            let newCellFi = newRow.insertCell();
+                            let textFi = document.createTextNode(`${querysetsFromBackJson[i]["competitor__surname_comp"]} ${querysetsFromBackJson[i]["competitor__name_comp"]}`);
+                            if (querysetsFromBackJson[i]["competitor_translation"] !== null) {
+                                newCellFi.parentElement.style.border = "5px solid #A27D29";
                             }
-                            console.log(querysetsFromBackJson)
-                            // console.log(querysetsFromBackJson[0]["fields"])
-                            for (let i = 0; i < querysetsFromBackJson.length; i ++) {
-                                let newRow = massTable.insertRow();
-                                let newCellFi = newRow.insertCell();
-                                let textFi = document.createTextNode(`${querysetsFromBackJson[i]["fields"]["competitor"][0]} ${querysetsFromBackJson[i]["fields"]["competitor"][1]}`);
-                                newCellFi.appendChild(textFi);
-                                let newCellWeight = newRow.insertCell();
-                                let textWeight = document.createTextNode(querysetsFromBackJson[i]["fields"]["competitor_weight"]);
-                                newCellWeight.appendChild(textWeight);
-                                let compSTypes = querysetsFromBackJson[i]["fields"]["competitor"][2];
-                                if (compSTypes.includes("Троеборье классическое") || compSTypes.includes("Жим лёжа (без экип.)")) {
-                                    let newCellsquatRes1 = newRow.insertCell();
-                                    if (querysetsFromBackJson[i]["fields"]["first_attempt_squat_res"] === null) {
-                                        let textsquatRes1 = document.createTextNode("");
-                                        newCellsquatRes1.appendChild(textsquatRes1);
-                                    } else {
-                                        let textsquatRes1 = document.createTextNode(querysetsFromBackJson[i]["fields"]["first_attempt_squat_res"]);
-                                        newCellsquatRes1.appendChild(textsquatRes1);
-                                        if (querysetsFromBackJson[i]["fields"]["first_attempt_squat_off"] !== null) {
-                                            if (querysetsFromBackJson[i]["fields"]["first_attempt_squat_off"] === "0" || querysetsFromBackJson[i]["fields"]["first_attempt_squat_off"] === "1") {
-                                                newCellsquatRes1.style.backgroundColor = "#ffa0a0";
-                                            } else if (querysetsFromBackJson[i]["fields"]["first_attempt_squat_off"] === "2" || querysetsFromBackJson[i]["fields"]["first_attempt_squat_off"] === "3") {
-                                                newCellsquatRes1.style.backgroundColor = "#aaffaa";
-                                            }
-                                        }
-                                    }
-                                    let newCellsquatRes2 = newRow.insertCell();
-                                    if (querysetsFromBackJson[i]["fields"]["second_attempt_squat_res"] === null) {
-                                        let textsquatRes2 = document.createTextNode("");
-                                        newCellsquatRes2.appendChild(textsquatRes2);
-                                    } else {
-                                        let textsquatRes2 = document.createTextNode(querysetsFromBackJson[i]["fields"]["second_attempt_squat_res"]);
-                                        newCellsquatRes2.appendChild(textsquatRes2);
-                                        if (querysetsFromBackJson[i]["fields"]["second_attempt_squat_off"] !== null) {
-                                            if (querysetsFromBackJson[i]["fields"]["second_attempt_squat_off"] === "0" || querysetsFromBackJson[i]["fields"]["second_attempt_squat_off"] === "1") {
-                                                newCellsquatRes2.style.backgroundColor = "#ffa0a0";
-                                            } else if (querysetsFromBackJson[i]["fields"]["second_attempt_squat_off"] === "2" || querysetsFromBackJson[i]["fields"]["second_attempt_squat_off"] === "3") {
-                                                newCellsquatRes2.style.backgroundColor = "#aaffaa";
-                                            }
-                                        }
-                                    }
-                                    let newCellsquatRes3 = newRow.insertCell();
-                                    if (querysetsFromBackJson[i]["fields"]["third_attempt_squat_res"] === null) {
-                                        let textsquatRes3 = document.createTextNode("");
-                                        newCellsquatRes3.appendChild(textsquatRes3);
-                                    } else {
-                                        let textsquatRes3 = document.createTextNode(querysetsFromBackJson[i]["fields"]["third_attempt_squat_res"]);
-                                        newCellsquatRes3.appendChild(textsquatRes3);
-                                        if (querysetsFromBackJson[i]["fields"]["third_attempt_squat_off"] !== null) {
-                                            if (querysetsFromBackJson[i]["fields"]["third_attempt_squat_off"] === "0" || querysetsFromBackJson[i]["fields"]["third_attempt_squat_off"] === "1") {
-                                                newCellsquatRes3.style.backgroundColor = "#ffa0a0";
-                                            } else if (querysetsFromBackJson[i]["fields"]["third_attempt_squat_off"] === "2" || querysetsFromBackJson[i]["fields"]["third_attempt_squat_off"] === "3") {
-                                                newCellsquatRes3.style.backgroundColor = "#aaffaa";
-                                            }
-                                        }
-                                    }
-                                    let newCellbpRes1 = newRow.insertCell();
-                                    if (querysetsFromBackJson[i]["fields"]["first_attempt_bpress_res"] === null) {
-                                        let textbpRes1 = document.createTextNode("");
-                                        newCellbpRes1.appendChild(textbpRes1);
-                                    } else {
-                                        let textbpRes1 = document.createTextNode(querysetsFromBackJson[i]["fields"]["first_attempt_bpress_res"]);
-                                        newCellbpRes1.appendChild(textbpRes1);
-                                        if (querysetsFromBackJson[i]["fields"]["first_attempt_bpress_off"] !== null) {
-                                            if (querysetsFromBackJson[i]["fields"]["first_attempt_bpress_off"] === "0" || querysetsFromBackJson[i]["fields"]["first_attempt_bpress_off"] === "1") {
-                                                newCellbpRes1.style.backgroundColor = "#ffa0a0";
-                                            } else if (querysetsFromBackJson[i]["fields"]["first_attempt_bpress_off"] === "2" || querysetsFromBackJson[i]["fields"]["first_attempt_bpress_off"] === "3") {
-                                                newCellbpRes1.style.backgroundColor = "#aaffaa";
-                                            }
-                                        }
-                                    }
-                                    let newCellbpRes2 = newRow.insertCell();
-                                    if (querysetsFromBackJson[i]["fields"]["second_attempt_bpress_res"] === null) {
-                                        let textbpRes2 = document.createTextNode("");
-                                        newCellbpRes2.appendChild(textbpRes2);
-                                    } else {
-                                        let textbpRes2 = document.createTextNode(querysetsFromBackJson[i]["fields"]["second_attempt_bpress_res"]);
-                                        newCellbpRes2.appendChild(textbpRes2);
-                                        if (querysetsFromBackJson[i]["fields"]["second_attempt_bpress_off"] !== null) {
-                                            if (querysetsFromBackJson[i]["fields"]["second_attempt_bpress_off"] === "0" || querysetsFromBackJson[i]["fields"]["second_attempt_bpress_off"] === "1") {
-                                                newCellbpRes2.style.backgroundColor = "#ffa0a0";
-                                            } else if (querysetsFromBackJson[i]["fields"]["second_attempt_bpress_off"] === "2" || querysetsFromBackJson[i]["fields"]["second_attempt_bpress_off"] === "3") {
-                                                newCellbpRes2.style.backgroundColor = "#aaffaa";
-                                            }
-                                        }
-                                    }
-                                    let newCellbpRes3 = newRow.insertCell();
-                                    if (querysetsFromBackJson[i]["fields"]["third_attempt_bpress_res"] === null) {
-                                        let textbpRes3 = document.createTextNode("");
-                                        newCellbpRes3.appendChild(textbpRes3);
-                                    } else {
-                                        let textbpRes3 = document.createTextNode(querysetsFromBackJson[i]["fields"]["third_attempt_bpress_res"]);
-                                        newCellbpRes3.appendChild(textbpRes3);
-                                        if (querysetsFromBackJson[i]["fields"]["third_attempt_bpress_off"] !== null) {
-                                            if (querysetsFromBackJson[i]["fields"]["third_attempt_bpress_off"] === "0" || querysetsFromBackJson[i]["fields"]["third_attempt_bpress_off"] === "1") {
-                                                newCellbpRes3.style.backgroundColor = "#ffa0a0";
-                                            } else if (querysetsFromBackJson[i]["fields"]["third_attempt_bpress_off"] === "2" || querysetsFromBackJson[i]["fields"]["third_attempt_bpress_off"] === "3") {
-                                                newCellbpRes3.style.backgroundColor = "#aaffaa";
-                                            }
-                                        }
-                                    }
-                                    let newCelldlRes1 = newRow.insertCell();
-                                    if (querysetsFromBackJson[i]["fields"]["first_attempt_dlift_res"] === null) {
-                                        let textdlRes1 = document.createTextNode("");
-                                        newCelldlRes1.appendChild(textdlRes1);
-                                    } else {
-                                        let textdlRes1 = document.createTextNode(querysetsFromBackJson[i]["fields"]["first_attempt_dlift_res"]);
-                                        newCelldlRes1.appendChild(textdlRes1);
-                                        if (querysetsFromBackJson[i]["fields"]["first_attempt_dlift_off"] !== null) {
-                                            if (querysetsFromBackJson[i]["fields"]["first_attempt_dlift_off"] === "0" || querysetsFromBackJson[i]["fields"]["first_attempt_dlift_off"] === "1") {
-                                                newCelldlRes1.style.backgroundColor = "#ffa0a0";
-                                            } else if (querysetsFromBackJson[i]["fields"]["first_attempt_dlift_off"] === "2" || querysetsFromBackJson[i]["fields"]["first_attempt_dlift_off"] === "3") {
-                                                newCelldlRes1.style.backgroundColor = "#aaffaa";
-                                            }
-                                        }
-                                    }
-                                    let newCelldlRes2 = newRow.insertCell();
-                                    if (querysetsFromBackJson[i]["fields"]["second_attempt_dlift_res"] === null) {
-                                        let textdlRes2 = document.createTextNode("");
-                                        newCelldlRes2.appendChild(textdlRes2);
-                                    } else {
-                                        let textdlRes2 = document.createTextNode(querysetsFromBackJson[i]["fields"]["second_attempt_dlift_res"]);
-                                        newCelldlRes2.appendChild(textdlRes2);
-                                        if (querysetsFromBackJson[i]["fields"]["second_attempt_dlift_off"] !== null) {
-                                            if (querysetsFromBackJson[i]["fields"]["second_attempt_dlift_off"] === "0" || querysetsFromBackJson[i]["fields"]["second_attempt_dlift_off"] === "1") {
-                                                newCelldlRes2.style.backgroundColor = "#ffa0a0";
-                                            } else if (querysetsFromBackJson[i]["fields"]["second_attempt_dlift_off"] === "2" || querysetsFromBackJson[i]["fields"]["second_attempt_dlift_off"] === "3") {
-                                                newCelldlRes2.style.backgroundColor = "#aaffaa";
-                                            }
-                                        }
-                                    }
-                                    let newCelldlRes3 = newRow.insertCell();
-                                    if (querysetsFromBackJson[i]["fields"]["third_attempt_dlift_res"] === null) {
-                                        let textdlRes3 = document.createTextNode("");
-                                        newCelldlRes3.appendChild(textdlRes3);
-                                    } else {
-                                        let textdlRes3 = document.createTextNode(querysetsFromBackJson[i]["fields"]["third_attempt_dlift_res"]);
-                                        newCelldlRes3.appendChild(textdlRes3);
-                                        if (querysetsFromBackJson[i]["fields"]["third_attempt_dlift_off"] !== null) {
-                                            if (querysetsFromBackJson[i]["fields"]["third_attempt_dlift_off"] === "0" || querysetsFromBackJson[i]["fields"]["third_attempt_dlift_off"] === "1") {
-                                                newCelldlRes3.style.backgroundColor = "#ffa0a0";
-                                            } else if (querysetsFromBackJson[i]["fields"]["third_attempt_dlift_off"] === "2" || querysetsFromBackJson[i]["fields"]["third_attempt_dlift_off"] === "3") {
-                                                newCelldlRes3.style.backgroundColor = "#aaffaa";
-                                            }
-                                        }
-                                    }
-                                    let newCellitSquat = newRow.insertCell();
-                                    if (querysetsFromBackJson[i]["fields"]["best_squat_res"] === null) {
-                                        let textitSquat = document.createTextNode("");
-                                        newCellitSquat.appendChild(textitSquat);
-                                    } else {
-                                        let textitSquat = document.createTextNode(querysetsFromBackJson[i]["fields"]["best_squat_res"]);
-                                        newCellitSquat.appendChild(textitSquat);
-                                    }
-                                    let newCellitBp = newRow.insertCell();
-                                    if (querysetsFromBackJson[i]["fields"]["best_bpress_res"] === null) {
-                                        let textitBp = document.createTextNode("");
-                                        newCellitBp.appendChild(textitBp);
-                                    } else {
-                                        let textitBp = document.createTextNode(querysetsFromBackJson[i]["fields"]["best_bpress_res"]);
-                                        newCellitBp.appendChild(textitBp);
-                                    }
-                                    let newCellititDl = newRow.insertCell();
-                                    if (querysetsFromBackJson[i]["fields"]["best_dlift_res"] === null) {
-                                        let textitDl = document.createTextNode("");
-                                        newCellititDl.appendChild(textitDl);
-                                    } else {
-                                        let textitDl = document.createTextNode(querysetsFromBackJson[i]["fields"]["best_dlift_res"]);
-                                        newCellititDl.appendChild(textitDl);
-                                    }
-                                    let newCellIt = newRow.insertCell();
-                                    if (querysetsFromBackJson[i]["fields"]["best_sum_res"] === null) {
-                                        let textIt = document.createTextNode("");
-                                        newCellIt.appendChild(textIt);
-                                    } else {
-                                        let textIt = document.createTextNode(querysetsFromBackJson[i]["fields"]["best_sum_res"]);
-                                        newCellIt.appendChild(textIt);
-                                    }
+                            newCellFi.appendChild(textFi);
+                            let newCellWeight = newRow.insertCell();
+                            let textWeight = document.createTextNode(querysetsFromBackJson[i]["competitor_weight"]);
+                            newCellWeight.appendChild(textWeight);
+                            let compSTypes = querysetsFromBackJson[i]["competitor__sports_type__title"];
+                            if (compSTypes.includes("Троеборье классическое") || compSTypes.includes("Жим лёжа (без экип.)")) {
+                                let newCellsquatRes1 = newRow.insertCell();
+                                if (querysetsFromBackJson[i]["first_attempt_squat_res"] === null) {
+                                    let textsquatRes1 = document.createTextNode("");
+                                    newCellsquatRes1.appendChild(textsquatRes1);
                                 } else {
-                                    let newCellsquatRes1 = newRow.insertCell();
-                                    if (querysetsFromBackJson[i]["fields"]["first_attempt_squat_res_ek"] === null) {
-                                        let textsquatRes1 = document.createTextNode("");
-                                        newCellsquatRes1.appendChild(textsquatRes1);
-                                    } else {
-                                        let textsquatRes1 = document.createTextNode(querysetsFromBackJson[i]["fields"]["first_attempt_squat_res_ek"]);
-                                        newCellsquatRes1.appendChild(textsquatRes1);
-                                        if (querysetsFromBackJson[i]["fields"]["first_attempt_squat_off_ek"] !== null) {
-                                            if (querysetsFromBackJson[i]["fields"]["first_attempt_squat_off_ek"] === "0" || querysetsFromBackJson[i]["fields"]["first_attempt_squat_off_ek"] === "1") {
-                                                newCellsquatRes1.style.backgroundColor = "#ffa0a0";
-                                            } else if (querysetsFromBackJson[i]["fields"]["first_attempt_squat_off_ek"] === "2" || querysetsFromBackJson[i]["fields"]["first_attempt_squat_off_ek"] === "3") {
-                                                newCellsquatRes1.style.backgroundColor = "#aaffaa";
-                                            }
+                                    let textsquatRes1 = document.createTextNode(querysetsFromBackJson[i]["first_attempt_squat_res"]);
+                                    newCellsquatRes1.appendChild(textsquatRes1);
+                                    if (querysetsFromBackJson[i]["first_attempt_squat_off"] !== null) {
+                                        if (querysetsFromBackJson[i]["first_attempt_squat_off"] === "0" || querysetsFromBackJson[i]["first_attempt_squat_off"] === "1") {
+                                            newCellsquatRes1.style.backgroundColor = "#ffa0a0";
+                                        } else if (querysetsFromBackJson[i]["first_attempt_squat_off"] === "2" || querysetsFromBackJson[i]["first_attempt_squat_off"] === "3") {
+                                            newCellsquatRes1.style.backgroundColor = "#aaffaa";
                                         }
                                     }
-                                    let newCellsquatRes2 = newRow.insertCell();
-                                    if (querysetsFromBackJson[i]["fields"]["second_attempt_squat_res_ek"] === null) {
-                                        let textsquatRes2 = document.createTextNode("");
-                                        newCellsquatRes2.appendChild(textsquatRes2);
-                                    } else {
-                                        let textsquatRes2 = document.createTextNode(querysetsFromBackJson[i]["fields"]["second_attempt_squat_res_ek"]);
-                                        newCellsquatRes2.appendChild(textsquatRes2);
-                                        if (querysetsFromBackJson[i]["fields"]["second_attempt_squat_off_ek"] !== null) {
-                                            if (querysetsFromBackJson[i]["fields"]["second_attempt_squat_off_ek"] === "0" || querysetsFromBackJson[i]["fields"]["second_attempt_squat_off_ek"] === "1") {
-                                                newCellsquatRes2.style.backgroundColor = "#ffa0a0";
-                                            } else if (querysetsFromBackJson[i]["fields"]["second_attempt_squat_off_ek"] === "2" || querysetsFromBackJson[i]["fields"]["second_attempt_squat_off_ek"] === "3") {
-                                                newCellsquatRes2.style.backgroundColor = "#aaffaa";
-                                            }
+                                }
+                                let newCellsquatRes2 = newRow.insertCell();
+                                if (querysetsFromBackJson[i]["second_attempt_squat_res"] === null) {
+                                    let textsquatRes2 = document.createTextNode("");
+                                    newCellsquatRes2.appendChild(textsquatRes2);
+                                } else {
+                                    let textsquatRes2 = document.createTextNode(querysetsFromBackJson[i]["second_attempt_squat_res"]);
+                                    newCellsquatRes2.appendChild(textsquatRes2);
+                                    if (querysetsFromBackJson[i]["second_attempt_squat_off"] !== null) {
+                                        if (querysetsFromBackJson[i]["second_attempt_squat_off"] === "0" || querysetsFromBackJson[i]["second_attempt_squat_off"] === "1") {
+                                            newCellsquatRes2.style.backgroundColor = "#ffa0a0";
+                                        } else if (querysetsFromBackJson[i]["second_attempt_squat_off"] === "2" || querysetsFromBackJson[i]["second_attempt_squat_off"] === "3") {
+                                            newCellsquatRes2.style.backgroundColor = "#aaffaa";
                                         }
                                     }
-                                    let newCellsquatRes3 = newRow.insertCell();
-                                    if (querysetsFromBackJson[i]["fields"]["third_attempt_squat_res_ek"] === null) {
-                                        let textsquatRes3 = document.createTextNode("");
-                                        newCellsquatRes3.appendChild(textsquatRes3);
-                                    } else {
-                                        let textsquatRes3 = document.createTextNode(querysetsFromBackJson[i]["fields"]["third_attempt_squat_res_ek"]);
-                                        newCellsquatRes3.appendChild(textsquatRes3);
-                                        if (querysetsFromBackJson[i]["fields"]["third_attempt_squat_off_ek"] !== null) {
-                                            if (querysetsFromBackJson[i]["fields"]["third_attempt_squat_off_ek"] === "0" || querysetsFromBackJson[i]["fields"]["third_attempt_squat_off_ek"] === "1") {
-                                                newCellsquatRes3.style.backgroundColor = "#ffa0a0";
-                                            } else if (querysetsFromBackJson[i]["fields"]["third_attempt_squat_off_ek"] === "2" || querysetsFromBackJson[i]["fields"]["third_attempt_squat_off_ek"] === "3") {
-                                                newCellsquatRes3.style.backgroundColor = "#aaffaa";
-                                            }
+                                }
+                                let newCellsquatRes3 = newRow.insertCell();
+                                if (querysetsFromBackJson[i]["third_attempt_squat_res"] === null) {
+                                    let textsquatRes3 = document.createTextNode("");
+                                    newCellsquatRes3.appendChild(textsquatRes3);
+                                } else {
+                                    let textsquatRes3 = document.createTextNode(querysetsFromBackJson[i]["third_attempt_squat_res"]);
+                                    newCellsquatRes3.appendChild(textsquatRes3);
+                                    if (querysetsFromBackJson[i]["third_attempt_squat_off"] !== null) {
+                                        if (querysetsFromBackJson[i]["third_attempt_squat_off"] === "0" || querysetsFromBackJson[i]["third_attempt_squat_off"] === "1") {
+                                            newCellsquatRes3.style.backgroundColor = "#ffa0a0";
+                                        } else if (querysetsFromBackJson[i]["third_attempt_squat_off"] === "2" || querysetsFromBackJson[i]["third_attempt_squat_off"] === "3") {
+                                            newCellsquatRes3.style.backgroundColor = "#aaffaa";
                                         }
                                     }
-                                    let newCellbpRes1 = newRow.insertCell();
-                                    if (querysetsFromBackJson[i]["fields"]["first_attempt_bpress_res_ek"] === null) {
-                                        let textbpRes1 = document.createTextNode("");
-                                        newCellbpRes1.appendChild(textbpRes1);
-                                    } else {
-                                        let textbpRes1 = document.createTextNode(querysetsFromBackJson[i]["fields"]["first_attempt_bpress_res_ek"]);
-                                        newCellbpRes1.appendChild(textbpRes1);
-                                        if (querysetsFromBackJson[i]["fields"]["first_attempt_bpress_off_ek"] !== null) {
-                                            if (querysetsFromBackJson[i]["fields"]["first_attempt_bpress_off_ek"] === "0" || querysetsFromBackJson[i]["fields"]["first_attempt_bpress_off_ek"] === "1") {
-                                                newCellbpRes1.style.backgroundColor = "#ffa0a0";
-                                            } else if (querysetsFromBackJson[i]["fields"]["first_attempt_bpress_off_ek"] === "2" || querysetsFromBackJson[i]["fields"]["first_attempt_bpress_off_ek"] === "3") {
-                                                newCellbpRes1.style.backgroundColor = "#aaffaa";
-                                            }
+                                }
+                                let newCellbpRes1 = newRow.insertCell();
+                                if (querysetsFromBackJson[i]["first_attempt_bpress_res"] === null) {
+                                    let textbpRes1 = document.createTextNode("");
+                                    newCellbpRes1.appendChild(textbpRes1);
+                                } else {
+                                    let textbpRes1 = document.createTextNode(querysetsFromBackJson[i]["first_attempt_bpress_res"]);
+                                    newCellbpRes1.appendChild(textbpRes1);
+                                    if (querysetsFromBackJson[i]["first_attempt_bpress_off"] !== null) {
+                                        if (querysetsFromBackJson[i]["first_attempt_bpress_off"] === "0" || querysetsFromBackJson[i]["first_attempt_bpress_off"] === "1") {
+                                            newCellbpRes1.style.backgroundColor = "#ffa0a0";
+                                        } else if (querysetsFromBackJson[i]["first_attempt_bpress_off"] === "2" || querysetsFromBackJson[i]["first_attempt_bpress_off"] === "3") {
+                                            newCellbpRes1.style.backgroundColor = "#aaffaa";
                                         }
                                     }
-                                    let newCellbpRes2 = newRow.insertCell();
-                                    if (querysetsFromBackJson[i]["fields"]["second_attempt_bpress_res_ek"] === null) {
-                                        let textbpRes2 = document.createTextNode("");
-                                        newCellbpRes2.appendChild(textbpRes2);
-                                    } else {
-                                        let textbpRes2 = document.createTextNode(querysetsFromBackJson[i]["fields"]["second_attempt_bpress_res_ek"]);
-                                        newCellbpRes2.appendChild(textbpRes2);
-                                        if (querysetsFromBackJson[i]["fields"]["second_attempt_bpress_off_ek"] !== null) {
-                                            if (querysetsFromBackJson[i]["fields"]["second_attempt_bpress_off_ek"] === "0" || querysetsFromBackJson[i]["fields"]["second_attempt_bpress_off_ek"] === "1") {
-                                                newCellbpRes2.style.backgroundColor = "#ffa0a0";
-                                            } else if (querysetsFromBackJson[i]["fields"]["second_attempt_bpress_off_ek"] === "2" || querysetsFromBackJson[i]["fields"]["second_attempt_bpress_off_ek"] === "3") {
-                                                newCellbpRes2.style.backgroundColor = "#aaffaa";
-                                            }
+                                }
+                                let newCellbpRes2 = newRow.insertCell();
+                                if (querysetsFromBackJson[i]["second_attempt_bpress_res"] === null) {
+                                    let textbpRes2 = document.createTextNode("");
+                                    newCellbpRes2.appendChild(textbpRes2);
+                                } else {
+                                    let textbpRes2 = document.createTextNode(querysetsFromBackJson[i]["second_attempt_bpress_res"]);
+                                    newCellbpRes2.appendChild(textbpRes2);
+                                    if (querysetsFromBackJson[i]["second_attempt_bpress_off"] !== null) {
+                                        if (querysetsFromBackJson[i]["second_attempt_bpress_off"] === "0" || querysetsFromBackJson[i]["second_attempt_bpress_off"] === "1") {
+                                            newCellbpRes2.style.backgroundColor = "#ffa0a0";
+                                        } else if (querysetsFromBackJson[i]["second_attempt_bpress_off"] === "2" || querysetsFromBackJson[i]["second_attempt_bpress_off"] === "3") {
+                                            newCellbpRes2.style.backgroundColor = "#aaffaa";
                                         }
                                     }
-                                    let newCellbpRes3 = newRow.insertCell();
-                                    if (querysetsFromBackJson[i]["fields"]["third_attempt_bpress_res_ek"] === null) {
-                                        let textbpRes3 = document.createTextNode("");
-                                        newCellbpRes3.appendChild(textbpRes3);
-                                    } else {
-                                        let textbpRes3 = document.createTextNode(querysetsFromBackJson[i]["fields"]["third_attempt_bpress_res_ek"]);
-                                        newCellbpRes3.appendChild(textbpRes3);
-                                        if (querysetsFromBackJson[i]["fields"]["third_attempt_bpress_off_ek"] !== null) {
-                                            if (querysetsFromBackJson[i]["fields"]["third_attempt_bpress_off_ek"] === "0" || querysetsFromBackJson[i]["fields"]["third_attempt_bpress_off_ek"] === "1") {
-                                                newCellbpRes3.style.backgroundColor = "#ffa0a0";
-                                            } else if (querysetsFromBackJson[i]["fields"]["third_attempt_bpress_off_ek"] === "2" || querysetsFromBackJson[i]["fields"]["third_attempt_bpress_off_ek"] === "3") {
-                                                newCellbpRes3.style.backgroundColor = "#aaffaa";
-                                            }
+                                }
+                                let newCellbpRes3 = newRow.insertCell();
+                                if (querysetsFromBackJson[i]["third_attempt_bpress_res"] === null) {
+                                    let textbpRes3 = document.createTextNode("");
+                                    newCellbpRes3.appendChild(textbpRes3);
+                                } else {
+                                    let textbpRes3 = document.createTextNode(querysetsFromBackJson[i]["third_attempt_bpress_res"]);
+                                    newCellbpRes3.appendChild(textbpRes3);
+                                    if (querysetsFromBackJson[i]["third_attempt_bpress_off"] !== null) {
+                                        if (querysetsFromBackJson[i]["third_attempt_bpress_off"] === "0" || querysetsFromBackJson[i]["third_attempt_bpress_off"] === "1") {
+                                            newCellbpRes3.style.backgroundColor = "#ffa0a0";
+                                        } else if (querysetsFromBackJson[i]["third_attempt_bpress_off"] === "2" || querysetsFromBackJson[i]["third_attempt_bpress_off"] === "3") {
+                                            newCellbpRes3.style.backgroundColor = "#aaffaa";
                                         }
                                     }
-                                    let newCelldlRes1 = newRow.insertCell();
-                                    if (querysetsFromBackJson[i]["fields"]["first_attempt_dlift_res_ek"] === null) {
-                                        let textdlRes1 = document.createTextNode("");
-                                        newCelldlRes1.appendChild(textdlRes1);
-                                    } else {
-                                        let textdlRes1 = document.createTextNode(querysetsFromBackJson[i]["fields"]["first_attempt_dlift_res_ek"]);
-                                        newCelldlRes1.appendChild(textdlRes1);
-                                        if (querysetsFromBackJson[i]["fields"]["first_attempt_dlift_off_ek"] !== null) {
-                                            if (querysetsFromBackJson[i]["fields"]["first_attempt_dlift_off_ek"] === "0" || querysetsFromBackJson[i]["fields"]["first_attempt_dlift_off_ek"] === "1") {
-                                                newCelldlRes1.style.backgroundColor = "#ffa0a0";
-                                            } else if (querysetsFromBackJson[i]["fields"]["first_attempt_dlift_off_ek"] === "2" || querysetsFromBackJson[i]["fields"]["first_attempt_dlift_off_ek"] === "3") {
-                                                newCelldlRes1.style.backgroundColor = "#aaffaa";
-                                            }
+                                }
+                                let newCelldlRes1 = newRow.insertCell();
+                                if (querysetsFromBackJson[i]["first_attempt_dlift_res"] === null) {
+                                    let textdlRes1 = document.createTextNode("");
+                                    newCelldlRes1.appendChild(textdlRes1);
+                                } else {
+                                    let textdlRes1 = document.createTextNode(querysetsFromBackJson[i]["first_attempt_dlift_res"]);
+                                    newCelldlRes1.appendChild(textdlRes1);
+                                    if (querysetsFromBackJson[i]["first_attempt_dlift_off"] !== null) {
+                                        if (querysetsFromBackJson[i]["first_attempt_dlift_off"] === "0" || querysetsFromBackJson[i]["first_attempt_dlift_off"] === "1") {
+                                            newCelldlRes1.style.backgroundColor = "#ffa0a0";
+                                        } else if (querysetsFromBackJson[i]["first_attempt_dlift_off"] === "2" || querysetsFromBackJson[i]["first_attempt_dlift_off"] === "3") {
+                                            newCelldlRes1.style.backgroundColor = "#aaffaa";
                                         }
                                     }
-                                    let newCelldlRes2 = newRow.insertCell();
-                                    if (querysetsFromBackJson[i]["fields"]["second_attempt_dlift_res_ek"] === null) {
-                                        let textdlRes2 = document.createTextNode("");
-                                        newCelldlRes2.appendChild(textdlRes2);
-                                    } else {
-                                        let textdlRes2 = document.createTextNode(querysetsFromBackJson[i]["fields"]["second_attempt_dlift_res_ek"]);
-                                        newCelldlRes2.appendChild(textdlRes2);
-                                        if (querysetsFromBackJson[i]["fields"]["second_attempt_dlift_off_ek"] !== null) {
-                                            if (querysetsFromBackJson[i]["fields"]["second_attempt_dlift_off_ek"] === "0" || querysetsFromBackJson[i]["fields"]["second_attempt_dlift_off_ek"] === "1") {
-                                                newCelldlRes2.style.backgroundColor = "#ffa0a0";
-                                            } else if (querysetsFromBackJson[i]["fields"]["second_attempt_dlift_off_ek"] === "2" || querysetsFromBackJson[i]["fields"]["second_attempt_dlift_off_ek"] === "3") {
-                                                newCelldlRes2.style.backgroundColor = "#aaffaa";
-                                            }
+                                }
+                                let newCelldlRes2 = newRow.insertCell();
+                                if (querysetsFromBackJson[i]["second_attempt_dlift_res"] === null) {
+                                    let textdlRes2 = document.createTextNode("");
+                                    newCelldlRes2.appendChild(textdlRes2);
+                                } else {
+                                    let textdlRes2 = document.createTextNode(querysetsFromBackJson[i]["second_attempt_dlift_res"]);
+                                    newCelldlRes2.appendChild(textdlRes2);
+                                    if (querysetsFromBackJson[i]["second_attempt_dlift_off"] !== null) {
+                                        if (querysetsFromBackJson[i]["second_attempt_dlift_off"] === "0" || querysetsFromBackJson[i]["second_attempt_dlift_off"] === "1") {
+                                            newCelldlRes2.style.backgroundColor = "#ffa0a0";
+                                        } else if (querysetsFromBackJson[i]["second_attempt_dlift_off"] === "2" || querysetsFromBackJson[i]["second_attempt_dlift_off"] === "3") {
+                                            newCelldlRes2.style.backgroundColor = "#aaffaa";
                                         }
                                     }
-                                    let newCelldlRes3 = newRow.insertCell();
-                                    if (querysetsFromBackJson[i]["fields"]["third_attempt_dlift_res_ek"] === null) {
-                                        let textdlRes3 = document.createTextNode("");
-                                        newCelldlRes3.appendChild(textdlRes3);
-                                    } else {
-                                        let textdlRes3 = document.createTextNode(querysetsFromBackJson[i]["fields"]["third_attempt_dlift_res_ek"]);
-                                        newCelldlRes3.appendChild(textdlRes3);
-                                        if (querysetsFromBackJson[i]["fields"]["third_attempt_dlift_off_ek"] !== null) {
-                                            if (querysetsFromBackJson[i]["fields"]["third_attempt_dlift_off_ek"] === "0" || querysetsFromBackJson[i]["fields"]["third_attempt_dlift_off_ek"] === "1") {
-                                                newCelldlRes3.style.backgroundColor = "#ffa0a0";
-                                            } else if (querysetsFromBackJson[i]["fields"]["third_attempt_dlift_off_ek"] === "2" || querysetsFromBackJson[i]["fields"]["third_attempt_dlift_off_ek"] === "3") {
-                                                newCelldlRes3.style.backgroundColor = "#aaffaa";
-                                            }
+                                }
+                                let newCelldlRes3 = newRow.insertCell();
+                                if (querysetsFromBackJson[i]["third_attempt_dlift_res"] === null) {
+                                    let textdlRes3 = document.createTextNode("");
+                                    newCelldlRes3.appendChild(textdlRes3);
+                                } else {
+                                    let textdlRes3 = document.createTextNode(querysetsFromBackJson[i]["third_attempt_dlift_res"]);
+                                    newCelldlRes3.appendChild(textdlRes3);
+                                    if (querysetsFromBackJson[i]["third_attempt_dlift_off"] !== null) {
+                                        if (querysetsFromBackJson[i]["third_attempt_dlift_off"] === "0" || querysetsFromBackJson[i]["third_attempt_dlift_off"] === "1") {
+                                            newCelldlRes3.style.backgroundColor = "#ffa0a0";
+                                        } else if (querysetsFromBackJson[i]["third_attempt_dlift_off"] === "2" || querysetsFromBackJson[i]["third_attempt_dlift_off"] === "3") {
+                                            newCelldlRes3.style.backgroundColor = "#aaffaa";
                                         }
                                     }
-                                    let newCellitSquat = newRow.insertCell();
-                                    if (querysetsFromBackJson[i]["fields"]["best_squat_res_ek"] === null) {
-                                        let textitSquat = document.createTextNode("");
-                                        newCellitSquat.appendChild(textitSquat);
-                                    } else {
-                                        let textitSquat = document.createTextNode(querysetsFromBackJson[i]["fields"]["best_squat_res_ek"]);
-                                        newCellitSquat.appendChild(textitSquat);
+                                }
+                                let newCellitSquat = newRow.insertCell();
+                                if (querysetsFromBackJson[i]["best_squat_res"] === null) {
+                                    let textitSquat = document.createTextNode("");
+                                    newCellitSquat.appendChild(textitSquat);
+                                } else {
+                                    let textitSquat = document.createTextNode(querysetsFromBackJson[i]["best_squat_res"]);
+                                    newCellitSquat.appendChild(textitSquat);
+                                }
+                                let newCellitBp = newRow.insertCell();
+                                if (querysetsFromBackJson[i]["best_bpress_res"] === null) {
+                                    let textitBp = document.createTextNode("");
+                                    newCellitBp.appendChild(textitBp);
+                                } else {
+                                    let textitBp = document.createTextNode(querysetsFromBackJson[i]["best_bpress_res"]);
+                                    newCellitBp.appendChild(textitBp);
+                                }
+                                let newCellititDl = newRow.insertCell();
+                                if (querysetsFromBackJson[i]["best_dlift_res"] === null) {
+                                    let textitDl = document.createTextNode("");
+                                    newCellititDl.appendChild(textitDl);
+                                } else {
+                                    let textitDl = document.createTextNode(querysetsFromBackJson[i]["best_dlift_res"]);
+                                    newCellititDl.appendChild(textitDl);
+                                }
+                                let newCellIt = newRow.insertCell();
+                                if (querysetsFromBackJson[i]["best_sum_res"] === null) {
+                                    let textIt = document.createTextNode("");
+                                    newCellIt.appendChild(textIt);
+                                } else {
+                                    let textIt = document.createTextNode(querysetsFromBackJson[i]["best_sum_res"]);
+                                    newCellIt.appendChild(textIt);
+                                }
+                            } else {
+                                let newCellsquatRes1 = newRow.insertCell();
+                                if (querysetsFromBackJson[i]["first_attempt_squat_res_ek"] === null) {
+                                    let textsquatRes1 = document.createTextNode("");
+                                    newCellsquatRes1.appendChild(textsquatRes1);
+                                } else {
+                                    let textsquatRes1 = document.createTextNode(querysetsFromBackJson[i]["first_attempt_squat_res_ek"]);
+                                    newCellsquatRes1.appendChild(textsquatRes1);
+                                    if (querysetsFromBackJson[i]["first_attempt_squat_off_ek"] !== null) {
+                                        if (querysetsFromBackJson[i]["first_attempt_squat_off_ek"] === "0" || querysetsFromBackJson[i]["first_attempt_squat_off_ek"] === "1") {
+                                            newCellsquatRes1.style.backgroundColor = "#ffa0a0";
+                                        } else if (querysetsFromBackJson[i]["first_attempt_squat_off_ek"] === "2" || querysetsFromBackJson[i]["first_attempt_squat_off_ek"] === "3") {
+                                            newCellsquatRes1.style.backgroundColor = "#aaffaa";
+                                        }
                                     }
-                                    let newCellitBp = newRow.insertCell();
-                                    if (querysetsFromBackJson[i]["fields"]["best_bpress_res_ek"] === null) {
-                                        let textitBp = document.createTextNode("");
-                                        newCellitBp.appendChild(textitBp);
-                                    } else {
-                                        let textitBp = document.createTextNode(querysetsFromBackJson[i]["fields"]["best_bpress_res_ek"]);
-                                        newCellitBp.appendChild(textitBp);
+                                }
+                                let newCellsquatRes2 = newRow.insertCell();
+                                if (querysetsFromBackJson[i]["second_attempt_squat_res_ek"] === null) {
+                                    let textsquatRes2 = document.createTextNode("");
+                                    newCellsquatRes2.appendChild(textsquatRes2);
+                                } else {
+                                    let textsquatRes2 = document.createTextNode(querysetsFromBackJson[i]["second_attempt_squat_res_ek"]);
+                                    newCellsquatRes2.appendChild(textsquatRes2);
+                                    if (querysetsFromBackJson[i]["second_attempt_squat_off_ek"] !== null) {
+                                        if (querysetsFromBackJson[i]["second_attempt_squat_off_ek"] === "0" || querysetsFromBackJson[i]["second_attempt_squat_off_ek"] === "1") {
+                                            newCellsquatRes2.style.backgroundColor = "#ffa0a0";
+                                        } else if (querysetsFromBackJson[i]["second_attempt_squat_off_ek"] === "2" || querysetsFromBackJson[i]["second_attempt_squat_off_ek"] === "3") {
+                                            newCellsquatRes2.style.backgroundColor = "#aaffaa";
+                                        }
                                     }
-                                    let newCellititDl = newRow.insertCell();
-                                    if (querysetsFromBackJson[i]["fields"]["best_dlift_res_ek"] === null) {
-                                        let textitDl = document.createTextNode("");
-                                        newCellititDl.appendChild(textitDl);
-                                    } else {
-                                        let textitDl = document.createTextNode(querysetsFromBackJson[i]["fields"]["best_dlift_res_ek"]);
-                                        newCellititDl.appendChild(textitDl);
+                                }
+                                let newCellsquatRes3 = newRow.insertCell();
+                                if (querysetsFromBackJson[i]["third_attempt_squat_res_ek"] === null) {
+                                    let textsquatRes3 = document.createTextNode("");
+                                    newCellsquatRes3.appendChild(textsquatRes3);
+                                } else {
+                                    let textsquatRes3 = document.createTextNode(querysetsFromBackJson[i]["third_attempt_squat_res_ek"]);
+                                    newCellsquatRes3.appendChild(textsquatRes3);
+                                    if (querysetsFromBackJson[i]["third_attempt_squat_off_ek"] !== null) {
+                                        if (querysetsFromBackJson[i]["third_attempt_squat_off_ek"] === "0" || querysetsFromBackJson[i]["third_attempt_squat_off_ek"] === "1") {
+                                            newCellsquatRes3.style.backgroundColor = "#ffa0a0";
+                                        } else if (querysetsFromBackJson[i]["third_attempt_squat_off_ek"] === "2" || querysetsFromBackJson[i]["third_attempt_squat_off_ek"] === "3") {
+                                            newCellsquatRes3.style.backgroundColor = "#aaffaa";
+                                        }
                                     }
-                                    let newCellIt = newRow.insertCell();
-                                    if (querysetsFromBackJson[i]["fields"]["best_sum_res_ek"] === null) {
-                                        let textIt = document.createTextNode("");
-                                        newCellIt.appendChild(textIt);
-                                    } else {
-                                        let textIt = document.createTextNode(querysetsFromBackJson[i]["fields"]["best_sum_res_ek"]);
-                                        newCellIt.appendChild(textIt);
+                                }
+                                let newCellbpRes1 = newRow.insertCell();
+                                if (querysetsFromBackJson[i]["first_attempt_bpress_res_ek"] === null) {
+                                    let textbpRes1 = document.createTextNode("");
+                                    newCellbpRes1.appendChild(textbpRes1);
+                                } else {
+                                    let textbpRes1 = document.createTextNode(querysetsFromBackJson[i]["first_attempt_bpress_res_ek"]);
+                                    newCellbpRes1.appendChild(textbpRes1);
+                                    if (querysetsFromBackJson[i]["first_attempt_bpress_off_ek"] !== null) {
+                                        if (querysetsFromBackJson[i]["first_attempt_bpress_off_ek"] === "0" || querysetsFromBackJson[i]["first_attempt_bpress_off_ek"] === "1") {
+                                            newCellbpRes1.style.backgroundColor = "#ffa0a0";
+                                        } else if (querysetsFromBackJson[i]["first_attempt_bpress_off_ek"] === "2" || querysetsFromBackJson[i]["first_attempt_bpress_off_ek"] === "3") {
+                                            newCellbpRes1.style.backgroundColor = "#aaffaa";
+                                        }
                                     }
+                                }
+                                let newCellbpRes2 = newRow.insertCell();
+                                if (querysetsFromBackJson[i]["second_attempt_bpress_res_ek"] === null) {
+                                    let textbpRes2 = document.createTextNode("");
+                                    newCellbpRes2.appendChild(textbpRes2);
+                                } else {
+                                    let textbpRes2 = document.createTextNode(querysetsFromBackJson[i]["second_attempt_bpress_res_ek"]);
+                                    newCellbpRes2.appendChild(textbpRes2);
+                                    if (querysetsFromBackJson[i]["second_attempt_bpress_off_ek"] !== null) {
+                                        if (querysetsFromBackJson[i]["second_attempt_bpress_off_ek"] === "0" || querysetsFromBackJson[i]["second_attempt_bpress_off_ek"] === "1") {
+                                            newCellbpRes2.style.backgroundColor = "#ffa0a0";
+                                        } else if (querysetsFromBackJson[i]["second_attempt_bpress_off_ek"] === "2" || querysetsFromBackJson[i]["second_attempt_bpress_off_ek"] === "3") {
+                                            newCellbpRes2.style.backgroundColor = "#aaffaa";
+                                        }
+                                    }
+                                }
+                                let newCellbpRes3 = newRow.insertCell();
+                                if (querysetsFromBackJson[i]["third_attempt_bpress_res_ek"] === null) {
+                                    let textbpRes3 = document.createTextNode("");
+                                    newCellbpRes3.appendChild(textbpRes3);
+                                } else {
+                                    let textbpRes3 = document.createTextNode(querysetsFromBackJson[i]["third_attempt_bpress_res_ek"]);
+                                    newCellbpRes3.appendChild(textbpRes3);
+                                    if (querysetsFromBackJson[i]["third_attempt_bpress_off_ek"] !== null) {
+                                        if (querysetsFromBackJson[i]["third_attempt_bpress_off_ek"] === "0" || querysetsFromBackJson[i]["third_attempt_bpress_off_ek"] === "1") {
+                                            newCellbpRes3.style.backgroundColor = "#ffa0a0";
+                                        } else if (querysetsFromBackJson[i]["third_attempt_bpress_off_ek"] === "2" || querysetsFromBackJson[i]["third_attempt_bpress_off_ek"] === "3") {
+                                            newCellbpRes3.style.backgroundColor = "#aaffaa";
+                                        }
+                                    }
+                                }
+                                let newCelldlRes1 = newRow.insertCell();
+                                if (querysetsFromBackJson[i]["first_attempt_dlift_res_ek"] === null) {
+                                    let textdlRes1 = document.createTextNode("");
+                                    newCelldlRes1.appendChild(textdlRes1);
+                                } else {
+                                    let textdlRes1 = document.createTextNode(querysetsFromBackJson[i]["first_attempt_dlift_res_ek"]);
+                                    newCelldlRes1.appendChild(textdlRes1);
+                                    if (querysetsFromBackJson[i]["first_attempt_dlift_off_ek"] !== null) {
+                                        if (querysetsFromBackJson[i]["first_attempt_dlift_off_ek"] === "0" || querysetsFromBackJson[i]["first_attempt_dlift_off_ek"] === "1") {
+                                            newCelldlRes1.style.backgroundColor = "#ffa0a0";
+                                        } else if (querysetsFromBackJson[i]["first_attempt_dlift_off_ek"] === "2" || querysetsFromBackJson[i]["first_attempt_dlift_off_ek"] === "3") {
+                                            newCelldlRes1.style.backgroundColor = "#aaffaa";
+                                        }
+                                    }
+                                }
+                                let newCelldlRes2 = newRow.insertCell();
+                                if (querysetsFromBackJson[i]["second_attempt_dlift_res_ek"] === null) {
+                                    let textdlRes2 = document.createTextNode("");
+                                    newCelldlRes2.appendChild(textdlRes2);
+                                } else {
+                                    let textdlRes2 = document.createTextNode(querysetsFromBackJson[i]["second_attempt_dlift_res_ek"]);
+                                    newCelldlRes2.appendChild(textdlRes2);
+                                    if (querysetsFromBackJson[i]["second_attempt_dlift_off_ek"] !== null) {
+                                        if (querysetsFromBackJson[i]["second_attempt_dlift_off_ek"] === "0" || querysetsFromBackJson[i]["second_attempt_dlift_off_ek"] === "1") {
+                                            newCelldlRes2.style.backgroundColor = "#ffa0a0";
+                                        } else if (querysetsFromBackJson[i]["second_attempt_dlift_off_ek"] === "2" || querysetsFromBackJson[i]["second_attempt_dlift_off_ek"] === "3") {
+                                            newCelldlRes2.style.backgroundColor = "#aaffaa";
+                                        }
+                                    }
+                                }
+                                let newCelldlRes3 = newRow.insertCell();
+                                if (querysetsFromBackJson[i]["third_attempt_dlift_res_ek"] === null) {
+                                    let textdlRes3 = document.createTextNode("");
+                                    newCelldlRes3.appendChild(textdlRes3);
+                                } else {
+                                    let textdlRes3 = document.createTextNode(querysetsFromBackJson[i]["third_attempt_dlift_res_ek"]);
+                                    newCelldlRes3.appendChild(textdlRes3);
+                                    if (querysetsFromBackJson[i]["third_attempt_dlift_off_ek"] !== null) {
+                                        if (querysetsFromBackJson[i]["third_attempt_dlift_off_ek"] === "0" || querysetsFromBackJson[i]["third_attempt_dlift_off_ek"] === "1") {
+                                            newCelldlRes3.style.backgroundColor = "#ffa0a0";
+                                        } else if (querysetsFromBackJson[i]["third_attempt_dlift_off_ek"] === "2" || querysetsFromBackJson[i]["third_attempt_dlift_off_ek"] === "3") {
+                                            newCelldlRes3.style.backgroundColor = "#aaffaa";
+                                        }
+                                    }
+                                }
+                                let newCellitSquat = newRow.insertCell();
+                                if (querysetsFromBackJson[i]["best_squat_res_ek"] === null) {
+                                    let textitSquat = document.createTextNode("");
+                                    newCellitSquat.appendChild(textitSquat);
+                                } else {
+                                    let textitSquat = document.createTextNode(querysetsFromBackJson[i]["best_squat_res_ek"]);
+                                    newCellitSquat.appendChild(textitSquat);
+                                }
+                                let newCellitBp = newRow.insertCell();
+                                if (querysetsFromBackJson[i]["best_bpress_res_ek"] === null) {
+                                    let textitBp = document.createTextNode("");
+                                    newCellitBp.appendChild(textitBp);
+                                } else {
+                                    let textitBp = document.createTextNode(querysetsFromBackJson[i]["best_bpress_res_ek"]);
+                                    newCellitBp.appendChild(textitBp);
+                                }
+                                let newCellititDl = newRow.insertCell();
+                                if (querysetsFromBackJson[i]["best_dlift_res_ek"] === null) {
+                                    let textitDl = document.createTextNode("");
+                                    newCellititDl.appendChild(textitDl);
+                                } else {
+                                    let textitDl = document.createTextNode(querysetsFromBackJson[i]["best_dlift_res_ek"]);
+                                    newCellititDl.appendChild(textitDl);
+                                }
+                                let newCellIt = newRow.insertCell();
+                                if (querysetsFromBackJson[i]["best_sum_res_ek"] === null) {
+                                    let textIt = document.createTextNode("");
+                                    newCellIt.appendChild(textIt);
+                                } else {
+                                    let textIt = document.createTextNode(querysetsFromBackJson[i]["best_sum_res_ek"]);
+                                    newCellIt.appendChild(textIt);
                                 }
                             }
                         }
-                    }
 
+
+
+
+                        // if (querysetsFromBack !== JSON.parse(myxmlhttp.response).cur_flow_competitors_json) {
+                        //     querysetsFromBack = JSON.parse(myxmlhttp.response).cur_flow_competitors_json;
+                        //     let querysetsFromBackJson = JSON.parse(querysetsFromBack);
+                        //     while (massTable.rows.length > 1) {
+                        //         massTable.deleteRow(-1);
+                        //     }
+                        //     console.log(querysetsFromBackJson)
+                        //     // console.log(querysetsFromBackJson[0]["fields"])
+                        //     for (let i = 0; i < querysetsFromBackJson.length; i ++) {
+                        //         let newRow = massTable.insertRow();
+                        //         let newCellFi = newRow.insertCell();
+                        //         let textFi = document.createTextNode(`${querysetsFromBackJson[i]["fields"]["competitor"][0]} ${querysetsFromBackJson[i]["fields"]["competitor"][1]}`);
+                        //         newCellFi.appendChild(textFi);
+                        //         let newCellWeight = newRow.insertCell();
+                        //         let textWeight = document.createTextNode(querysetsFromBackJson[i]["fields"]["competitor_weight"]);
+                        //         newCellWeight.appendChild(textWeight);
+                        //         let compSTypes = querysetsFromBackJson[i]["fields"]["competitor"][2];
+                        //         if (compSTypes.includes("Троеборье классическое") || compSTypes.includes("Жим лёжа (без экип.)")) {
+                        //             let newCellsquatRes1 = newRow.insertCell();
+                        //             if (querysetsFromBackJson[i]["fields"]["first_attempt_squat_res"] === null) {
+                        //                 let textsquatRes1 = document.createTextNode("");
+                        //                 newCellsquatRes1.appendChild(textsquatRes1);
+                        //             } else {
+                        //                 let textsquatRes1 = document.createTextNode(querysetsFromBackJson[i]["fields"]["first_attempt_squat_res"]);
+                        //                 newCellsquatRes1.appendChild(textsquatRes1);
+                        //                 if (querysetsFromBackJson[i]["fields"]["first_attempt_squat_off"] !== null) {
+                        //                     if (querysetsFromBackJson[i]["fields"]["first_attempt_squat_off"] === "0" || querysetsFromBackJson[i]["fields"]["first_attempt_squat_off"] === "1") {
+                        //                         newCellsquatRes1.style.backgroundColor = "#ffa0a0";
+                        //                     } else if (querysetsFromBackJson[i]["fields"]["first_attempt_squat_off"] === "2" || querysetsFromBackJson[i]["fields"]["first_attempt_squat_off"] === "3") {
+                        //                         newCellsquatRes1.style.backgroundColor = "#aaffaa";
+                        //                     }
+                        //                 }
+                        //             }
+                        //             let newCellsquatRes2 = newRow.insertCell();
+                        //             if (querysetsFromBackJson[i]["fields"]["second_attempt_squat_res"] === null) {
+                        //                 let textsquatRes2 = document.createTextNode("");
+                        //                 newCellsquatRes2.appendChild(textsquatRes2);
+                        //             } else {
+                        //                 let textsquatRes2 = document.createTextNode(querysetsFromBackJson[i]["fields"]["second_attempt_squat_res"]);
+                        //                 newCellsquatRes2.appendChild(textsquatRes2);
+                        //                 if (querysetsFromBackJson[i]["fields"]["second_attempt_squat_off"] !== null) {
+                        //                     if (querysetsFromBackJson[i]["fields"]["second_attempt_squat_off"] === "0" || querysetsFromBackJson[i]["fields"]["second_attempt_squat_off"] === "1") {
+                        //                         newCellsquatRes2.style.backgroundColor = "#ffa0a0";
+                        //                     } else if (querysetsFromBackJson[i]["fields"]["second_attempt_squat_off"] === "2" || querysetsFromBackJson[i]["fields"]["second_attempt_squat_off"] === "3") {
+                        //                         newCellsquatRes2.style.backgroundColor = "#aaffaa";
+                        //                     }
+                        //                 }
+                        //             }
+                        //             let newCellsquatRes3 = newRow.insertCell();
+                        //             if (querysetsFromBackJson[i]["fields"]["third_attempt_squat_res"] === null) {
+                        //                 let textsquatRes3 = document.createTextNode("");
+                        //                 newCellsquatRes3.appendChild(textsquatRes3);
+                        //             } else {
+                        //                 let textsquatRes3 = document.createTextNode(querysetsFromBackJson[i]["fields"]["third_attempt_squat_res"]);
+                        //                 newCellsquatRes3.appendChild(textsquatRes3);
+                        //                 if (querysetsFromBackJson[i]["fields"]["third_attempt_squat_off"] !== null) {
+                        //                     if (querysetsFromBackJson[i]["fields"]["third_attempt_squat_off"] === "0" || querysetsFromBackJson[i]["fields"]["third_attempt_squat_off"] === "1") {
+                        //                         newCellsquatRes3.style.backgroundColor = "#ffa0a0";
+                        //                     } else if (querysetsFromBackJson[i]["fields"]["third_attempt_squat_off"] === "2" || querysetsFromBackJson[i]["fields"]["third_attempt_squat_off"] === "3") {
+                        //                         newCellsquatRes3.style.backgroundColor = "#aaffaa";
+                        //                     }
+                        //                 }
+                        //             }
+                        //             let newCellbpRes1 = newRow.insertCell();
+                        //             if (querysetsFromBackJson[i]["fields"]["first_attempt_bpress_res"] === null) {
+                        //                 let textbpRes1 = document.createTextNode("");
+                        //                 newCellbpRes1.appendChild(textbpRes1);
+                        //             } else {
+                        //                 let textbpRes1 = document.createTextNode(querysetsFromBackJson[i]["fields"]["first_attempt_bpress_res"]);
+                        //                 newCellbpRes1.appendChild(textbpRes1);
+                        //                 if (querysetsFromBackJson[i]["fields"]["first_attempt_bpress_off"] !== null) {
+                        //                     if (querysetsFromBackJson[i]["fields"]["first_attempt_bpress_off"] === "0" || querysetsFromBackJson[i]["fields"]["first_attempt_bpress_off"] === "1") {
+                        //                         newCellbpRes1.style.backgroundColor = "#ffa0a0";
+                        //                     } else if (querysetsFromBackJson[i]["fields"]["first_attempt_bpress_off"] === "2" || querysetsFromBackJson[i]["fields"]["first_attempt_bpress_off"] === "3") {
+                        //                         newCellbpRes1.style.backgroundColor = "#aaffaa";
+                        //                     }
+                        //                 }
+                        //             }
+                        //             let newCellbpRes2 = newRow.insertCell();
+                        //             if (querysetsFromBackJson[i]["fields"]["second_attempt_bpress_res"] === null) {
+                        //                 let textbpRes2 = document.createTextNode("");
+                        //                 newCellbpRes2.appendChild(textbpRes2);
+                        //             } else {
+                        //                 let textbpRes2 = document.createTextNode(querysetsFromBackJson[i]["fields"]["second_attempt_bpress_res"]);
+                        //                 newCellbpRes2.appendChild(textbpRes2);
+                        //                 if (querysetsFromBackJson[i]["fields"]["second_attempt_bpress_off"] !== null) {
+                        //                     if (querysetsFromBackJson[i]["fields"]["second_attempt_bpress_off"] === "0" || querysetsFromBackJson[i]["fields"]["second_attempt_bpress_off"] === "1") {
+                        //                         newCellbpRes2.style.backgroundColor = "#ffa0a0";
+                        //                     } else if (querysetsFromBackJson[i]["fields"]["second_attempt_bpress_off"] === "2" || querysetsFromBackJson[i]["fields"]["second_attempt_bpress_off"] === "3") {
+                        //                         newCellbpRes2.style.backgroundColor = "#aaffaa";
+                        //                     }
+                        //                 }
+                        //             }
+                        //             let newCellbpRes3 = newRow.insertCell();
+                        //             if (querysetsFromBackJson[i]["fields"]["third_attempt_bpress_res"] === null) {
+                        //                 let textbpRes3 = document.createTextNode("");
+                        //                 newCellbpRes3.appendChild(textbpRes3);
+                        //             } else {
+                        //                 let textbpRes3 = document.createTextNode(querysetsFromBackJson[i]["fields"]["third_attempt_bpress_res"]);
+                        //                 newCellbpRes3.appendChild(textbpRes3);
+                        //                 if (querysetsFromBackJson[i]["fields"]["third_attempt_bpress_off"] !== null) {
+                        //                     if (querysetsFromBackJson[i]["fields"]["third_attempt_bpress_off"] === "0" || querysetsFromBackJson[i]["fields"]["third_attempt_bpress_off"] === "1") {
+                        //                         newCellbpRes3.style.backgroundColor = "#ffa0a0";
+                        //                     } else if (querysetsFromBackJson[i]["fields"]["third_attempt_bpress_off"] === "2" || querysetsFromBackJson[i]["fields"]["third_attempt_bpress_off"] === "3") {
+                        //                         newCellbpRes3.style.backgroundColor = "#aaffaa";
+                        //                     }
+                        //                 }
+                        //             }
+                        //             let newCelldlRes1 = newRow.insertCell();
+                        //             if (querysetsFromBackJson[i]["fields"]["first_attempt_dlift_res"] === null) {
+                        //                 let textdlRes1 = document.createTextNode("");
+                        //                 newCelldlRes1.appendChild(textdlRes1);
+                        //             } else {
+                        //                 let textdlRes1 = document.createTextNode(querysetsFromBackJson[i]["fields"]["first_attempt_dlift_res"]);
+                        //                 newCelldlRes1.appendChild(textdlRes1);
+                        //                 if (querysetsFromBackJson[i]["fields"]["first_attempt_dlift_off"] !== null) {
+                        //                     if (querysetsFromBackJson[i]["fields"]["first_attempt_dlift_off"] === "0" || querysetsFromBackJson[i]["fields"]["first_attempt_dlift_off"] === "1") {
+                        //                         newCelldlRes1.style.backgroundColor = "#ffa0a0";
+                        //                     } else if (querysetsFromBackJson[i]["fields"]["first_attempt_dlift_off"] === "2" || querysetsFromBackJson[i]["fields"]["first_attempt_dlift_off"] === "3") {
+                        //                         newCelldlRes1.style.backgroundColor = "#aaffaa";
+                        //                     }
+                        //                 }
+                        //             }
+                        //             let newCelldlRes2 = newRow.insertCell();
+                        //             if (querysetsFromBackJson[i]["fields"]["second_attempt_dlift_res"] === null) {
+                        //                 let textdlRes2 = document.createTextNode("");
+                        //                 newCelldlRes2.appendChild(textdlRes2);
+                        //             } else {
+                        //                 let textdlRes2 = document.createTextNode(querysetsFromBackJson[i]["fields"]["second_attempt_dlift_res"]);
+                        //                 newCelldlRes2.appendChild(textdlRes2);
+                        //                 if (querysetsFromBackJson[i]["fields"]["second_attempt_dlift_off"] !== null) {
+                        //                     if (querysetsFromBackJson[i]["fields"]["second_attempt_dlift_off"] === "0" || querysetsFromBackJson[i]["fields"]["second_attempt_dlift_off"] === "1") {
+                        //                         newCelldlRes2.style.backgroundColor = "#ffa0a0";
+                        //                     } else if (querysetsFromBackJson[i]["fields"]["second_attempt_dlift_off"] === "2" || querysetsFromBackJson[i]["fields"]["second_attempt_dlift_off"] === "3") {
+                        //                         newCelldlRes2.style.backgroundColor = "#aaffaa";
+                        //                     }
+                        //                 }
+                        //             }
+                        //             let newCelldlRes3 = newRow.insertCell();
+                        //             if (querysetsFromBackJson[i]["fields"]["third_attempt_dlift_res"] === null) {
+                        //                 let textdlRes3 = document.createTextNode("");
+                        //                 newCelldlRes3.appendChild(textdlRes3);
+                        //             } else {
+                        //                 let textdlRes3 = document.createTextNode(querysetsFromBackJson[i]["fields"]["third_attempt_dlift_res"]);
+                        //                 newCelldlRes3.appendChild(textdlRes3);
+                        //                 if (querysetsFromBackJson[i]["fields"]["third_attempt_dlift_off"] !== null) {
+                        //                     if (querysetsFromBackJson[i]["fields"]["third_attempt_dlift_off"] === "0" || querysetsFromBackJson[i]["fields"]["third_attempt_dlift_off"] === "1") {
+                        //                         newCelldlRes3.style.backgroundColor = "#ffa0a0";
+                        //                     } else if (querysetsFromBackJson[i]["fields"]["third_attempt_dlift_off"] === "2" || querysetsFromBackJson[i]["fields"]["third_attempt_dlift_off"] === "3") {
+                        //                         newCelldlRes3.style.backgroundColor = "#aaffaa";
+                        //                     }
+                        //                 }
+                        //             }
+                        //             let newCellitSquat = newRow.insertCell();
+                        //             if (querysetsFromBackJson[i]["fields"]["best_squat_res"] === null) {
+                        //                 let textitSquat = document.createTextNode("");
+                        //                 newCellitSquat.appendChild(textitSquat);
+                        //             } else {
+                        //                 let textitSquat = document.createTextNode(querysetsFromBackJson[i]["fields"]["best_squat_res"]);
+                        //                 newCellitSquat.appendChild(textitSquat);
+                        //             }
+                        //             let newCellitBp = newRow.insertCell();
+                        //             if (querysetsFromBackJson[i]["fields"]["best_bpress_res"] === null) {
+                        //                 let textitBp = document.createTextNode("");
+                        //                 newCellitBp.appendChild(textitBp);
+                        //             } else {
+                        //                 let textitBp = document.createTextNode(querysetsFromBackJson[i]["fields"]["best_bpress_res"]);
+                        //                 newCellitBp.appendChild(textitBp);
+                        //             }
+                        //             let newCellititDl = newRow.insertCell();
+                        //             if (querysetsFromBackJson[i]["fields"]["best_dlift_res"] === null) {
+                        //                 let textitDl = document.createTextNode("");
+                        //                 newCellititDl.appendChild(textitDl);
+                        //             } else {
+                        //                 let textitDl = document.createTextNode(querysetsFromBackJson[i]["fields"]["best_dlift_res"]);
+                        //                 newCellititDl.appendChild(textitDl);
+                        //             }
+                        //             let newCellIt = newRow.insertCell();
+                        //             if (querysetsFromBackJson[i]["fields"]["best_sum_res"] === null) {
+                        //                 let textIt = document.createTextNode("");
+                        //                 newCellIt.appendChild(textIt);
+                        //             } else {
+                        //                 let textIt = document.createTextNode(querysetsFromBackJson[i]["fields"]["best_sum_res"]);
+                        //                 newCellIt.appendChild(textIt);
+                        //             }
+                        //         } else {
+                        //             let newCellsquatRes1 = newRow.insertCell();
+                        //             if (querysetsFromBackJson[i]["fields"]["first_attempt_squat_res_ek"] === null) {
+                        //                 let textsquatRes1 = document.createTextNode("");
+                        //                 newCellsquatRes1.appendChild(textsquatRes1);
+                        //             } else {
+                        //                 let textsquatRes1 = document.createTextNode(querysetsFromBackJson[i]["fields"]["first_attempt_squat_res_ek"]);
+                        //                 newCellsquatRes1.appendChild(textsquatRes1);
+                        //                 if (querysetsFromBackJson[i]["fields"]["first_attempt_squat_off_ek"] !== null) {
+                        //                     if (querysetsFromBackJson[i]["fields"]["first_attempt_squat_off_ek"] === "0" || querysetsFromBackJson[i]["fields"]["first_attempt_squat_off_ek"] === "1") {
+                        //                         newCellsquatRes1.style.backgroundColor = "#ffa0a0";
+                        //                     } else if (querysetsFromBackJson[i]["fields"]["first_attempt_squat_off_ek"] === "2" || querysetsFromBackJson[i]["fields"]["first_attempt_squat_off_ek"] === "3") {
+                        //                         newCellsquatRes1.style.backgroundColor = "#aaffaa";
+                        //                     }
+                        //                 }
+                        //             }
+                        //             let newCellsquatRes2 = newRow.insertCell();
+                        //             if (querysetsFromBackJson[i]["fields"]["second_attempt_squat_res_ek"] === null) {
+                        //                 let textsquatRes2 = document.createTextNode("");
+                        //                 newCellsquatRes2.appendChild(textsquatRes2);
+                        //             } else {
+                        //                 let textsquatRes2 = document.createTextNode(querysetsFromBackJson[i]["fields"]["second_attempt_squat_res_ek"]);
+                        //                 newCellsquatRes2.appendChild(textsquatRes2);
+                        //                 if (querysetsFromBackJson[i]["fields"]["second_attempt_squat_off_ek"] !== null) {
+                        //                     if (querysetsFromBackJson[i]["fields"]["second_attempt_squat_off_ek"] === "0" || querysetsFromBackJson[i]["fields"]["second_attempt_squat_off_ek"] === "1") {
+                        //                         newCellsquatRes2.style.backgroundColor = "#ffa0a0";
+                        //                     } else if (querysetsFromBackJson[i]["fields"]["second_attempt_squat_off_ek"] === "2" || querysetsFromBackJson[i]["fields"]["second_attempt_squat_off_ek"] === "3") {
+                        //                         newCellsquatRes2.style.backgroundColor = "#aaffaa";
+                        //                     }
+                        //                 }
+                        //             }
+                        //             let newCellsquatRes3 = newRow.insertCell();
+                        //             if (querysetsFromBackJson[i]["fields"]["third_attempt_squat_res_ek"] === null) {
+                        //                 let textsquatRes3 = document.createTextNode("");
+                        //                 newCellsquatRes3.appendChild(textsquatRes3);
+                        //             } else {
+                        //                 let textsquatRes3 = document.createTextNode(querysetsFromBackJson[i]["fields"]["third_attempt_squat_res_ek"]);
+                        //                 newCellsquatRes3.appendChild(textsquatRes3);
+                        //                 if (querysetsFromBackJson[i]["fields"]["third_attempt_squat_off_ek"] !== null) {
+                        //                     if (querysetsFromBackJson[i]["fields"]["third_attempt_squat_off_ek"] === "0" || querysetsFromBackJson[i]["fields"]["third_attempt_squat_off_ek"] === "1") {
+                        //                         newCellsquatRes3.style.backgroundColor = "#ffa0a0";
+                        //                     } else if (querysetsFromBackJson[i]["fields"]["third_attempt_squat_off_ek"] === "2" || querysetsFromBackJson[i]["fields"]["third_attempt_squat_off_ek"] === "3") {
+                        //                         newCellsquatRes3.style.backgroundColor = "#aaffaa";
+                        //                     }
+                        //                 }
+                        //             }
+                        //             let newCellbpRes1 = newRow.insertCell();
+                        //             if (querysetsFromBackJson[i]["fields"]["first_attempt_bpress_res_ek"] === null) {
+                        //                 let textbpRes1 = document.createTextNode("");
+                        //                 newCellbpRes1.appendChild(textbpRes1);
+                        //             } else {
+                        //                 let textbpRes1 = document.createTextNode(querysetsFromBackJson[i]["fields"]["first_attempt_bpress_res_ek"]);
+                        //                 newCellbpRes1.appendChild(textbpRes1);
+                        //                 if (querysetsFromBackJson[i]["fields"]["first_attempt_bpress_off_ek"] !== null) {
+                        //                     if (querysetsFromBackJson[i]["fields"]["first_attempt_bpress_off_ek"] === "0" || querysetsFromBackJson[i]["fields"]["first_attempt_bpress_off_ek"] === "1") {
+                        //                         newCellbpRes1.style.backgroundColor = "#ffa0a0";
+                        //                     } else if (querysetsFromBackJson[i]["fields"]["first_attempt_bpress_off_ek"] === "2" || querysetsFromBackJson[i]["fields"]["first_attempt_bpress_off_ek"] === "3") {
+                        //                         newCellbpRes1.style.backgroundColor = "#aaffaa";
+                        //                     }
+                        //                 }
+                        //             }
+                        //             let newCellbpRes2 = newRow.insertCell();
+                        //             if (querysetsFromBackJson[i]["fields"]["second_attempt_bpress_res_ek"] === null) {
+                        //                 let textbpRes2 = document.createTextNode("");
+                        //                 newCellbpRes2.appendChild(textbpRes2);
+                        //             } else {
+                        //                 let textbpRes2 = document.createTextNode(querysetsFromBackJson[i]["fields"]["second_attempt_bpress_res_ek"]);
+                        //                 newCellbpRes2.appendChild(textbpRes2);
+                        //                 if (querysetsFromBackJson[i]["fields"]["second_attempt_bpress_off_ek"] !== null) {
+                        //                     if (querysetsFromBackJson[i]["fields"]["second_attempt_bpress_off_ek"] === "0" || querysetsFromBackJson[i]["fields"]["second_attempt_bpress_off_ek"] === "1") {
+                        //                         newCellbpRes2.style.backgroundColor = "#ffa0a0";
+                        //                     } else if (querysetsFromBackJson[i]["fields"]["second_attempt_bpress_off_ek"] === "2" || querysetsFromBackJson[i]["fields"]["second_attempt_bpress_off_ek"] === "3") {
+                        //                         newCellbpRes2.style.backgroundColor = "#aaffaa";
+                        //                     }
+                        //                 }
+                        //             }
+                        //             let newCellbpRes3 = newRow.insertCell();
+                        //             if (querysetsFromBackJson[i]["fields"]["third_attempt_bpress_res_ek"] === null) {
+                        //                 let textbpRes3 = document.createTextNode("");
+                        //                 newCellbpRes3.appendChild(textbpRes3);
+                        //             } else {
+                        //                 let textbpRes3 = document.createTextNode(querysetsFromBackJson[i]["fields"]["third_attempt_bpress_res_ek"]);
+                        //                 newCellbpRes3.appendChild(textbpRes3);
+                        //                 if (querysetsFromBackJson[i]["fields"]["third_attempt_bpress_off_ek"] !== null) {
+                        //                     if (querysetsFromBackJson[i]["fields"]["third_attempt_bpress_off_ek"] === "0" || querysetsFromBackJson[i]["fields"]["third_attempt_bpress_off_ek"] === "1") {
+                        //                         newCellbpRes3.style.backgroundColor = "#ffa0a0";
+                        //                     } else if (querysetsFromBackJson[i]["fields"]["third_attempt_bpress_off_ek"] === "2" || querysetsFromBackJson[i]["fields"]["third_attempt_bpress_off_ek"] === "3") {
+                        //                         newCellbpRes3.style.backgroundColor = "#aaffaa";
+                        //                     }
+                        //                 }
+                        //             }
+                        //             let newCelldlRes1 = newRow.insertCell();
+                        //             if (querysetsFromBackJson[i]["fields"]["first_attempt_dlift_res_ek"] === null) {
+                        //                 let textdlRes1 = document.createTextNode("");
+                        //                 newCelldlRes1.appendChild(textdlRes1);
+                        //             } else {
+                        //                 let textdlRes1 = document.createTextNode(querysetsFromBackJson[i]["fields"]["first_attempt_dlift_res_ek"]);
+                        //                 newCelldlRes1.appendChild(textdlRes1);
+                        //                 if (querysetsFromBackJson[i]["fields"]["first_attempt_dlift_off_ek"] !== null) {
+                        //                     if (querysetsFromBackJson[i]["fields"]["first_attempt_dlift_off_ek"] === "0" || querysetsFromBackJson[i]["fields"]["first_attempt_dlift_off_ek"] === "1") {
+                        //                         newCelldlRes1.style.backgroundColor = "#ffa0a0";
+                        //                     } else if (querysetsFromBackJson[i]["fields"]["first_attempt_dlift_off_ek"] === "2" || querysetsFromBackJson[i]["fields"]["first_attempt_dlift_off_ek"] === "3") {
+                        //                         newCelldlRes1.style.backgroundColor = "#aaffaa";
+                        //                     }
+                        //                 }
+                        //             }
+                        //             let newCelldlRes2 = newRow.insertCell();
+                        //             if (querysetsFromBackJson[i]["fields"]["second_attempt_dlift_res_ek"] === null) {
+                        //                 let textdlRes2 = document.createTextNode("");
+                        //                 newCelldlRes2.appendChild(textdlRes2);
+                        //             } else {
+                        //                 let textdlRes2 = document.createTextNode(querysetsFromBackJson[i]["fields"]["second_attempt_dlift_res_ek"]);
+                        //                 newCelldlRes2.appendChild(textdlRes2);
+                        //                 if (querysetsFromBackJson[i]["fields"]["second_attempt_dlift_off_ek"] !== null) {
+                        //                     if (querysetsFromBackJson[i]["fields"]["second_attempt_dlift_off_ek"] === "0" || querysetsFromBackJson[i]["fields"]["second_attempt_dlift_off_ek"] === "1") {
+                        //                         newCelldlRes2.style.backgroundColor = "#ffa0a0";
+                        //                     } else if (querysetsFromBackJson[i]["fields"]["second_attempt_dlift_off_ek"] === "2" || querysetsFromBackJson[i]["fields"]["second_attempt_dlift_off_ek"] === "3") {
+                        //                         newCelldlRes2.style.backgroundColor = "#aaffaa";
+                        //                     }
+                        //                 }
+                        //             }
+                        //             let newCelldlRes3 = newRow.insertCell();
+                        //             if (querysetsFromBackJson[i]["fields"]["third_attempt_dlift_res_ek"] === null) {
+                        //                 let textdlRes3 = document.createTextNode("");
+                        //                 newCelldlRes3.appendChild(textdlRes3);
+                        //             } else {
+                        //                 let textdlRes3 = document.createTextNode(querysetsFromBackJson[i]["fields"]["third_attempt_dlift_res_ek"]);
+                        //                 newCelldlRes3.appendChild(textdlRes3);
+                        //                 if (querysetsFromBackJson[i]["fields"]["third_attempt_dlift_off_ek"] !== null) {
+                        //                     if (querysetsFromBackJson[i]["fields"]["third_attempt_dlift_off_ek"] === "0" || querysetsFromBackJson[i]["fields"]["third_attempt_dlift_off_ek"] === "1") {
+                        //                         newCelldlRes3.style.backgroundColor = "#ffa0a0";
+                        //                     } else if (querysetsFromBackJson[i]["fields"]["third_attempt_dlift_off_ek"] === "2" || querysetsFromBackJson[i]["fields"]["third_attempt_dlift_off_ek"] === "3") {
+                        //                         newCelldlRes3.style.backgroundColor = "#aaffaa";
+                        //                     }
+                        //                 }
+                        //             }
+                        //             let newCellitSquat = newRow.insertCell();
+                        //             if (querysetsFromBackJson[i]["fields"]["best_squat_res_ek"] === null) {
+                        //                 let textitSquat = document.createTextNode("");
+                        //                 newCellitSquat.appendChild(textitSquat);
+                        //             } else {
+                        //                 let textitSquat = document.createTextNode(querysetsFromBackJson[i]["fields"]["best_squat_res_ek"]);
+                        //                 newCellitSquat.appendChild(textitSquat);
+                        //             }
+                        //             let newCellitBp = newRow.insertCell();
+                        //             if (querysetsFromBackJson[i]["fields"]["best_bpress_res_ek"] === null) {
+                        //                 let textitBp = document.createTextNode("");
+                        //                 newCellitBp.appendChild(textitBp);
+                        //             } else {
+                        //                 let textitBp = document.createTextNode(querysetsFromBackJson[i]["fields"]["best_bpress_res_ek"]);
+                        //                 newCellitBp.appendChild(textitBp);
+                        //             }
+                        //             let newCellititDl = newRow.insertCell();
+                        //             if (querysetsFromBackJson[i]["fields"]["best_dlift_res_ek"] === null) {
+                        //                 let textitDl = document.createTextNode("");
+                        //                 newCellititDl.appendChild(textitDl);
+                        //             } else {
+                        //                 let textitDl = document.createTextNode(querysetsFromBackJson[i]["fields"]["best_dlift_res_ek"]);
+                        //                 newCellititDl.appendChild(textitDl);
+                        //             }
+                        //             let newCellIt = newRow.insertCell();
+                        //             if (querysetsFromBackJson[i]["fields"]["best_sum_res_ek"] === null) {
+                        //                 let textIt = document.createTextNode("");
+                        //                 newCellIt.appendChild(textIt);
+                        //             } else {
+                        //                 let textIt = document.createTextNode(querysetsFromBackJson[i]["fields"]["best_sum_res_ek"]);
+                        //                 newCellIt.appendChild(textIt);
+                        //             }
+                        //         }
+                        //     }
+                        // }
+                    }
                 } else if (myxmlhttp.status === 500) {
                     console.log(JSON.parse(myxmlhttp.response).error)
                 }
@@ -2127,11 +3871,11 @@ ready(() => {
                 console.log(myxmlhttp.responseText);
             };
         });
-
         function getScoreComp() {
             document.getElementById('score-comp-form_btn').click();
         }
-        setInterval(getScoreComp, 5000);
+        // setInterval(getScoreComp, 5000);
+        setInterval(getScoreComp, 2000);
     }
 
     let searchParticipantBtn = document.getElementById('register_part_page-search_btn');
@@ -2364,43 +4108,5 @@ ready(() => {
             }
         });
     }
-
-// console.log(window.location.pathname)
-// console.log(window.location.search)
-// console.log(decodeURIComponent(window.location.search))
-// console.log(window.location.search.('form-secretary_stream-select'))
-// let secretaryPageSelectStreamForm = document.getElementById('form-secretary_stream');
-// if (secretaryPageSelectStreamForm) {
-//     secretaryPageSelectStreamForm.addEventListener("submit", function (e) {
-//         e.preventDefault();
-//         let thisForm = e.target;
-//         let method = thisForm.getAttribute('method');
-//         let endpoint = thisForm.getAttribute('action');
-//         let data = thisForm.elements;
-//         let resultForm = '';
-//         for (let i = 0; i < data.length; i++) {
-//             let item = data.item(i);
-//             let value = item.value;
-//             resultForm = resultForm + '&' + item.name + '=' + encodeURIComponent(value);
-//         }
-//         console.log(resultForm);
-//         let myxmlhttp = getXmlHttp();
-//         myxmlhttp.open(method, endpoint, true);
-//         myxmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-//         myxmlhttp.setRequestHeader("X-CSRFToken", data.csrfmiddlewaretoken.value);
-//         myxmlhttp.send(resultForm);
-//         myxmlhttp.onload = function () {
-//             if (myxmlhttp.status === 200) {
-//                 console.log("ok")
-//             } else if (myxmlhttp.status === 500) {
-//                 console.log(JSON.parse(myxmlhttp.response).error)
-//             }
-//         };
-//         myxmlhttp.onerror = function () {
-//             console.log(myxmlhttp.responseText);
-//         };
-//     });
-// }
-
 
 });

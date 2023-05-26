@@ -169,6 +169,10 @@
                        placeholder="{% if cur_comp_protocol %}{% if cur_comp_protocol.first_attempt_dlift_res %}{{ cur_comp_protocol.first_attempt_dlift_res }}{% elif cur_comp_protocol.first_attempt_dlift_res_ek %}{{ cur_comp_protocol.first_attempt_dlift_res_ek }}{% else %}0.00{% endif %}{% else %}0.00{% endif %}"
                        value="{% if cur_comp_protocol %}{% if cur_comp_protocol.first_attempt_dlift_res %}{{ cur_comp_protocol.first_attempt_dlift_res|formatnuminput }}{% elif cur_comp_protocol.first_attempt_dlift_res_ek %}{{ cur_comp_protocol.first_attempt_dlift_res_ek|formatnuminput }}{% else %}0.00{% endif %}{% else %}0.00{% endif %}">
             </div>
+            <div class="competition_entry-form_sur">
+                <label for="competition_entry-form_was_paid" class="competition_entry-form_sur-label">Внёс стартовый взнос</label>
+                <input type="checkbox" name="competition_entry-form_was_paid" class="competition_entry-form_paid_chckbx" id="competition_entry-form_was_paid" {% if cur_comp_protocol.was_paid %}checked{% endif %}>
+            </div>
             <div class="competition_registry-form_send">
                 <input type="submit" id="competition_registry-form_btn" name="competition_registry-form_btn" class="competition_entry-form_btn" value="Сохранить">
                 <input type="button" id="competition_registry-form_del" name="competition_registry-form_del" class="competition_entry-form_del" value="Удалить">

@@ -40,7 +40,6 @@ def competition_entry_page(request, competition_slug):
         'cur_competition': cur_competition,
     }
     if "competition_entry-form_btn" in request.POST:
-        # print(request.POST)
         gender_st = request.POST.get('competition_entry-form_gender')
         surname_comp = request.POST.get('competition_entry-form_sur-input')
         name_comp = request.POST.get('competition_entry-form_name-input')
@@ -106,9 +105,6 @@ def competition_entry_page(request, competition_slug):
 def competitors_page(request, competition_slug):
     cur_competition = Competitions.objects.get(competition_slug=competition_slug)
     competitors = Competitors.objects.filter(comp_title_id=cur_competition.id)
-    # print(cur_competition)
-    # print(competitors)
-    # print(competitors.filter(sports_type__title="Жим лёжа (без экип.)", gender="Женский"))
     competitiors_pwlclass_m = ""
     competitiors_pwlclass_f = ""
     competitiors_pwlekip_m = ""
@@ -132,7 +128,6 @@ def competitors_page(request, competition_slug):
             competitiors_bp_f = competitors.filter(sports_type__title="Жим лёжа (без экип.)", gender="Женский")
     response_data = {
         'cur_competition': cur_competition,
-        # 'competitors': competitors,
         'competitiors_pwlclass_m': competitiors_pwlclass_m,
         'competitiors_pwlclass_f': competitiors_pwlclass_f,
         'competitiors_pwlekip_m': competitiors_pwlekip_m,
@@ -792,6 +787,8 @@ def secretary_page(request, competition_slug):
     if 'saveval' in request.POST:
         targ_el_block_st = request.POST.get('saveattrname')
         targ_el_block_val = request.POST.get('saveattrval')
+        if targ_el_block_val == '':
+            targ_el_block_val = None
         targ_el_block = targ_el_block_st.split('secr-page_noform-')[1]
         targ_el_block_end = targ_el_block.split('_')[0]
         targ_el_pk = targ_el_block.split('_')[1]
@@ -963,7 +960,6 @@ def secretary_page(request, competition_slug):
             CompetitionProtocols.objects.filter(pk=targ_el_pk).update(pillar_height_bpress=targ_el_block_val)
         return JsonResponse({"saved_val": targ_el_block_val}, status=200)
     if 'showmeatt' in request.POST:
-        # print(request.POST)
         show_or_not = request.POST.get('showmeatt')
         targ_pk = request.POST.get('pk')
         targ_block_type = request.POST.get('typeatt')
@@ -976,1353 +972,25 @@ def secretary_page(request, competition_slug):
                 return JsonResponse({"answer": "yes"}, status=200)
         else:
             CompetitionProtocols.objects.filter(pk=targ_pk).update(competitor_translation=None)
+            timer_obj = TimerScoreboard.objects.first()
+            timer_obj.timer_start = False
+            timer_obj.save()
             return JsonResponse({"answer": "no"}, status=200)
-    # if 'secr-page_form-btn-plclass' in request.POST:
-    #     # print(request.POST)
-    #     comp_pk = request.POST.get('secr-page_form-btn-plclass')
-    #     pil_h_squat = request.POST.get('secr-page_form-pil_h_squat')
-    #     pil_h_bpress = request.POST.get('secr-page_form-pil_h_bpress')
-    #     if pil_h_squat:
-    #         pil_h_squat = pil_h_squat
-    #     else:
-    #         pil_h_squat = None
-    #     if pil_h_bpress:
-    #         pil_h_bpress = pil_h_bpress
-    #     else:
-    #         pil_h_bpress = None
-    #     first_attempt_squat_res = request.POST.get('secr-page_form-fat-squat-res')
-    #     if first_attempt_squat_res:
-    #         first_attempt_squat_res = Decimal(first_attempt_squat_res)
-    #     else:
-    #         first_attempt_squat_res = None
-    #     first_attempt_squat_off = request.POST.get('secr-page_form-fat-squat-off')
-    #     second_attempt_squat_res = request.POST.get('secr-page_form-sat-squat-res')
-    #     if second_attempt_squat_res:
-    #         second_attempt_squat_res = Decimal(second_attempt_squat_res)
-    #     else:
-    #         second_attempt_squat_res = None
-    #     second_attempt_squat_off = request.POST.get('secr-page_form-sat-squat-off')
-    #     third_attempt_squat_res = request.POST.get('secr-page_form-tat-squat-res')
-    #     if third_attempt_squat_res:
-    #         third_attempt_squat_res = Decimal(third_attempt_squat_res)
-    #     else:
-    #         third_attempt_squat_res = None
-    #     third_attempt_squat_off = request.POST.get('secr-page_form-tat-squat-off')
-    #     first_attempt_bpress_res = request.POST.get('secr-page_form-fat-bpress-res')
-    #     if first_attempt_bpress_res:
-    #         first_attempt_bpress_res = Decimal(first_attempt_bpress_res)
-    #     else:
-    #         first_attempt_bpress_res = None
-    #     first_attempt_bpress_off = request.POST.get('secr-page_form-fat-bpress-off')
-    #     second_attempt_bpress_res = request.POST.get('secr-page_form-sat-bpress-res')
-    #     if second_attempt_bpress_res:
-    #         second_attempt_bpress_res = Decimal(second_attempt_bpress_res)
-    #     else:
-    #         second_attempt_bpress_res = None
-    #     second_attempt_bpress_off = request.POST.get('secr-page_form-sat-bpress-off')
-    #     third_attempt_bpress_res = request.POST.get('secr-page_form-tat-bpress-res')
-    #     if third_attempt_bpress_res:
-    #         third_attempt_bpress_res = Decimal(third_attempt_bpress_res)
-    #     else:
-    #         third_attempt_bpress_res = None
-    #     third_attempt_bpress_off = request.POST.get('secr-page_form-tat-bpress-off')
-    #     first_attempt_dlift_res = request.POST.get('secr-page_form-fat-dlift-res')
-    #     if first_attempt_dlift_res:
-    #         first_attempt_dlift_res = Decimal(first_attempt_dlift_res)
-    #     else:
-    #         first_attempt_dlift_res = None
-    #     first_attempt_dlift_off = request.POST.get('secr-page_form-fat-dlift-off')
-    #     second_attempt_dlift_res = request.POST.get('secr-page_form-sat-dlift-res')
-    #     if second_attempt_dlift_res:
-    #         second_attempt_dlift_res = Decimal(second_attempt_dlift_res)
-    #     else:
-    #         second_attempt_dlift_res = None
-    #     second_attempt_dlift_off = request.POST.get('secr-page_form-sat-dlift-off')
-    #     third_attempt_dlift_res = request.POST.get('secr-page_form-tat-dlift-res')
-    #     if third_attempt_dlift_res:
-    #         third_attempt_dlift_res = Decimal(third_attempt_dlift_res)
-    #     else:
-    #         third_attempt_dlift_res = None
-    #     third_attempt_dlift_off = request.POST.get('secr-page_form-tat-dlift-off')
-    #     cur_comp = CompetitionProtocols.objects.get(pk=comp_pk)
-    #     # best_squat_res = ''
-    #     # best_bpress_res = ''
-    #     # best_dlift_res = ''
-    #     # best_sum_res = ''
-    #     comp_transl = request.POST.get('secr-page_chckbx')
-    #     cur_transl = CompetitionProtocols.objects.exclude(competitor_translation=None)
-    #     # print(comp_transl)
-    #     # print(cur_transl)
-    #     if comp_transl and cur_transl:
-    #         # print(comp_transl)
-    #         # print(cur_transl[0].competitor_translation)
-    #         if comp_transl != cur_transl[0].competitor_translation:
-    #             return JsonResponse({"error": "Нельзя запускать две трансляции одновременно. Сначала закончите существующую."}, status=302)
-    #     if cur_transl:
-    #         cur_transl_val = cur_transl.values_list('competitor_translation', flat=True)[0]
-    #         cur_transl_pk = cur_transl.values_list('id', flat=True)[0]
-    #         if comp_pk == str(cur_transl_pk):
-    #             if cur_transl_val == "Присед 1 класс" and first_attempt_squat_off:
-    #                 # CompetitionProtocols.objects.filter(pk=cur_transl_pk).update(competitor_translation=None)
-    #                 cur_comp.pillar_height_squat = pil_h_squat
-    #                 cur_comp.pillar_height_bpress = pil_h_bpress
-    #                 cur_comp.first_attempt_squat_res = first_attempt_squat_res
-    #                 cur_comp.first_attempt_squat_off = first_attempt_squat_off
-    #                 cur_comp.second_attempt_squat_res = second_attempt_squat_res
-    #                 cur_comp.second_attempt_squat_off = second_attempt_squat_off
-    #                 cur_comp.third_attempt_squat_res = third_attempt_squat_res
-    #                 cur_comp.third_attempt_squat_off = third_attempt_squat_off
-    #                 cur_comp.first_attempt_bpress_res = first_attempt_bpress_res
-    #                 cur_comp.first_attempt_bpress_off = first_attempt_bpress_off
-    #                 cur_comp.second_attempt_bpress_res = second_attempt_bpress_res
-    #                 cur_comp.second_attempt_bpress_off = second_attempt_bpress_off
-    #                 cur_comp.third_attempt_bpress_res = third_attempt_bpress_res
-    #                 cur_comp.third_attempt_bpress_off = third_attempt_bpress_off
-    #                 cur_comp.first_attempt_dlift_res = first_attempt_dlift_res
-    #                 cur_comp.first_attempt_dlift_off = first_attempt_dlift_off
-    #                 cur_comp.second_attempt_dlift_res = second_attempt_dlift_res
-    #                 cur_comp.second_attempt_dlift_off = second_attempt_dlift_off
-    #                 cur_comp.third_attempt_dlift_res = third_attempt_dlift_res
-    #                 cur_comp.third_attempt_dlift_off = third_attempt_dlift_off
-    #                 cur_comp.competitor_translation = comp_transl
-    #                 cur_comp.save()
-    #                 return JsonResponse({"pil_h_squat": pil_h_squat, "pil_h_bpress": pil_h_bpress, "first_attempt_squat_res": first_attempt_squat_res, "first_attempt_squat_off": first_attempt_squat_off,
-    #                                      "second_attempt_squat_res": second_attempt_squat_res, "second_attempt_squat_off": second_attempt_squat_off,
-    #                                      "third_attempt_squat_res": third_attempt_squat_res, "third_attempt_squat_off": third_attempt_squat_off,
-    #                                      "first_attempt_bpress_res": first_attempt_bpress_res, "first_attempt_bpress_off": first_attempt_bpress_off,
-    #                                      "second_attempt_bpress_res": second_attempt_bpress_res, "second_attempt_bpress_off": second_attempt_bpress_off,
-    #                                      "third_attempt_bpress_res": third_attempt_bpress_res, "third_attempt_bpress_off": third_attempt_bpress_off,
-    #                                      "first_attempt_dlift_res": first_attempt_dlift_res, "first_attempt_dlift_off": first_attempt_dlift_off,
-    #                                      "second_attempt_dlift_res": second_attempt_dlift_res, "second_attempt_dlift_off": second_attempt_dlift_off,
-    #                                      "third_attempt_dlift_res": third_attempt_dlift_res, "third_attempt_dlift_off": third_attempt_dlift_off, "comp_transl": comp_transl}, status=200)
-    #             if cur_transl_val == "Присед 2 класс" and second_attempt_squat_off:
-    #                 cur_comp.pillar_height_squat = pil_h_squat
-    #                 cur_comp.pillar_height_bpress = pil_h_bpress
-    #                 cur_comp.first_attempt_squat_res = first_attempt_squat_res
-    #                 cur_comp.first_attempt_squat_off = first_attempt_squat_off
-    #                 cur_comp.second_attempt_squat_res = second_attempt_squat_res
-    #                 cur_comp.second_attempt_squat_off = second_attempt_squat_off
-    #                 cur_comp.third_attempt_squat_res = third_attempt_squat_res
-    #                 cur_comp.third_attempt_squat_off = third_attempt_squat_off
-    #                 cur_comp.first_attempt_bpress_res = first_attempt_bpress_res
-    #                 cur_comp.first_attempt_bpress_off = first_attempt_bpress_off
-    #                 cur_comp.second_attempt_bpress_res = second_attempt_bpress_res
-    #                 cur_comp.second_attempt_bpress_off = second_attempt_bpress_off
-    #                 cur_comp.third_attempt_bpress_res = third_attempt_bpress_res
-    #                 cur_comp.third_attempt_bpress_off = third_attempt_bpress_off
-    #                 cur_comp.first_attempt_dlift_res = first_attempt_dlift_res
-    #                 cur_comp.first_attempt_dlift_off = first_attempt_dlift_off
-    #                 cur_comp.second_attempt_dlift_res = second_attempt_dlift_res
-    #                 cur_comp.second_attempt_dlift_off = second_attempt_dlift_off
-    #                 cur_comp.third_attempt_dlift_res = third_attempt_dlift_res
-    #                 cur_comp.third_attempt_dlift_off = third_attempt_dlift_off
-    #                 cur_comp.competitor_translation = comp_transl
-    #                 cur_comp.save()
-    #                 return JsonResponse({"pil_h_squat": pil_h_squat, "pil_h_bpress": pil_h_bpress, "first_attempt_squat_res": first_attempt_squat_res,
-    #                                      "first_attempt_squat_off": first_attempt_squat_off,
-    #                                      "second_attempt_squat_res": second_attempt_squat_res,
-    #                                      "second_attempt_squat_off": second_attempt_squat_off,
-    #                                      "third_attempt_squat_res": third_attempt_squat_res,
-    #                                      "third_attempt_squat_off": third_attempt_squat_off,
-    #                                      "first_attempt_bpress_res": first_attempt_bpress_res,
-    #                                      "first_attempt_bpress_off": first_attempt_bpress_off,
-    #                                      "second_attempt_bpress_res": second_attempt_bpress_res,
-    #                                      "second_attempt_bpress_off": second_attempt_bpress_off,
-    #                                      "third_attempt_bpress_res": third_attempt_bpress_res,
-    #                                      "third_attempt_bpress_off": third_attempt_bpress_off,
-    #                                      "first_attempt_dlift_res": first_attempt_dlift_res,
-    #                                      "first_attempt_dlift_off": first_attempt_dlift_off,
-    #                                      "second_attempt_dlift_res": second_attempt_dlift_res,
-    #                                      "second_attempt_dlift_off": second_attempt_dlift_off,
-    #                                      "third_attempt_dlift_res": third_attempt_dlift_res,
-    #                                      "third_attempt_dlift_off": third_attempt_dlift_off,
-    #                                      "comp_transl": comp_transl}, status=200)
-    #             if cur_transl_val == "Присед 3 класс" and third_attempt_squat_off:
-    #                 cur_comp.pillar_height_squat = pil_h_squat
-    #                 cur_comp.pillar_height_bpress = pil_h_bpress
-    #                 cur_comp.first_attempt_squat_res = first_attempt_squat_res
-    #                 cur_comp.first_attempt_squat_off = first_attempt_squat_off
-    #                 cur_comp.second_attempt_squat_res = second_attempt_squat_res
-    #                 cur_comp.second_attempt_squat_off = second_attempt_squat_off
-    #                 cur_comp.third_attempt_squat_res = third_attempt_squat_res
-    #                 cur_comp.third_attempt_squat_off = third_attempt_squat_off
-    #                 cur_comp.first_attempt_bpress_res = first_attempt_bpress_res
-    #                 cur_comp.first_attempt_bpress_off = first_attempt_bpress_off
-    #                 cur_comp.second_attempt_bpress_res = second_attempt_bpress_res
-    #                 cur_comp.second_attempt_bpress_off = second_attempt_bpress_off
-    #                 cur_comp.third_attempt_bpress_res = third_attempt_bpress_res
-    #                 cur_comp.third_attempt_bpress_off = third_attempt_bpress_off
-    #                 cur_comp.first_attempt_dlift_res = first_attempt_dlift_res
-    #                 cur_comp.first_attempt_dlift_off = first_attempt_dlift_off
-    #                 cur_comp.second_attempt_dlift_res = second_attempt_dlift_res
-    #                 cur_comp.second_attempt_dlift_off = second_attempt_dlift_off
-    #                 cur_comp.third_attempt_dlift_res = third_attempt_dlift_res
-    #                 cur_comp.third_attempt_dlift_off = third_attempt_dlift_off
-    #                 cur_comp.competitor_translation = comp_transl
-    #                 cur_comp.save()
-    #                 return JsonResponse({"pil_h_squat": pil_h_squat, "pil_h_bpress": pil_h_bpress, "first_attempt_squat_res": first_attempt_squat_res,
-    #                                      "first_attempt_squat_off": first_attempt_squat_off,
-    #                                      "second_attempt_squat_res": second_attempt_squat_res,
-    #                                      "second_attempt_squat_off": second_attempt_squat_off,
-    #                                      "third_attempt_squat_res": third_attempt_squat_res,
-    #                                      "third_attempt_squat_off": third_attempt_squat_off,
-    #                                      "first_attempt_bpress_res": first_attempt_bpress_res,
-    #                                      "first_attempt_bpress_off": first_attempt_bpress_off,
-    #                                      "second_attempt_bpress_res": second_attempt_bpress_res,
-    #                                      "second_attempt_bpress_off": second_attempt_bpress_off,
-    #                                      "third_attempt_bpress_res": third_attempt_bpress_res,
-    #                                      "third_attempt_bpress_off": third_attempt_bpress_off,
-    #                                      "first_attempt_dlift_res": first_attempt_dlift_res,
-    #                                      "first_attempt_dlift_off": first_attempt_dlift_off,
-    #                                      "second_attempt_dlift_res": second_attempt_dlift_res,
-    #                                      "second_attempt_dlift_off": second_attempt_dlift_off,
-    #                                      "third_attempt_dlift_res": third_attempt_dlift_res,
-    #                                      "third_attempt_dlift_off": third_attempt_dlift_off,
-    #                                      "comp_transl": comp_transl}, status=200)
-    #             if cur_transl_val == "Жим 1 класс" and first_attempt_bpress_off:
-    #                 cur_comp.pillar_height_squat = pil_h_squat
-    #                 cur_comp.pillar_height_bpress = pil_h_bpress
-    #                 cur_comp.first_attempt_squat_res = first_attempt_squat_res
-    #                 cur_comp.first_attempt_squat_off = first_attempt_squat_off
-    #                 cur_comp.second_attempt_squat_res = second_attempt_squat_res
-    #                 cur_comp.second_attempt_squat_off = second_attempt_squat_off
-    #                 cur_comp.third_attempt_squat_res = third_attempt_squat_res
-    #                 cur_comp.third_attempt_squat_off = third_attempt_squat_off
-    #                 cur_comp.first_attempt_bpress_res = first_attempt_bpress_res
-    #                 cur_comp.first_attempt_bpress_off = first_attempt_bpress_off
-    #                 cur_comp.second_attempt_bpress_res = second_attempt_bpress_res
-    #                 cur_comp.second_attempt_bpress_off = second_attempt_bpress_off
-    #                 cur_comp.third_attempt_bpress_res = third_attempt_bpress_res
-    #                 cur_comp.third_attempt_bpress_off = third_attempt_bpress_off
-    #                 cur_comp.first_attempt_dlift_res = first_attempt_dlift_res
-    #                 cur_comp.first_attempt_dlift_off = first_attempt_dlift_off
-    #                 cur_comp.second_attempt_dlift_res = second_attempt_dlift_res
-    #                 cur_comp.second_attempt_dlift_off = second_attempt_dlift_off
-    #                 cur_comp.third_attempt_dlift_res = third_attempt_dlift_res
-    #                 cur_comp.third_attempt_dlift_off = third_attempt_dlift_off
-    #                 cur_comp.competitor_translation = comp_transl
-    #                 cur_comp.save()
-    #                 return JsonResponse({"pil_h_squat": pil_h_squat, "pil_h_bpress": pil_h_bpress, "first_attempt_squat_res": first_attempt_squat_res,
-    #                                      "first_attempt_squat_off": first_attempt_squat_off,
-    #                                      "second_attempt_squat_res": second_attempt_squat_res,
-    #                                      "second_attempt_squat_off": second_attempt_squat_off,
-    #                                      "third_attempt_squat_res": third_attempt_squat_res,
-    #                                      "third_attempt_squat_off": third_attempt_squat_off,
-    #                                      "first_attempt_bpress_res": first_attempt_bpress_res,
-    #                                      "first_attempt_bpress_off": first_attempt_bpress_off,
-    #                                      "second_attempt_bpress_res": second_attempt_bpress_res,
-    #                                      "second_attempt_bpress_off": second_attempt_bpress_off,
-    #                                      "third_attempt_bpress_res": third_attempt_bpress_res,
-    #                                      "third_attempt_bpress_off": third_attempt_bpress_off,
-    #                                      "first_attempt_dlift_res": first_attempt_dlift_res,
-    #                                      "first_attempt_dlift_off": first_attempt_dlift_off,
-    #                                      "second_attempt_dlift_res": second_attempt_dlift_res,
-    #                                      "second_attempt_dlift_off": second_attempt_dlift_off,
-    #                                      "third_attempt_dlift_res": third_attempt_dlift_res,
-    #                                      "third_attempt_dlift_off": third_attempt_dlift_off,
-    #                                      "comp_transl": comp_transl}, status=200)
-    #             if cur_transl_val == "Жим 2 класс" and second_attempt_bpress_off:
-    #                 cur_comp.pillar_height_squat = pil_h_squat
-    #                 cur_comp.pillar_height_bpress = pil_h_bpress
-    #                 cur_comp.first_attempt_squat_res = first_attempt_squat_res
-    #                 cur_comp.first_attempt_squat_off = first_attempt_squat_off
-    #                 cur_comp.second_attempt_squat_res = second_attempt_squat_res
-    #                 cur_comp.second_attempt_squat_off = second_attempt_squat_off
-    #                 cur_comp.third_attempt_squat_res = third_attempt_squat_res
-    #                 cur_comp.third_attempt_squat_off = third_attempt_squat_off
-    #                 cur_comp.first_attempt_bpress_res = first_attempt_bpress_res
-    #                 cur_comp.first_attempt_bpress_off = first_attempt_bpress_off
-    #                 cur_comp.second_attempt_bpress_res = second_attempt_bpress_res
-    #                 cur_comp.second_attempt_bpress_off = second_attempt_bpress_off
-    #                 cur_comp.third_attempt_bpress_res = third_attempt_bpress_res
-    #                 cur_comp.third_attempt_bpress_off = third_attempt_bpress_off
-    #                 cur_comp.first_attempt_dlift_res = first_attempt_dlift_res
-    #                 cur_comp.first_attempt_dlift_off = first_attempt_dlift_off
-    #                 cur_comp.second_attempt_dlift_res = second_attempt_dlift_res
-    #                 cur_comp.second_attempt_dlift_off = second_attempt_dlift_off
-    #                 cur_comp.third_attempt_dlift_res = third_attempt_dlift_res
-    #                 cur_comp.third_attempt_dlift_off = third_attempt_dlift_off
-    #                 cur_comp.competitor_translation = comp_transl
-    #                 cur_comp.save()
-    #                 return JsonResponse({"pil_h_squat": pil_h_squat, "pil_h_bpress": pil_h_bpress, "first_attempt_squat_res": first_attempt_squat_res,
-    #                                      "first_attempt_squat_off": first_attempt_squat_off,
-    #                                      "second_attempt_squat_res": second_attempt_squat_res,
-    #                                      "second_attempt_squat_off": second_attempt_squat_off,
-    #                                      "third_attempt_squat_res": third_attempt_squat_res,
-    #                                      "third_attempt_squat_off": third_attempt_squat_off,
-    #                                      "first_attempt_bpress_res": first_attempt_bpress_res,
-    #                                      "first_attempt_bpress_off": first_attempt_bpress_off,
-    #                                      "second_attempt_bpress_res": second_attempt_bpress_res,
-    #                                      "second_attempt_bpress_off": second_attempt_bpress_off,
-    #                                      "third_attempt_bpress_res": third_attempt_bpress_res,
-    #                                      "third_attempt_bpress_off": third_attempt_bpress_off,
-    #                                      "first_attempt_dlift_res": first_attempt_dlift_res,
-    #                                      "first_attempt_dlift_off": first_attempt_dlift_off,
-    #                                      "second_attempt_dlift_res": second_attempt_dlift_res,
-    #                                      "second_attempt_dlift_off": second_attempt_dlift_off,
-    #                                      "third_attempt_dlift_res": third_attempt_dlift_res,
-    #                                      "third_attempt_dlift_off": third_attempt_dlift_off,
-    #                                      "comp_transl": comp_transl}, status=200)
-    #             if cur_transl_val == "Жим 3 класс" and third_attempt_bpress_off:
-    #                 cur_comp.pillar_height_squat = pil_h_squat
-    #                 cur_comp.pillar_height_bpress = pil_h_bpress
-    #                 cur_comp.first_attempt_squat_res = first_attempt_squat_res
-    #                 cur_comp.first_attempt_squat_off = first_attempt_squat_off
-    #                 cur_comp.second_attempt_squat_res = second_attempt_squat_res
-    #                 cur_comp.second_attempt_squat_off = second_attempt_squat_off
-    #                 cur_comp.third_attempt_squat_res = third_attempt_squat_res
-    #                 cur_comp.third_attempt_squat_off = third_attempt_squat_off
-    #                 cur_comp.first_attempt_bpress_res = first_attempt_bpress_res
-    #                 cur_comp.first_attempt_bpress_off = first_attempt_bpress_off
-    #                 cur_comp.second_attempt_bpress_res = second_attempt_bpress_res
-    #                 cur_comp.second_attempt_bpress_off = second_attempt_bpress_off
-    #                 cur_comp.third_attempt_bpress_res = third_attempt_bpress_res
-    #                 cur_comp.third_attempt_bpress_off = third_attempt_bpress_off
-    #                 cur_comp.first_attempt_dlift_res = first_attempt_dlift_res
-    #                 cur_comp.first_attempt_dlift_off = first_attempt_dlift_off
-    #                 cur_comp.second_attempt_dlift_res = second_attempt_dlift_res
-    #                 cur_comp.second_attempt_dlift_off = second_attempt_dlift_off
-    #                 cur_comp.third_attempt_dlift_res = third_attempt_dlift_res
-    #                 cur_comp.third_attempt_dlift_off = third_attempt_dlift_off
-    #                 cur_comp.competitor_translation = comp_transl
-    #                 cur_comp.save()
-    #                 return JsonResponse({"pil_h_squat": pil_h_squat, "pil_h_bpress": pil_h_bpress, "first_attempt_squat_res": first_attempt_squat_res,
-    #                                      "first_attempt_squat_off": first_attempt_squat_off,
-    #                                      "second_attempt_squat_res": second_attempt_squat_res,
-    #                                      "second_attempt_squat_off": second_attempt_squat_off,
-    #                                      "third_attempt_squat_res": third_attempt_squat_res,
-    #                                      "third_attempt_squat_off": third_attempt_squat_off,
-    #                                      "first_attempt_bpress_res": first_attempt_bpress_res,
-    #                                      "first_attempt_bpress_off": first_attempt_bpress_off,
-    #                                      "second_attempt_bpress_res": second_attempt_bpress_res,
-    #                                      "second_attempt_bpress_off": second_attempt_bpress_off,
-    #                                      "third_attempt_bpress_res": third_attempt_bpress_res,
-    #                                      "third_attempt_bpress_off": third_attempt_bpress_off,
-    #                                      "first_attempt_dlift_res": first_attempt_dlift_res,
-    #                                      "first_attempt_dlift_off": first_attempt_dlift_off,
-    #                                      "second_attempt_dlift_res": second_attempt_dlift_res,
-    #                                      "second_attempt_dlift_off": second_attempt_dlift_off,
-    #                                      "third_attempt_dlift_res": third_attempt_dlift_res,
-    #                                      "third_attempt_dlift_off": third_attempt_dlift_off,
-    #                                      "comp_transl": comp_transl}, status=200)
-    #             if cur_transl_val == "Тяга 1 класс" and first_attempt_dlift_off:
-    #                 cur_comp.pillar_height_squat = pil_h_squat
-    #                 cur_comp.pillar_height_bpress = pil_h_bpress
-    #                 cur_comp.first_attempt_squat_res = first_attempt_squat_res
-    #                 cur_comp.first_attempt_squat_off = first_attempt_squat_off
-    #                 cur_comp.second_attempt_squat_res = second_attempt_squat_res
-    #                 cur_comp.second_attempt_squat_off = second_attempt_squat_off
-    #                 cur_comp.third_attempt_squat_res = third_attempt_squat_res
-    #                 cur_comp.third_attempt_squat_off = third_attempt_squat_off
-    #                 cur_comp.first_attempt_bpress_res = first_attempt_bpress_res
-    #                 cur_comp.first_attempt_bpress_off = first_attempt_bpress_off
-    #                 cur_comp.second_attempt_bpress_res = second_attempt_bpress_res
-    #                 cur_comp.second_attempt_bpress_off = second_attempt_bpress_off
-    #                 cur_comp.third_attempt_bpress_res = third_attempt_bpress_res
-    #                 cur_comp.third_attempt_bpress_off = third_attempt_bpress_off
-    #                 cur_comp.first_attempt_dlift_res = first_attempt_dlift_res
-    #                 cur_comp.first_attempt_dlift_off = first_attempt_dlift_off
-    #                 cur_comp.second_attempt_dlift_res = second_attempt_dlift_res
-    #                 cur_comp.second_attempt_dlift_off = second_attempt_dlift_off
-    #                 cur_comp.third_attempt_dlift_res = third_attempt_dlift_res
-    #                 cur_comp.third_attempt_dlift_off = third_attempt_dlift_off
-    #                 cur_comp.competitor_translation = comp_transl
-    #                 cur_comp.save()
-    #                 return JsonResponse({"pil_h_squat": pil_h_squat, "pil_h_bpress": pil_h_bpress, "first_attempt_squat_res": first_attempt_squat_res,
-    #                                      "first_attempt_squat_off": first_attempt_squat_off,
-    #                                      "second_attempt_squat_res": second_attempt_squat_res,
-    #                                      "second_attempt_squat_off": second_attempt_squat_off,
-    #                                      "third_attempt_squat_res": third_attempt_squat_res,
-    #                                      "third_attempt_squat_off": third_attempt_squat_off,
-    #                                      "first_attempt_bpress_res": first_attempt_bpress_res,
-    #                                      "first_attempt_bpress_off": first_attempt_bpress_off,
-    #                                      "second_attempt_bpress_res": second_attempt_bpress_res,
-    #                                      "second_attempt_bpress_off": second_attempt_bpress_off,
-    #                                      "third_attempt_bpress_res": third_attempt_bpress_res,
-    #                                      "third_attempt_bpress_off": third_attempt_bpress_off,
-    #                                      "first_attempt_dlift_res": first_attempt_dlift_res,
-    #                                      "first_attempt_dlift_off": first_attempt_dlift_off,
-    #                                      "second_attempt_dlift_res": second_attempt_dlift_res,
-    #                                      "second_attempt_dlift_off": second_attempt_dlift_off,
-    #                                      "third_attempt_dlift_res": third_attempt_dlift_res,
-    #                                      "third_attempt_dlift_off": third_attempt_dlift_off,
-    #                                      "comp_transl": comp_transl}, status=200)
-    #             if cur_transl_val == "Тяга 2 класс" and second_attempt_dlift_off:
-    #                 cur_comp.pillar_height_squat = pil_h_squat
-    #                 cur_comp.pillar_height_bpress = pil_h_bpress
-    #                 cur_comp.first_attempt_squat_res = first_attempt_squat_res
-    #                 cur_comp.first_attempt_squat_off = first_attempt_squat_off
-    #                 cur_comp.second_attempt_squat_res = second_attempt_squat_res
-    #                 cur_comp.second_attempt_squat_off = second_attempt_squat_off
-    #                 cur_comp.third_attempt_squat_res = third_attempt_squat_res
-    #                 cur_comp.third_attempt_squat_off = third_attempt_squat_off
-    #                 cur_comp.first_attempt_bpress_res = first_attempt_bpress_res
-    #                 cur_comp.first_attempt_bpress_off = first_attempt_bpress_off
-    #                 cur_comp.second_attempt_bpress_res = second_attempt_bpress_res
-    #                 cur_comp.second_attempt_bpress_off = second_attempt_bpress_off
-    #                 cur_comp.third_attempt_bpress_res = third_attempt_bpress_res
-    #                 cur_comp.third_attempt_bpress_off = third_attempt_bpress_off
-    #                 cur_comp.first_attempt_dlift_res = first_attempt_dlift_res
-    #                 cur_comp.first_attempt_dlift_off = first_attempt_dlift_off
-    #                 cur_comp.second_attempt_dlift_res = second_attempt_dlift_res
-    #                 cur_comp.second_attempt_dlift_off = second_attempt_dlift_off
-    #                 cur_comp.third_attempt_dlift_res = third_attempt_dlift_res
-    #                 cur_comp.third_attempt_dlift_off = third_attempt_dlift_off
-    #                 cur_comp.competitor_translation = comp_transl
-    #                 cur_comp.save()
-    #                 return JsonResponse({"pil_h_squat": pil_h_squat, "pil_h_bpress": pil_h_bpress, "first_attempt_squat_res": first_attempt_squat_res,
-    #                                      "first_attempt_squat_off": first_attempt_squat_off,
-    #                                      "second_attempt_squat_res": second_attempt_squat_res,
-    #                                      "second_attempt_squat_off": second_attempt_squat_off,
-    #                                      "third_attempt_squat_res": third_attempt_squat_res,
-    #                                      "third_attempt_squat_off": third_attempt_squat_off,
-    #                                      "first_attempt_bpress_res": first_attempt_bpress_res,
-    #                                      "first_attempt_bpress_off": first_attempt_bpress_off,
-    #                                      "second_attempt_bpress_res": second_attempt_bpress_res,
-    #                                      "second_attempt_bpress_off": second_attempt_bpress_off,
-    #                                      "third_attempt_bpress_res": third_attempt_bpress_res,
-    #                                      "third_attempt_bpress_off": third_attempt_bpress_off,
-    #                                      "first_attempt_dlift_res": first_attempt_dlift_res,
-    #                                      "first_attempt_dlift_off": first_attempt_dlift_off,
-    #                                      "second_attempt_dlift_res": second_attempt_dlift_res,
-    #                                      "second_attempt_dlift_off": second_attempt_dlift_off,
-    #                                      "third_attempt_dlift_res": third_attempt_dlift_res,
-    #                                      "third_attempt_dlift_off": third_attempt_dlift_off,
-    #                                      "comp_transl": comp_transl}, status=200)
-    #             if cur_transl_val == "Тяга 3 класс" and third_attempt_dlift_off:
-    #                 cur_comp.pillar_height_squat = pil_h_squat
-    #                 cur_comp.pillar_height_bpress = pil_h_bpress
-    #                 cur_comp.first_attempt_squat_res = first_attempt_squat_res
-    #                 cur_comp.first_attempt_squat_off = first_attempt_squat_off
-    #                 cur_comp.second_attempt_squat_res = second_attempt_squat_res
-    #                 cur_comp.second_attempt_squat_off = second_attempt_squat_off
-    #                 cur_comp.third_attempt_squat_res = third_attempt_squat_res
-    #                 cur_comp.third_attempt_squat_off = third_attempt_squat_off
-    #                 cur_comp.first_attempt_bpress_res = first_attempt_bpress_res
-    #                 cur_comp.first_attempt_bpress_off = first_attempt_bpress_off
-    #                 cur_comp.second_attempt_bpress_res = second_attempt_bpress_res
-    #                 cur_comp.second_attempt_bpress_off = second_attempt_bpress_off
-    #                 cur_comp.third_attempt_bpress_res = third_attempt_bpress_res
-    #                 cur_comp.third_attempt_bpress_off = third_attempt_bpress_off
-    #                 cur_comp.first_attempt_dlift_res = first_attempt_dlift_res
-    #                 cur_comp.first_attempt_dlift_off = first_attempt_dlift_off
-    #                 cur_comp.second_attempt_dlift_res = second_attempt_dlift_res
-    #                 cur_comp.second_attempt_dlift_off = second_attempt_dlift_off
-    #                 cur_comp.third_attempt_dlift_res = third_attempt_dlift_res
-    #                 cur_comp.third_attempt_dlift_off = third_attempt_dlift_off
-    #                 cur_comp.competitor_translation = comp_transl
-    #                 cur_comp.save()
-    #                 return JsonResponse({"pil_h_squat": pil_h_squat, "pil_h_bpress": pil_h_bpress, "first_attempt_squat_res": first_attempt_squat_res,
-    #                                      "first_attempt_squat_off": first_attempt_squat_off,
-    #                                      "second_attempt_squat_res": second_attempt_squat_res,
-    #                                      "second_attempt_squat_off": second_attempt_squat_off,
-    #                                      "third_attempt_squat_res": third_attempt_squat_res,
-    #                                      "third_attempt_squat_off": third_attempt_squat_off,
-    #                                      "first_attempt_bpress_res": first_attempt_bpress_res,
-    #                                      "first_attempt_bpress_off": first_attempt_bpress_off,
-    #                                      "second_attempt_bpress_res": second_attempt_bpress_res,
-    #                                      "second_attempt_bpress_off": second_attempt_bpress_off,
-    #                                      "third_attempt_bpress_res": third_attempt_bpress_res,
-    #                                      "third_attempt_bpress_off": third_attempt_bpress_off,
-    #                                      "first_attempt_dlift_res": first_attempt_dlift_res,
-    #                                      "first_attempt_dlift_off": first_attempt_dlift_off,
-    #                                      "second_attempt_dlift_res": second_attempt_dlift_res,
-    #                                      "second_attempt_dlift_off": second_attempt_dlift_off,
-    #                                      "third_attempt_dlift_res": third_attempt_dlift_res,
-    #                                      "third_attempt_dlift_off": third_attempt_dlift_off,
-    #                                      "comp_transl": comp_transl}, status=200)
-    #     if comp_transl:
-    #         cur_comp.pillar_height_squat = pil_h_squat
-    #         cur_comp.pillar_height_bpress = pil_h_bpress
-    #         cur_comp.first_attempt_squat_res = first_attempt_squat_res
-    #         cur_comp.first_attempt_squat_off = first_attempt_squat_off
-    #         cur_comp.second_attempt_squat_res = second_attempt_squat_res
-    #         cur_comp.second_attempt_squat_off = second_attempt_squat_off
-    #         cur_comp.third_attempt_squat_res = third_attempt_squat_res
-    #         cur_comp.third_attempt_squat_off = third_attempt_squat_off
-    #         cur_comp.first_attempt_bpress_res = first_attempt_bpress_res
-    #         cur_comp.first_attempt_bpress_off = first_attempt_bpress_off
-    #         cur_comp.second_attempt_bpress_res = second_attempt_bpress_res
-    #         cur_comp.second_attempt_bpress_off = second_attempt_bpress_off
-    #         cur_comp.third_attempt_bpress_res = third_attempt_bpress_res
-    #         cur_comp.third_attempt_bpress_off = third_attempt_bpress_off
-    #         cur_comp.first_attempt_dlift_res = first_attempt_dlift_res
-    #         cur_comp.first_attempt_dlift_off = first_attempt_dlift_off
-    #         cur_comp.second_attempt_dlift_res = second_attempt_dlift_res
-    #         cur_comp.second_attempt_dlift_off = second_attempt_dlift_off
-    #         cur_comp.third_attempt_dlift_res = third_attempt_dlift_res
-    #         cur_comp.third_attempt_dlift_off = third_attempt_dlift_off
-    #         cur_comp.competitor_translation = comp_transl
-    #         cur_comp.save()
-    #         return JsonResponse(
-    #             {"pil_h_squat": pil_h_squat, "pil_h_bpress": pil_h_bpress, "first_attempt_squat_res": first_attempt_squat_res, "first_attempt_squat_off": first_attempt_squat_off,
-    #              "second_attempt_squat_res": second_attempt_squat_res,
-    #              "second_attempt_squat_off": second_attempt_squat_off,
-    #              "third_attempt_squat_res": third_attempt_squat_res, "third_attempt_squat_off": third_attempt_squat_off,
-    #              "first_attempt_bpress_res": first_attempt_bpress_res,
-    #              "first_attempt_bpress_off": first_attempt_bpress_off,
-    #              "second_attempt_bpress_res": second_attempt_bpress_res,
-    #              "second_attempt_bpress_off": second_attempt_bpress_off,
-    #              "third_attempt_bpress_res": third_attempt_bpress_res,
-    #              "third_attempt_bpress_off": third_attempt_bpress_off,
-    #              "first_attempt_dlift_res": first_attempt_dlift_res, "first_attempt_dlift_off": first_attempt_dlift_off,
-    #              "second_attempt_dlift_res": second_attempt_dlift_res,
-    #              "second_attempt_dlift_off": second_attempt_dlift_off,
-    #              "third_attempt_dlift_res": third_attempt_dlift_res, "third_attempt_dlift_off": third_attempt_dlift_off,
-    #              "comp_transl": comp_transl}, status=200)
-    #     else:
-    #         cur_comp.pillar_height_squat = pil_h_squat
-    #         cur_comp.pillar_height_bpress = pil_h_bpress
-    #         cur_comp.first_attempt_squat_res = first_attempt_squat_res
-    #         cur_comp.first_attempt_squat_off = first_attempt_squat_off
-    #         cur_comp.second_attempt_squat_res = second_attempt_squat_res
-    #         cur_comp.second_attempt_squat_off = second_attempt_squat_off
-    #         cur_comp.third_attempt_squat_res = third_attempt_squat_res
-    #         cur_comp.third_attempt_squat_off = third_attempt_squat_off
-    #         cur_comp.first_attempt_bpress_res = first_attempt_bpress_res
-    #         cur_comp.first_attempt_bpress_off = first_attempt_bpress_off
-    #         cur_comp.second_attempt_bpress_res = second_attempt_bpress_res
-    #         cur_comp.second_attempt_bpress_off = second_attempt_bpress_off
-    #         cur_comp.third_attempt_bpress_res = third_attempt_bpress_res
-    #         cur_comp.third_attempt_bpress_off = third_attempt_bpress_off
-    #         cur_comp.first_attempt_dlift_res = first_attempt_dlift_res
-    #         cur_comp.first_attempt_dlift_off = first_attempt_dlift_off
-    #         cur_comp.second_attempt_dlift_res = second_attempt_dlift_res
-    #         cur_comp.second_attempt_dlift_off = second_attempt_dlift_off
-    #         cur_comp.third_attempt_dlift_res = third_attempt_dlift_res
-    #         cur_comp.third_attempt_dlift_off = third_attempt_dlift_off
-    #         cur_comp.competitor_translation = None
-    #         cur_comp.save()
-    #         return JsonResponse(
-    #             {"pil_h_squat": pil_h_squat, "pil_h_bpress": pil_h_bpress, "first_attempt_squat_res": first_attempt_squat_res, "first_attempt_squat_off": first_attempt_squat_off,
-    #              "second_attempt_squat_res": second_attempt_squat_res,
-    #              "second_attempt_squat_off": second_attempt_squat_off,
-    #              "third_attempt_squat_res": third_attempt_squat_res, "third_attempt_squat_off": third_attempt_squat_off,
-    #              "first_attempt_bpress_res": first_attempt_bpress_res,
-    #              "first_attempt_bpress_off": first_attempt_bpress_off,
-    #              "second_attempt_bpress_res": second_attempt_bpress_res,
-    #              "second_attempt_bpress_off": second_attempt_bpress_off,
-    #              "third_attempt_bpress_res": third_attempt_bpress_res,
-    #              "third_attempt_bpress_off": third_attempt_bpress_off,
-    #              "first_attempt_dlift_res": first_attempt_dlift_res, "first_attempt_dlift_off": first_attempt_dlift_off,
-    #              "second_attempt_dlift_res": second_attempt_dlift_res,
-    #              "second_attempt_dlift_off": second_attempt_dlift_off,
-    #              "third_attempt_dlift_res": third_attempt_dlift_res, "third_attempt_dlift_off": third_attempt_dlift_off,
-    #              "comp_transl": comp_transl}, status=200)
-    #     # , "testjson": serializers.serialize("json", CompetitionProtocols.objects.all().order_by(
-    #         # F("first_attempt_squat_res").asc(nulls_last=True)), use_natural_foreign_keys=True)
-    # if 'secr-page_form-btn-bpclass' in request.POST:
-    #     comp_pk = request.POST.get('secr-page_form-btn-bpclass')
-    #     pil_h_bpress = request.POST.get('secr-page_form-pil_h_bpress')
-    #     if pil_h_bpress:
-    #         pil_h_bpress = pil_h_bpress
-    #     else:
-    #         pil_h_bpress = None
-    #     first_attempt_bpress_res = request.POST.get('secr-page_form-fat-bpress-res')
-    #     if first_attempt_bpress_res:
-    #         first_attempt_bpress_res = Decimal(first_attempt_bpress_res)
-    #     else:
-    #         first_attempt_bpress_res = None
-    #     first_attempt_bpress_off = request.POST.get('secr-page_form-fat-bpress-off')
-    #     second_attempt_bpress_res = request.POST.get('secr-page_form-sat-bpress-res')
-    #     if second_attempt_bpress_res:
-    #         second_attempt_bpress_res = Decimal(second_attempt_bpress_res)
-    #     else:
-    #         second_attempt_bpress_res = None
-    #     second_attempt_bpress_off = request.POST.get('secr-page_form-sat-bpress-off')
-    #     third_attempt_bpress_res = request.POST.get('secr-page_form-tat-bpress-res')
-    #     if third_attempt_bpress_res:
-    #         third_attempt_bpress_res = Decimal(third_attempt_bpress_res)
-    #     else:
-    #         third_attempt_bpress_res = None
-    #     third_attempt_bpress_off = request.POST.get('secr-page_form-tat-bpress-off')
-    #     cur_comp = CompetitionProtocols.objects.get(pk=comp_pk)
-    #     comp_transl = request.POST.get('secr-page_chckbx')
-    #     cur_transl = CompetitionProtocols.objects.exclude(competitor_translation=None)
-    #     if comp_transl and cur_transl:
-    #         if comp_transl != cur_transl[0].competitor_translation:
-    #             return JsonResponse(
-    #                 {"error": "Нельзя запускать две трансляции одновременно. Сначала закончите существующую."},
-    #                 status=302)
-    #     if cur_transl:
-    #         cur_transl_val = cur_transl.values_list('competitor_translation', flat=True)[0]
-    #         cur_transl_pk = cur_transl.values_list('id', flat=True)[0]
-    #         if comp_pk == str(cur_transl_pk):
-    #             if cur_transl_val == "Жим 1 класс" and first_attempt_bpress_off:
-    #                 cur_comp.pillar_height_bpress = pil_h_bpress
-    #                 cur_comp.first_attempt_bpress_res = first_attempt_bpress_res
-    #                 cur_comp.first_attempt_bpress_off = first_attempt_bpress_off
-    #                 cur_comp.second_attempt_bpress_res = second_attempt_bpress_res
-    #                 cur_comp.second_attempt_bpress_off = second_attempt_bpress_off
-    #                 cur_comp.third_attempt_bpress_res = third_attempt_bpress_res
-    #                 cur_comp.third_attempt_bpress_off = third_attempt_bpress_off
-    #                 cur_comp.competitor_translation = comp_transl
-    #                 cur_comp.save()
-    #                 return JsonResponse({"pil_h_bpress": pil_h_bpress, "first_attempt_bpress_res": first_attempt_bpress_res,
-    #                                      "first_attempt_bpress_off": first_attempt_bpress_off,
-    #                                      "second_attempt_bpress_res": second_attempt_bpress_res,
-    #                                      "second_attempt_bpress_off": second_attempt_bpress_off,
-    #                                      "third_attempt_bpress_res": third_attempt_bpress_res,
-    #                                      "third_attempt_bpress_off": third_attempt_bpress_off,
-    #                                      "comp_transl": comp_transl}, status=200)
-    #             if cur_transl_val == "Жим 2 класс" and second_attempt_bpress_off:
-    #                 cur_comp.pillar_height_bpress = pil_h_bpress
-    #                 cur_comp.first_attempt_bpress_res = first_attempt_bpress_res
-    #                 cur_comp.first_attempt_bpress_off = first_attempt_bpress_off
-    #                 cur_comp.second_attempt_bpress_res = second_attempt_bpress_res
-    #                 cur_comp.second_attempt_bpress_off = second_attempt_bpress_off
-    #                 cur_comp.third_attempt_bpress_res = third_attempt_bpress_res
-    #                 cur_comp.third_attempt_bpress_off = third_attempt_bpress_off
-    #                 cur_comp.competitor_translation = comp_transl
-    #                 cur_comp.save()
-    #                 return JsonResponse({"pil_h_bpress": pil_h_bpress, "first_attempt_bpress_res": first_attempt_bpress_res,
-    #                                      "first_attempt_bpress_off": first_attempt_bpress_off,
-    #                                      "second_attempt_bpress_res": second_attempt_bpress_res,
-    #                                      "second_attempt_bpress_off": second_attempt_bpress_off,
-    #                                      "third_attempt_bpress_res": third_attempt_bpress_res,
-    #                                      "third_attempt_bpress_off": third_attempt_bpress_off,
-    #                                      "comp_transl": comp_transl}, status=200)
-    #             if cur_transl_val == "Жим 3 класс" and third_attempt_bpress_off:
-    #                 cur_comp.pillar_height_bpress = pil_h_bpress
-    #                 cur_comp.first_attempt_bpress_res = first_attempt_bpress_res
-    #                 cur_comp.first_attempt_bpress_off = first_attempt_bpress_off
-    #                 cur_comp.second_attempt_bpress_res = second_attempt_bpress_res
-    #                 cur_comp.second_attempt_bpress_off = second_attempt_bpress_off
-    #                 cur_comp.third_attempt_bpress_res = third_attempt_bpress_res
-    #                 cur_comp.third_attempt_bpress_off = third_attempt_bpress_off
-    #                 cur_comp.competitor_translation = comp_transl
-    #                 cur_comp.save()
-    #                 return JsonResponse({"pil_h_bpress": pil_h_bpress, "first_attempt_bpress_res": first_attempt_bpress_res,
-    #                                      "first_attempt_bpress_off": first_attempt_bpress_off,
-    #                                      "second_attempt_bpress_res": second_attempt_bpress_res,
-    #                                      "second_attempt_bpress_off": second_attempt_bpress_off,
-    #                                      "third_attempt_bpress_res": third_attempt_bpress_res,
-    #                                      "third_attempt_bpress_off": third_attempt_bpress_off,
-    #                                      "comp_transl": comp_transl}, status=200)
-    #     if comp_transl:
-    #         cur_comp.pillar_height_bpress = pil_h_bpress
-    #         cur_comp.first_attempt_bpress_res = first_attempt_bpress_res
-    #         cur_comp.first_attempt_bpress_off = first_attempt_bpress_off
-    #         cur_comp.second_attempt_bpress_res = second_attempt_bpress_res
-    #         cur_comp.second_attempt_bpress_off = second_attempt_bpress_off
-    #         cur_comp.third_attempt_bpress_res = third_attempt_bpress_res
-    #         cur_comp.third_attempt_bpress_off = third_attempt_bpress_off
-    #         cur_comp.competitor_translation = comp_transl
-    #         cur_comp.save()
-    #         return JsonResponse(
-    #             {"pil_h_bpress": pil_h_bpress, "first_attempt_bpress_res": first_attempt_bpress_res,
-    #              "first_attempt_bpress_off": first_attempt_bpress_off,
-    #              "second_attempt_bpress_res": second_attempt_bpress_res,
-    #              "second_attempt_bpress_off": second_attempt_bpress_off,
-    #              "third_attempt_bpress_res": third_attempt_bpress_res,
-    #              "third_attempt_bpress_off": third_attempt_bpress_off,
-    #              "comp_transl": comp_transl}, status=200)
-    #     else:
-    #         cur_comp.pillar_height_bpress = pil_h_bpress
-    #         cur_comp.first_attempt_bpress_res = first_attempt_bpress_res
-    #         cur_comp.first_attempt_bpress_off = first_attempt_bpress_off
-    #         cur_comp.second_attempt_bpress_res = second_attempt_bpress_res
-    #         cur_comp.second_attempt_bpress_off = second_attempt_bpress_off
-    #         cur_comp.third_attempt_bpress_res = third_attempt_bpress_res
-    #         cur_comp.third_attempt_bpress_off = third_attempt_bpress_off
-    #         cur_comp.competitor_translation = None
-    #         cur_comp.save()
-    #         return JsonResponse(
-    #             {"pil_h_bpress": pil_h_bpress, "first_attempt_bpress_res": first_attempt_bpress_res,
-    #              "first_attempt_bpress_off": first_attempt_bpress_off,
-    #              "second_attempt_bpress_res": second_attempt_bpress_res,
-    #              "second_attempt_bpress_off": second_attempt_bpress_off,
-    #              "third_attempt_bpress_res": third_attempt_bpress_res,
-    #              "third_attempt_bpress_off": third_attempt_bpress_off,
-    #              "comp_transl": comp_transl}, status=200)
-    # if 'secr-page_form-btn-plek' in request.POST:
-    #     comp_pk = request.POST.get('secr-page_form-btn-plek')
-    #     pil_h_squat = request.POST.get('secr-page_form-pil_h_squat')
-    #     pil_h_bpress = request.POST.get('secr-page_form-pil_h_bpress')
-    #     if pil_h_squat:
-    #         pil_h_squat = pil_h_squat
-    #     else:
-    #         pil_h_squat = None
-    #     if pil_h_bpress:
-    #         pil_h_bpress = pil_h_bpress
-    #     else:
-    #         pil_h_bpress = None
-    #     first_attempt_squat_res = request.POST.get('secr-page_form-fat-squat-res')
-    #     if first_attempt_squat_res:
-    #         first_attempt_squat_res = Decimal(first_attempt_squat_res)
-    #     else:
-    #         first_attempt_squat_res = None
-    #     first_attempt_squat_off = request.POST.get('secr-page_form-fat-squat-off')
-    #     second_attempt_squat_res = request.POST.get('secr-page_form-sat-squat-res')
-    #     if second_attempt_squat_res:
-    #         second_attempt_squat_res = Decimal(second_attempt_squat_res)
-    #     else:
-    #         second_attempt_squat_res = None
-    #     second_attempt_squat_off = request.POST.get('secr-page_form-sat-squat-off')
-    #     third_attempt_squat_res = request.POST.get('secr-page_form-tat-squat-res')
-    #     if third_attempt_squat_res:
-    #         third_attempt_squat_res = Decimal(third_attempt_squat_res)
-    #     else:
-    #         third_attempt_squat_res = None
-    #     third_attempt_squat_off = request.POST.get('secr-page_form-tat-squat-off')
-    #     first_attempt_bpress_res = request.POST.get('secr-page_form-fat-bpress-res')
-    #     if first_attempt_bpress_res:
-    #         first_attempt_bpress_res = Decimal(first_attempt_bpress_res)
-    #     else:
-    #         first_attempt_bpress_res = None
-    #     first_attempt_bpress_off = request.POST.get('secr-page_form-fat-bpress-off')
-    #     second_attempt_bpress_res = request.POST.get('secr-page_form-sat-bpress-res')
-    #     if second_attempt_bpress_res:
-    #         second_attempt_bpress_res = Decimal(second_attempt_bpress_res)
-    #     else:
-    #         second_attempt_bpress_res = None
-    #     second_attempt_bpress_off = request.POST.get('secr-page_form-sat-bpress-off')
-    #     third_attempt_bpress_res = request.POST.get('secr-page_form-tat-bpress-res')
-    #     if third_attempt_bpress_res:
-    #         third_attempt_bpress_res = Decimal(third_attempt_bpress_res)
-    #     else:
-    #         third_attempt_bpress_res = None
-    #     third_attempt_bpress_off = request.POST.get('secr-page_form-tat-bpress-off')
-    #     first_attempt_dlift_res = request.POST.get('secr-page_form-fat-dlift-res')
-    #     if first_attempt_dlift_res:
-    #         first_attempt_dlift_res = Decimal(first_attempt_dlift_res)
-    #     else:
-    #         first_attempt_dlift_res = None
-    #     first_attempt_dlift_off = request.POST.get('secr-page_form-fat-dlift-off')
-    #     second_attempt_dlift_res = request.POST.get('secr-page_form-sat-dlift-res')
-    #     if second_attempt_dlift_res:
-    #         second_attempt_dlift_res = Decimal(second_attempt_dlift_res)
-    #     else:
-    #         second_attempt_dlift_res = None
-    #     second_attempt_dlift_off = request.POST.get('secr-page_form-sat-dlift-off')
-    #     third_attempt_dlift_res = request.POST.get('secr-page_form-tat-dlift-res')
-    #     if third_attempt_dlift_res:
-    #         third_attempt_dlift_res = Decimal(third_attempt_dlift_res)
-    #     else:
-    #         third_attempt_dlift_res = None
-    #     third_attempt_dlift_off = request.POST.get('secr-page_form-tat-dlift-off')
-    #     cur_comp = CompetitionProtocols.objects.get(pk=comp_pk)
-    #     comp_transl = request.POST.get('secr-page_chckbx')
-    #     cur_transl = CompetitionProtocols.objects.exclude(competitor_translation=None)
-    #     if comp_transl and cur_transl:
-    #         if comp_transl != cur_transl[0].competitor_translation:
-    #             return JsonResponse(
-    #                 {"error": "Нельзя запускать две трансляции одновременно. Сначала закончите существующую."},
-    #                 status=302)
-    #     if cur_transl:
-    #         cur_transl_val = cur_transl.values_list('competitor_translation', flat=True)[0]
-    #         cur_transl_pk = cur_transl.values_list('id', flat=True)[0]
-    #         if comp_pk == str(cur_transl_pk):
-    #             if cur_transl_val == "Присед 1 экип" and first_attempt_squat_off:
-    #                 cur_comp.pillar_height_squat = pil_h_squat
-    #                 cur_comp.pillar_height_bpress = pil_h_bpress
-    #                 cur_comp.first_attempt_squat_res_ek = first_attempt_squat_res
-    #                 cur_comp.first_attempt_squat_off_ek = first_attempt_squat_off
-    #                 cur_comp.second_attempt_squat_res_ek = second_attempt_squat_res
-    #                 cur_comp.second_attempt_squat_off_ek = second_attempt_squat_off
-    #                 cur_comp.third_attempt_squat_res_ek = third_attempt_squat_res
-    #                 cur_comp.third_attempt_squat_off_ek = third_attempt_squat_off
-    #                 cur_comp.first_attempt_bpress_res_ek = first_attempt_bpress_res
-    #                 cur_comp.first_attempt_bpress_off_ek = first_attempt_bpress_off
-    #                 cur_comp.second_attempt_bpress_res_ek = second_attempt_bpress_res
-    #                 cur_comp.second_attempt_bpress_off_ek = second_attempt_bpress_off
-    #                 cur_comp.third_attempt_bpress_res_ek = third_attempt_bpress_res
-    #                 cur_comp.third_attempt_bpress_off_ek = third_attempt_bpress_off
-    #                 cur_comp.first_attempt_dlift_res_ek = first_attempt_dlift_res
-    #                 cur_comp.first_attempt_dlift_off_ek = first_attempt_dlift_off
-    #                 cur_comp.second_attempt_dlift_res_ek = second_attempt_dlift_res
-    #                 cur_comp.second_attempt_dlift_off_ek = second_attempt_dlift_off
-    #                 cur_comp.third_attempt_dlift_res_ek = third_attempt_dlift_res
-    #                 cur_comp.third_attempt_dlift_off_ek = third_attempt_dlift_off
-    #                 cur_comp.competitor_translation = comp_transl
-    #                 cur_comp.save()
-    #                 return JsonResponse({"pil_h_squat": pil_h_squat, "pil_h_bpress": pil_h_bpress, "first_attempt_squat_res": first_attempt_squat_res,
-    #                                      "first_attempt_squat_off": first_attempt_squat_off,
-    #                                      "second_attempt_squat_res": second_attempt_squat_res,
-    #                                      "second_attempt_squat_off": second_attempt_squat_off,
-    #                                      "third_attempt_squat_res": third_attempt_squat_res,
-    #                                      "third_attempt_squat_off": third_attempt_squat_off,
-    #                                      "first_attempt_bpress_res": first_attempt_bpress_res,
-    #                                      "first_attempt_bpress_off": first_attempt_bpress_off,
-    #                                      "second_attempt_bpress_res": second_attempt_bpress_res,
-    #                                      "second_attempt_bpress_off": second_attempt_bpress_off,
-    #                                      "third_attempt_bpress_res": third_attempt_bpress_res,
-    #                                      "third_attempt_bpress_off": third_attempt_bpress_off,
-    #                                      "first_attempt_dlift_res": first_attempt_dlift_res,
-    #                                      "first_attempt_dlift_off": first_attempt_dlift_off,
-    #                                      "second_attempt_dlift_res": second_attempt_dlift_res,
-    #                                      "second_attempt_dlift_off": second_attempt_dlift_off,
-    #                                      "third_attempt_dlift_res": third_attempt_dlift_res,
-    #                                      "third_attempt_dlift_off": third_attempt_dlift_off,
-    #                                      "comp_transl": comp_transl}, status=200)
-    #             if cur_transl_val == "Присед 2 экип" and second_attempt_squat_off:
-    #                 cur_comp.pillar_height_squat = pil_h_squat
-    #                 cur_comp.pillar_height_bpress = pil_h_bpress
-    #                 cur_comp.first_attempt_squat_res_ek = first_attempt_squat_res
-    #                 cur_comp.first_attempt_squat_off_ek = first_attempt_squat_off
-    #                 cur_comp.second_attempt_squat_res_ek = second_attempt_squat_res
-    #                 cur_comp.second_attempt_squat_off_ek = second_attempt_squat_off
-    #                 cur_comp.third_attempt_squat_res_ek = third_attempt_squat_res
-    #                 cur_comp.third_attempt_squat_off_ek = third_attempt_squat_off
-    #                 cur_comp.first_attempt_bpress_res_ek = first_attempt_bpress_res
-    #                 cur_comp.first_attempt_bpress_off_ek = first_attempt_bpress_off
-    #                 cur_comp.second_attempt_bpress_res_ek = second_attempt_bpress_res
-    #                 cur_comp.second_attempt_bpress_off_ek = second_attempt_bpress_off
-    #                 cur_comp.third_attempt_bpress_res_ek = third_attempt_bpress_res
-    #                 cur_comp.third_attempt_bpress_off_ek = third_attempt_bpress_off
-    #                 cur_comp.first_attempt_dlift_res_ek = first_attempt_dlift_res
-    #                 cur_comp.first_attempt_dlift_off_ek = first_attempt_dlift_off
-    #                 cur_comp.second_attempt_dlift_res_ek = second_attempt_dlift_res
-    #                 cur_comp.second_attempt_dlift_off_ek = second_attempt_dlift_off
-    #                 cur_comp.third_attempt_dlift_res_ek = third_attempt_dlift_res
-    #                 cur_comp.third_attempt_dlift_off_ek = third_attempt_dlift_off
-    #                 cur_comp.competitor_translation = comp_transl
-    #                 cur_comp.save()
-    #                 return JsonResponse({"pil_h_squat": pil_h_squat, "pil_h_bpress": pil_h_bpress, "first_attempt_squat_res": first_attempt_squat_res,
-    #                                      "first_attempt_squat_off": first_attempt_squat_off,
-    #                                      "second_attempt_squat_res": second_attempt_squat_res,
-    #                                      "second_attempt_squat_off": second_attempt_squat_off,
-    #                                      "third_attempt_squat_res": third_attempt_squat_res,
-    #                                      "third_attempt_squat_off": third_attempt_squat_off,
-    #                                      "first_attempt_bpress_res": first_attempt_bpress_res,
-    #                                      "first_attempt_bpress_off": first_attempt_bpress_off,
-    #                                      "second_attempt_bpress_res": second_attempt_bpress_res,
-    #                                      "second_attempt_bpress_off": second_attempt_bpress_off,
-    #                                      "third_attempt_bpress_res": third_attempt_bpress_res,
-    #                                      "third_attempt_bpress_off": third_attempt_bpress_off,
-    #                                      "first_attempt_dlift_res": first_attempt_dlift_res,
-    #                                      "first_attempt_dlift_off": first_attempt_dlift_off,
-    #                                      "second_attempt_dlift_res": second_attempt_dlift_res,
-    #                                      "second_attempt_dlift_off": second_attempt_dlift_off,
-    #                                      "third_attempt_dlift_res": third_attempt_dlift_res,
-    #                                      "third_attempt_dlift_off": third_attempt_dlift_off,
-    #                                      "comp_transl": comp_transl}, status=200)
-    #             if cur_transl_val == "Присед 3 экип" and third_attempt_squat_off:
-    #                 cur_comp.pillar_height_squat = pil_h_squat
-    #                 cur_comp.pillar_height_bpress = pil_h_bpress
-    #                 cur_comp.first_attempt_squat_res_ek = first_attempt_squat_res
-    #                 cur_comp.first_attempt_squat_off_ek = first_attempt_squat_off
-    #                 cur_comp.second_attempt_squat_res_ek = second_attempt_squat_res
-    #                 cur_comp.second_attempt_squat_off_ek = second_attempt_squat_off
-    #                 cur_comp.third_attempt_squat_res_ek = third_attempt_squat_res
-    #                 cur_comp.third_attempt_squat_off_ek = third_attempt_squat_off
-    #                 cur_comp.first_attempt_bpress_res_ek = first_attempt_bpress_res
-    #                 cur_comp.first_attempt_bpress_off_ek = first_attempt_bpress_off
-    #                 cur_comp.second_attempt_bpress_res_ek = second_attempt_bpress_res
-    #                 cur_comp.second_attempt_bpress_off_ek = second_attempt_bpress_off
-    #                 cur_comp.third_attempt_bpress_res_ek = third_attempt_bpress_res
-    #                 cur_comp.third_attempt_bpress_off_ek = third_attempt_bpress_off
-    #                 cur_comp.first_attempt_dlift_res_ek = first_attempt_dlift_res
-    #                 cur_comp.first_attempt_dlift_off_ek = first_attempt_dlift_off
-    #                 cur_comp.second_attempt_dlift_res_ek = second_attempt_dlift_res
-    #                 cur_comp.second_attempt_dlift_off_ek = second_attempt_dlift_off
-    #                 cur_comp.third_attempt_dlift_res_ek = third_attempt_dlift_res
-    #                 cur_comp.third_attempt_dlift_off_ek = third_attempt_dlift_off
-    #                 cur_comp.competitor_translation = comp_transl
-    #                 cur_comp.save()
-    #                 return JsonResponse({"pil_h_squat": pil_h_squat, "pil_h_bpress": pil_h_bpress, "first_attempt_squat_res": first_attempt_squat_res,
-    #                                      "first_attempt_squat_off": first_attempt_squat_off,
-    #                                      "second_attempt_squat_res": second_attempt_squat_res,
-    #                                      "second_attempt_squat_off": second_attempt_squat_off,
-    #                                      "third_attempt_squat_res": third_attempt_squat_res,
-    #                                      "third_attempt_squat_off": third_attempt_squat_off,
-    #                                      "first_attempt_bpress_res": first_attempt_bpress_res,
-    #                                      "first_attempt_bpress_off": first_attempt_bpress_off,
-    #                                      "second_attempt_bpress_res": second_attempt_bpress_res,
-    #                                      "second_attempt_bpress_off": second_attempt_bpress_off,
-    #                                      "third_attempt_bpress_res": third_attempt_bpress_res,
-    #                                      "third_attempt_bpress_off": third_attempt_bpress_off,
-    #                                      "first_attempt_dlift_res": first_attempt_dlift_res,
-    #                                      "first_attempt_dlift_off": first_attempt_dlift_off,
-    #                                      "second_attempt_dlift_res": second_attempt_dlift_res,
-    #                                      "second_attempt_dlift_off": second_attempt_dlift_off,
-    #                                      "third_attempt_dlift_res": third_attempt_dlift_res,
-    #                                      "third_attempt_dlift_off": third_attempt_dlift_off,
-    #                                      "comp_transl": comp_transl}, status=200)
-    #             if cur_transl_val == "Жим 1 экип" and first_attempt_bpress_off:
-    #                 cur_comp.pillar_height_squat = pil_h_squat
-    #                 cur_comp.pillar_height_bpress = pil_h_bpress
-    #                 cur_comp.first_attempt_squat_res_ek = first_attempt_squat_res
-    #                 cur_comp.first_attempt_squat_off_ek = first_attempt_squat_off
-    #                 cur_comp.second_attempt_squat_res_ek = second_attempt_squat_res
-    #                 cur_comp.second_attempt_squat_off_ek = second_attempt_squat_off
-    #                 cur_comp.third_attempt_squat_res_ek = third_attempt_squat_res
-    #                 cur_comp.third_attempt_squat_off_ek = third_attempt_squat_off
-    #                 cur_comp.first_attempt_bpress_res_ek = first_attempt_bpress_res
-    #                 cur_comp.first_attempt_bpress_off_ek = first_attempt_bpress_off
-    #                 cur_comp.second_attempt_bpress_res_ek = second_attempt_bpress_res
-    #                 cur_comp.second_attempt_bpress_off_ek = second_attempt_bpress_off
-    #                 cur_comp.third_attempt_bpress_res_ek = third_attempt_bpress_res
-    #                 cur_comp.third_attempt_bpress_off_ek = third_attempt_bpress_off
-    #                 cur_comp.first_attempt_dlift_res_ek = first_attempt_dlift_res
-    #                 cur_comp.first_attempt_dlift_off_ek = first_attempt_dlift_off
-    #                 cur_comp.second_attempt_dlift_res_ek = second_attempt_dlift_res
-    #                 cur_comp.second_attempt_dlift_off_ek = second_attempt_dlift_off
-    #                 cur_comp.third_attempt_dlift_res_ek = third_attempt_dlift_res
-    #                 cur_comp.third_attempt_dlift_off_ek = third_attempt_dlift_off
-    #                 cur_comp.competitor_translation = comp_transl
-    #                 cur_comp.save()
-    #                 return JsonResponse({"pil_h_squat": pil_h_squat, "pil_h_bpress": pil_h_bpress, "first_attempt_squat_res": first_attempt_squat_res,
-    #                                      "first_attempt_squat_off": first_attempt_squat_off,
-    #                                      "second_attempt_squat_res": second_attempt_squat_res,
-    #                                      "second_attempt_squat_off": second_attempt_squat_off,
-    #                                      "third_attempt_squat_res": third_attempt_squat_res,
-    #                                      "third_attempt_squat_off": third_attempt_squat_off,
-    #                                      "first_attempt_bpress_res": first_attempt_bpress_res,
-    #                                      "first_attempt_bpress_off": first_attempt_bpress_off,
-    #                                      "second_attempt_bpress_res": second_attempt_bpress_res,
-    #                                      "second_attempt_bpress_off": second_attempt_bpress_off,
-    #                                      "third_attempt_bpress_res": third_attempt_bpress_res,
-    #                                      "third_attempt_bpress_off": third_attempt_bpress_off,
-    #                                      "first_attempt_dlift_res": first_attempt_dlift_res,
-    #                                      "first_attempt_dlift_off": first_attempt_dlift_off,
-    #                                      "second_attempt_dlift_res": second_attempt_dlift_res,
-    #                                      "second_attempt_dlift_off": second_attempt_dlift_off,
-    #                                      "third_attempt_dlift_res": third_attempt_dlift_res,
-    #                                      "third_attempt_dlift_off": third_attempt_dlift_off,
-    #                                      "comp_transl": comp_transl}, status=200)
-    #             if cur_transl_val == "Жим 2 экип" and second_attempt_bpress_off:
-    #                 cur_comp.pillar_height_squat = pil_h_squat
-    #                 cur_comp.pillar_height_bpress = pil_h_bpress
-    #                 cur_comp.first_attempt_squat_res_ek = first_attempt_squat_res
-    #                 cur_comp.first_attempt_squat_off_ek = first_attempt_squat_off
-    #                 cur_comp.second_attempt_squat_res_ek = second_attempt_squat_res
-    #                 cur_comp.second_attempt_squat_off_ek = second_attempt_squat_off
-    #                 cur_comp.third_attempt_squat_res_ek = third_attempt_squat_res
-    #                 cur_comp.third_attempt_squat_off_ek = third_attempt_squat_off
-    #                 cur_comp.first_attempt_bpress_res_ek = first_attempt_bpress_res
-    #                 cur_comp.first_attempt_bpress_off_ek = first_attempt_bpress_off
-    #                 cur_comp.second_attempt_bpress_res_ek = second_attempt_bpress_res
-    #                 cur_comp.second_attempt_bpress_off_ek = second_attempt_bpress_off
-    #                 cur_comp.third_attempt_bpress_res_ek = third_attempt_bpress_res
-    #                 cur_comp.third_attempt_bpress_off_ek = third_attempt_bpress_off
-    #                 cur_comp.first_attempt_dlift_res_ek = first_attempt_dlift_res
-    #                 cur_comp.first_attempt_dlift_off_ek = first_attempt_dlift_off
-    #                 cur_comp.second_attempt_dlift_res_ek = second_attempt_dlift_res
-    #                 cur_comp.second_attempt_dlift_off_ek = second_attempt_dlift_off
-    #                 cur_comp.third_attempt_dlift_res_ek = third_attempt_dlift_res
-    #                 cur_comp.third_attempt_dlift_off_ek = third_attempt_dlift_off
-    #                 cur_comp.competitor_translation = comp_transl
-    #                 cur_comp.save()
-    #                 return JsonResponse({"pil_h_squat": pil_h_squat, "pil_h_bpress": pil_h_bpress, "first_attempt_squat_res": first_attempt_squat_res,
-    #                                      "first_attempt_squat_off": first_attempt_squat_off,
-    #                                      "second_attempt_squat_res": second_attempt_squat_res,
-    #                                      "second_attempt_squat_off": second_attempt_squat_off,
-    #                                      "third_attempt_squat_res": third_attempt_squat_res,
-    #                                      "third_attempt_squat_off": third_attempt_squat_off,
-    #                                      "first_attempt_bpress_res": first_attempt_bpress_res,
-    #                                      "first_attempt_bpress_off": first_attempt_bpress_off,
-    #                                      "second_attempt_bpress_res": second_attempt_bpress_res,
-    #                                      "second_attempt_bpress_off": second_attempt_bpress_off,
-    #                                      "third_attempt_bpress_res": third_attempt_bpress_res,
-    #                                      "third_attempt_bpress_off": third_attempt_bpress_off,
-    #                                      "first_attempt_dlift_res": first_attempt_dlift_res,
-    #                                      "first_attempt_dlift_off": first_attempt_dlift_off,
-    #                                      "second_attempt_dlift_res": second_attempt_dlift_res,
-    #                                      "second_attempt_dlift_off": second_attempt_dlift_off,
-    #                                      "third_attempt_dlift_res": third_attempt_dlift_res,
-    #                                      "third_attempt_dlift_off": third_attempt_dlift_off,
-    #                                      "comp_transl": comp_transl}, status=200)
-    #             if cur_transl_val == "Жим 3 экип" and third_attempt_bpress_off:
-    #                 cur_comp.pillar_height_squat = pil_h_squat
-    #                 cur_comp.pillar_height_bpress = pil_h_bpress
-    #                 cur_comp.first_attempt_squat_res_ek = first_attempt_squat_res
-    #                 cur_comp.first_attempt_squat_off_ek = first_attempt_squat_off
-    #                 cur_comp.second_attempt_squat_res_ek = second_attempt_squat_res
-    #                 cur_comp.second_attempt_squat_off_ek = second_attempt_squat_off
-    #                 cur_comp.third_attempt_squat_res_ek = third_attempt_squat_res
-    #                 cur_comp.third_attempt_squat_off_ek = third_attempt_squat_off
-    #                 cur_comp.first_attempt_bpress_res_ek = first_attempt_bpress_res
-    #                 cur_comp.first_attempt_bpress_off_ek = first_attempt_bpress_off
-    #                 cur_comp.second_attempt_bpress_res_ek = second_attempt_bpress_res
-    #                 cur_comp.second_attempt_bpress_off_ek = second_attempt_bpress_off
-    #                 cur_comp.third_attempt_bpress_res_ek = third_attempt_bpress_res
-    #                 cur_comp.third_attempt_bpress_off_ek = third_attempt_bpress_off
-    #                 cur_comp.first_attempt_dlift_res_ek = first_attempt_dlift_res
-    #                 cur_comp.first_attempt_dlift_off_ek = first_attempt_dlift_off
-    #                 cur_comp.second_attempt_dlift_res_ek = second_attempt_dlift_res
-    #                 cur_comp.second_attempt_dlift_off_ek = second_attempt_dlift_off
-    #                 cur_comp.third_attempt_dlift_res_ek = third_attempt_dlift_res
-    #                 cur_comp.third_attempt_dlift_off_ek = third_attempt_dlift_off
-    #                 cur_comp.competitor_translation = comp_transl
-    #                 cur_comp.save()
-    #                 return JsonResponse({"pil_h_squat": pil_h_squat, "pil_h_bpress": pil_h_bpress, "first_attempt_squat_res": first_attempt_squat_res,
-    #                                      "first_attempt_squat_off": first_attempt_squat_off,
-    #                                      "second_attempt_squat_res": second_attempt_squat_res,
-    #                                      "second_attempt_squat_off": second_attempt_squat_off,
-    #                                      "third_attempt_squat_res": third_attempt_squat_res,
-    #                                      "third_attempt_squat_off": third_attempt_squat_off,
-    #                                      "first_attempt_bpress_res": first_attempt_bpress_res,
-    #                                      "first_attempt_bpress_off": first_attempt_bpress_off,
-    #                                      "second_attempt_bpress_res": second_attempt_bpress_res,
-    #                                      "second_attempt_bpress_off": second_attempt_bpress_off,
-    #                                      "third_attempt_bpress_res": third_attempt_bpress_res,
-    #                                      "third_attempt_bpress_off": third_attempt_bpress_off,
-    #                                      "first_attempt_dlift_res": first_attempt_dlift_res,
-    #                                      "first_attempt_dlift_off": first_attempt_dlift_off,
-    #                                      "second_attempt_dlift_res": second_attempt_dlift_res,
-    #                                      "second_attempt_dlift_off": second_attempt_dlift_off,
-    #                                      "third_attempt_dlift_res": third_attempt_dlift_res,
-    #                                      "third_attempt_dlift_off": third_attempt_dlift_off,
-    #                                      "comp_transl": comp_transl}, status=200)
-    #             if cur_transl_val == "Тяга 1 экип" and first_attempt_dlift_off:
-    #                 cur_comp.pillar_height_squat = pil_h_squat
-    #                 cur_comp.pillar_height_bpress = pil_h_bpress
-    #                 cur_comp.first_attempt_squat_res_ek = first_attempt_squat_res
-    #                 cur_comp.first_attempt_squat_off_ek = first_attempt_squat_off
-    #                 cur_comp.second_attempt_squat_res_ek = second_attempt_squat_res
-    #                 cur_comp.second_attempt_squat_off_ek = second_attempt_squat_off
-    #                 cur_comp.third_attempt_squat_res_ek = third_attempt_squat_res
-    #                 cur_comp.third_attempt_squat_off_ek = third_attempt_squat_off
-    #                 cur_comp.first_attempt_bpress_res_ek = first_attempt_bpress_res
-    #                 cur_comp.first_attempt_bpress_off_ek = first_attempt_bpress_off
-    #                 cur_comp.second_attempt_bpress_res_ek = second_attempt_bpress_res
-    #                 cur_comp.second_attempt_bpress_off_ek = second_attempt_bpress_off
-    #                 cur_comp.third_attempt_bpress_res_ek = third_attempt_bpress_res
-    #                 cur_comp.third_attempt_bpress_off_ek = third_attempt_bpress_off
-    #                 cur_comp.first_attempt_dlift_res_ek = first_attempt_dlift_res
-    #                 cur_comp.first_attempt_dlift_off_ek = first_attempt_dlift_off
-    #                 cur_comp.second_attempt_dlift_res_ek = second_attempt_dlift_res
-    #                 cur_comp.second_attempt_dlift_off_ek = second_attempt_dlift_off
-    #                 cur_comp.third_attempt_dlift_res_ek = third_attempt_dlift_res
-    #                 cur_comp.third_attempt_dlift_off_ek = third_attempt_dlift_off
-    #                 cur_comp.competitor_translation = comp_transl
-    #                 cur_comp.save()
-    #                 return JsonResponse({"pil_h_squat": pil_h_squat, "pil_h_bpress": pil_h_bpress, "first_attempt_squat_res": first_attempt_squat_res,
-    #                                      "first_attempt_squat_off": first_attempt_squat_off,
-    #                                      "second_attempt_squat_res": second_attempt_squat_res,
-    #                                      "second_attempt_squat_off": second_attempt_squat_off,
-    #                                      "third_attempt_squat_res": third_attempt_squat_res,
-    #                                      "third_attempt_squat_off": third_attempt_squat_off,
-    #                                      "first_attempt_bpress_res": first_attempt_bpress_res,
-    #                                      "first_attempt_bpress_off": first_attempt_bpress_off,
-    #                                      "second_attempt_bpress_res": second_attempt_bpress_res,
-    #                                      "second_attempt_bpress_off": second_attempt_bpress_off,
-    #                                      "third_attempt_bpress_res": third_attempt_bpress_res,
-    #                                      "third_attempt_bpress_off": third_attempt_bpress_off,
-    #                                      "first_attempt_dlift_res": first_attempt_dlift_res,
-    #                                      "first_attempt_dlift_off": first_attempt_dlift_off,
-    #                                      "second_attempt_dlift_res": second_attempt_dlift_res,
-    #                                      "second_attempt_dlift_off": second_attempt_dlift_off,
-    #                                      "third_attempt_dlift_res": third_attempt_dlift_res,
-    #                                      "third_attempt_dlift_off": third_attempt_dlift_off,
-    #                                      "comp_transl": comp_transl}, status=200)
-    #             if cur_transl_val == "Тяга 2 экип" and second_attempt_dlift_off:
-    #                 cur_comp.pillar_height_squat = pil_h_squat
-    #                 cur_comp.pillar_height_bpress = pil_h_bpress
-    #                 cur_comp.first_attempt_squat_res_ek = first_attempt_squat_res
-    #                 cur_comp.first_attempt_squat_off_ek = first_attempt_squat_off
-    #                 cur_comp.second_attempt_squat_res_ek = second_attempt_squat_res
-    #                 cur_comp.second_attempt_squat_off_ek = second_attempt_squat_off
-    #                 cur_comp.third_attempt_squat_res_ek = third_attempt_squat_res
-    #                 cur_comp.third_attempt_squat_off_ek = third_attempt_squat_off
-    #                 cur_comp.first_attempt_bpress_res_ek = first_attempt_bpress_res
-    #                 cur_comp.first_attempt_bpress_off_ek = first_attempt_bpress_off
-    #                 cur_comp.second_attempt_bpress_res_ek = second_attempt_bpress_res
-    #                 cur_comp.second_attempt_bpress_off_ek = second_attempt_bpress_off
-    #                 cur_comp.third_attempt_bpress_res_ek = third_attempt_bpress_res
-    #                 cur_comp.third_attempt_bpress_off_ek = third_attempt_bpress_off
-    #                 cur_comp.first_attempt_dlift_res_ek = first_attempt_dlift_res
-    #                 cur_comp.first_attempt_dlift_off_ek = first_attempt_dlift_off
-    #                 cur_comp.second_attempt_dlift_res_ek = second_attempt_dlift_res
-    #                 cur_comp.second_attempt_dlift_off_ek = second_attempt_dlift_off
-    #                 cur_comp.third_attempt_dlift_res_ek = third_attempt_dlift_res
-    #                 cur_comp.third_attempt_dlift_off_ek = third_attempt_dlift_off
-    #                 cur_comp.competitor_translation = comp_transl
-    #                 cur_comp.save()
-    #                 return JsonResponse({"pil_h_squat": pil_h_squat, "pil_h_bpress": pil_h_bpress, "first_attempt_squat_res": first_attempt_squat_res,
-    #                                      "first_attempt_squat_off": first_attempt_squat_off,
-    #                                      "second_attempt_squat_res": second_attempt_squat_res,
-    #                                      "second_attempt_squat_off": second_attempt_squat_off,
-    #                                      "third_attempt_squat_res": third_attempt_squat_res,
-    #                                      "third_attempt_squat_off": third_attempt_squat_off,
-    #                                      "first_attempt_bpress_res": first_attempt_bpress_res,
-    #                                      "first_attempt_bpress_off": first_attempt_bpress_off,
-    #                                      "second_attempt_bpress_res": second_attempt_bpress_res,
-    #                                      "second_attempt_bpress_off": second_attempt_bpress_off,
-    #                                      "third_attempt_bpress_res": third_attempt_bpress_res,
-    #                                      "third_attempt_bpress_off": third_attempt_bpress_off,
-    #                                      "first_attempt_dlift_res": first_attempt_dlift_res,
-    #                                      "first_attempt_dlift_off": first_attempt_dlift_off,
-    #                                      "second_attempt_dlift_res": second_attempt_dlift_res,
-    #                                      "second_attempt_dlift_off": second_attempt_dlift_off,
-    #                                      "third_attempt_dlift_res": third_attempt_dlift_res,
-    #                                      "third_attempt_dlift_off": third_attempt_dlift_off,
-    #                                      "comp_transl": comp_transl}, status=200)
-    #             if cur_transl_val == "Тяга 3 экип" and third_attempt_dlift_off:
-    #                 cur_comp.pillar_height_squat = pil_h_squat
-    #                 cur_comp.pillar_height_bpress = pil_h_bpress
-    #                 cur_comp.first_attempt_squat_res_ek = first_attempt_squat_res
-    #                 cur_comp.first_attempt_squat_off_ek = first_attempt_squat_off
-    #                 cur_comp.second_attempt_squat_res_ek = second_attempt_squat_res
-    #                 cur_comp.second_attempt_squat_off_ek = second_attempt_squat_off
-    #                 cur_comp.third_attempt_squat_res_ek = third_attempt_squat_res
-    #                 cur_comp.third_attempt_squat_off_ek = third_attempt_squat_off
-    #                 cur_comp.first_attempt_bpress_res_ek = first_attempt_bpress_res
-    #                 cur_comp.first_attempt_bpress_off_ek = first_attempt_bpress_off
-    #                 cur_comp.second_attempt_bpress_res_ek = second_attempt_bpress_res
-    #                 cur_comp.second_attempt_bpress_off_ek = second_attempt_bpress_off
-    #                 cur_comp.third_attempt_bpress_res_ek = third_attempt_bpress_res
-    #                 cur_comp.third_attempt_bpress_off_ek = third_attempt_bpress_off
-    #                 cur_comp.first_attempt_dlift_res_ek = first_attempt_dlift_res
-    #                 cur_comp.first_attempt_dlift_off_ek = first_attempt_dlift_off
-    #                 cur_comp.second_attempt_dlift_res_ek = second_attempt_dlift_res
-    #                 cur_comp.second_attempt_dlift_off_ek = second_attempt_dlift_off
-    #                 cur_comp.third_attempt_dlift_res_ek = third_attempt_dlift_res
-    #                 cur_comp.third_attempt_dlift_off_ek = third_attempt_dlift_off
-    #                 cur_comp.competitor_translation = comp_transl
-    #                 cur_comp.save()
-    #                 return JsonResponse({"pil_h_squat": pil_h_squat, "pil_h_bpress": pil_h_bpress, "first_attempt_squat_res": first_attempt_squat_res,
-    #                                      "first_attempt_squat_off": first_attempt_squat_off,
-    #                                      "second_attempt_squat_res": second_attempt_squat_res,
-    #                                      "second_attempt_squat_off": second_attempt_squat_off,
-    #                                      "third_attempt_squat_res": third_attempt_squat_res,
-    #                                      "third_attempt_squat_off": third_attempt_squat_off,
-    #                                      "first_attempt_bpress_res": first_attempt_bpress_res,
-    #                                      "first_attempt_bpress_off": first_attempt_bpress_off,
-    #                                      "second_attempt_bpress_res": second_attempt_bpress_res,
-    #                                      "second_attempt_bpress_off": second_attempt_bpress_off,
-    #                                      "third_attempt_bpress_res": third_attempt_bpress_res,
-    #                                      "third_attempt_bpress_off": third_attempt_bpress_off,
-    #                                      "first_attempt_dlift_res": first_attempt_dlift_res,
-    #                                      "first_attempt_dlift_off": first_attempt_dlift_off,
-    #                                      "second_attempt_dlift_res": second_attempt_dlift_res,
-    #                                      "second_attempt_dlift_off": second_attempt_dlift_off,
-    #                                      "third_attempt_dlift_res": third_attempt_dlift_res,
-    #                                      "third_attempt_dlift_off": third_attempt_dlift_off,
-    #                                      "comp_transl": comp_transl}, status=200)
-    #     if comp_transl:
-    #         cur_comp.pillar_height_squat = pil_h_squat
-    #         cur_comp.pillar_height_bpress = pil_h_bpress
-    #         cur_comp.first_attempt_squat_res_ek = first_attempt_squat_res
-    #         cur_comp.first_attempt_squat_off_ek = first_attempt_squat_off
-    #         cur_comp.second_attempt_squat_res_ek = second_attempt_squat_res
-    #         cur_comp.second_attempt_squat_off_ek = second_attempt_squat_off
-    #         cur_comp.third_attempt_squat_res_ek = third_attempt_squat_res
-    #         cur_comp.third_attempt_squat_off_ek = third_attempt_squat_off
-    #         cur_comp.first_attempt_bpress_res_ek = first_attempt_bpress_res
-    #         cur_comp.first_attempt_bpress_off_ek = first_attempt_bpress_off
-    #         cur_comp.second_attempt_bpress_res_ek = second_attempt_bpress_res
-    #         cur_comp.second_attempt_bpress_off_ek = second_attempt_bpress_off
-    #         cur_comp.third_attempt_bpress_res_ek = third_attempt_bpress_res
-    #         cur_comp.third_attempt_bpress_off_ek = third_attempt_bpress_off
-    #         cur_comp.first_attempt_dlift_res_ek = first_attempt_dlift_res
-    #         cur_comp.first_attempt_dlift_off_ek = first_attempt_dlift_off
-    #         cur_comp.second_attempt_dlift_res_ek = second_attempt_dlift_res
-    #         cur_comp.second_attempt_dlift_off_ek = second_attempt_dlift_off
-    #         cur_comp.third_attempt_dlift_res_ek = third_attempt_dlift_res
-    #         cur_comp.third_attempt_dlift_off_ek = third_attempt_dlift_off
-    #         cur_comp.competitor_translation = comp_transl
-    #         cur_comp.save()
-    #         return JsonResponse(
-    #             {"pil_h_squat": pil_h_squat, "pil_h_bpress": pil_h_bpress, "first_attempt_squat_res": first_attempt_squat_res,
-    #              "first_attempt_squat_off": first_attempt_squat_off,
-    #              "second_attempt_squat_res": second_attempt_squat_res,
-    #              "second_attempt_squat_off": second_attempt_squat_off,
-    #              "third_attempt_squat_res": third_attempt_squat_res,
-    #              "third_attempt_squat_off": third_attempt_squat_off,
-    #              "first_attempt_bpress_res": first_attempt_bpress_res,
-    #              "first_attempt_bpress_off": first_attempt_bpress_off,
-    #              "second_attempt_bpress_res": second_attempt_bpress_res,
-    #              "second_attempt_bpress_off": second_attempt_bpress_off,
-    #              "third_attempt_bpress_res": third_attempt_bpress_res,
-    #              "third_attempt_bpress_off": third_attempt_bpress_off,
-    #              "first_attempt_dlift_res": first_attempt_dlift_res,
-    #              "first_attempt_dlift_off": first_attempt_dlift_off,
-    #              "second_attempt_dlift_res": second_attempt_dlift_res,
-    #              "second_attempt_dlift_off": second_attempt_dlift_off,
-    #              "third_attempt_dlift_res": third_attempt_dlift_res,
-    #              "third_attempt_dlift_off": third_attempt_dlift_off,
-    #              "comp_transl": comp_transl}, status=200)
-    #     else:
-    #         cur_comp.pillar_height_squat = pil_h_squat
-    #         cur_comp.pillar_height_bpress = pil_h_bpress
-    #         cur_comp.first_attempt_squat_res_ek = first_attempt_squat_res
-    #         cur_comp.first_attempt_squat_off_ek = first_attempt_squat_off
-    #         cur_comp.second_attempt_squat_res_ek = second_attempt_squat_res
-    #         cur_comp.second_attempt_squat_off_ek = second_attempt_squat_off
-    #         cur_comp.third_attempt_squat_res_ek = third_attempt_squat_res
-    #         cur_comp.third_attempt_squat_off_ek = third_attempt_squat_off
-    #         cur_comp.first_attempt_bpress_res_ek = first_attempt_bpress_res
-    #         cur_comp.first_attempt_bpress_off_ek = first_attempt_bpress_off
-    #         cur_comp.second_attempt_bpress_res_ek = second_attempt_bpress_res
-    #         cur_comp.second_attempt_bpress_off_ek = second_attempt_bpress_off
-    #         cur_comp.third_attempt_bpress_res_ek = third_attempt_bpress_res
-    #         cur_comp.third_attempt_bpress_off_ek = third_attempt_bpress_off
-    #         cur_comp.first_attempt_dlift_res_ek = first_attempt_dlift_res
-    #         cur_comp.first_attempt_dlift_off_ek = first_attempt_dlift_off
-    #         cur_comp.second_attempt_dlift_res_ek = second_attempt_dlift_res
-    #         cur_comp.second_attempt_dlift_off_ek = second_attempt_dlift_off
-    #         cur_comp.third_attempt_dlift_res_ek = third_attempt_dlift_res
-    #         cur_comp.third_attempt_dlift_off_ek = third_attempt_dlift_off
-    #         cur_comp.competitor_translation = None
-    #         cur_comp.save()
-    #         return JsonResponse(
-    #             {"pil_h_squat": pil_h_squat, "pil_h_bpress": pil_h_bpress, "first_attempt_squat_res": first_attempt_squat_res,
-    #              "first_attempt_squat_off": first_attempt_squat_off,
-    #              "second_attempt_squat_res": second_attempt_squat_res,
-    #              "second_attempt_squat_off": second_attempt_squat_off,
-    #              "third_attempt_squat_res": third_attempt_squat_res,
-    #              "third_attempt_squat_off": third_attempt_squat_off,
-    #              "first_attempt_bpress_res": first_attempt_bpress_res,
-    #              "first_attempt_bpress_off": first_attempt_bpress_off,
-    #              "second_attempt_bpress_res": second_attempt_bpress_res,
-    #              "second_attempt_bpress_off": second_attempt_bpress_off,
-    #              "third_attempt_bpress_res": third_attempt_bpress_res,
-    #              "third_attempt_bpress_off": third_attempt_bpress_off,
-    #              "first_attempt_dlift_res": first_attempt_dlift_res,
-    #              "first_attempt_dlift_off": first_attempt_dlift_off,
-    #              "second_attempt_dlift_res": second_attempt_dlift_res,
-    #              "second_attempt_dlift_off": second_attempt_dlift_off,
-    #              "third_attempt_dlift_res": third_attempt_dlift_res,
-    #              "third_attempt_dlift_off": third_attempt_dlift_off,
-    #              "comp_transl": comp_transl}, status=200)
-    # if 'secr-page_form-btn-bpek' in request.POST:
-    #     comp_pk = request.POST.get('secr-page_form-btn-bpek')
-    #     pil_h_bpress = request.POST.get('secr-page_form-pil_h_bpress')
-    #     if pil_h_bpress:
-    #         pil_h_bpress = pil_h_bpress
-    #     else:
-    #         pil_h_bpress = None
-    #     first_attempt_bpress_res = request.POST.get('secr-page_form-fat-bpress-res')
-    #     if first_attempt_bpress_res:
-    #         first_attempt_bpress_res = Decimal(first_attempt_bpress_res)
-    #     else:
-    #         first_attempt_bpress_res = None
-    #     first_attempt_bpress_off = request.POST.get('secr-page_form-fat-bpress-off')
-    #     second_attempt_bpress_res = request.POST.get('secr-page_form-sat-bpress-res')
-    #     if second_attempt_bpress_res:
-    #         second_attempt_bpress_res = Decimal(second_attempt_bpress_res)
-    #     else:
-    #         second_attempt_bpress_res = None
-    #     second_attempt_bpress_off = request.POST.get('secr-page_form-sat-bpress-off')
-    #     third_attempt_bpress_res = request.POST.get('secr-page_form-tat-bpress-res')
-    #     if third_attempt_bpress_res:
-    #         third_attempt_bpress_res = Decimal(third_attempt_bpress_res)
-    #     else:
-    #         third_attempt_bpress_res = None
-    #     third_attempt_bpress_off = request.POST.get('secr-page_form-tat-bpress-off')
-    #     cur_comp = CompetitionProtocols.objects.get(pk=comp_pk)
-    #     comp_transl = request.POST.get('secr-page_chckbx')
-    #     cur_transl = CompetitionProtocols.objects.exclude(competitor_translation=None)
-    #     if comp_transl and cur_transl:
-    #         if comp_transl != cur_transl[0].competitor_translation:
-    #             return JsonResponse(
-    #                 {"error": "Нельзя запускать две трансляции одновременно. Сначала закончите существующую."},
-    #                 status=302)
-    #     if cur_transl:
-    #         cur_transl_val = cur_transl.values_list('competitor_translation', flat=True)[0]
-    #         cur_transl_pk = cur_transl.values_list('id', flat=True)[0]
-    #         if comp_pk == str(cur_transl_pk):
-    #             if cur_transl_val == "Жим 1 экип" and first_attempt_bpress_off:
-    #                 cur_comp.pillar_height_bpress = pil_h_bpress
-    #                 cur_comp.first_attempt_bpress_res_ek = first_attempt_bpress_res
-    #                 cur_comp.first_attempt_bpress_off_ek = first_attempt_bpress_off
-    #                 cur_comp.second_attempt_bpress_res_ek = second_attempt_bpress_res
-    #                 cur_comp.second_attempt_bpress_off_ek = second_attempt_bpress_off
-    #                 cur_comp.third_attempt_bpress_res_ek = third_attempt_bpress_res
-    #                 cur_comp.third_attempt_bpress_off_ek = third_attempt_bpress_off
-    #                 cur_comp.competitor_translation = comp_transl
-    #                 cur_comp.save()
-    #                 return JsonResponse({"pil_h_bpress": pil_h_bpress, "first_attempt_bpress_res": first_attempt_bpress_res,
-    #                                      "first_attempt_bpress_off": first_attempt_bpress_off,
-    #                                      "second_attempt_bpress_res": second_attempt_bpress_res,
-    #                                      "second_attempt_bpress_off": second_attempt_bpress_off,
-    #                                      "third_attempt_bpress_res": third_attempt_bpress_res,
-    #                                      "third_attempt_bpress_off": third_attempt_bpress_off,
-    #                                      "comp_transl": comp_transl}, status=200)
-    #             if cur_transl_val == "Жим 2 экип" and second_attempt_bpress_off:
-    #                 cur_comp.pillar_height_bpress = pil_h_bpress
-    #                 cur_comp.first_attempt_bpress_res_ek = first_attempt_bpress_res
-    #                 cur_comp.first_attempt_bpress_off_ek = first_attempt_bpress_off
-    #                 cur_comp.second_attempt_bpress_res_ek = second_attempt_bpress_res
-    #                 cur_comp.second_attempt_bpress_off_ek = second_attempt_bpress_off
-    #                 cur_comp.third_attempt_bpress_res_ek = third_attempt_bpress_res
-    #                 cur_comp.third_attempt_bpress_off_ek = third_attempt_bpress_off
-    #                 cur_comp.competitor_translation = comp_transl
-    #                 cur_comp.save()
-    #                 return JsonResponse({"pil_h_bpress": pil_h_bpress, "first_attempt_bpress_res": first_attempt_bpress_res,
-    #                                      "first_attempt_bpress_off": first_attempt_bpress_off,
-    #                                      "second_attempt_bpress_res": second_attempt_bpress_res,
-    #                                      "second_attempt_bpress_off": second_attempt_bpress_off,
-    #                                      "third_attempt_bpress_res": third_attempt_bpress_res,
-    #                                      "third_attempt_bpress_off": third_attempt_bpress_off,
-    #                                      "comp_transl": comp_transl}, status=200)
-    #             if cur_transl_val == "Жим 3 экип" and third_attempt_bpress_off:
-    #                 cur_comp.pillar_height_bpress = pil_h_bpress
-    #                 cur_comp.first_attempt_bpress_res_ek = first_attempt_bpress_res
-    #                 cur_comp.first_attempt_bpress_off_ek = first_attempt_bpress_off
-    #                 cur_comp.second_attempt_bpress_res_ek = second_attempt_bpress_res
-    #                 cur_comp.second_attempt_bpress_off_ek = second_attempt_bpress_off
-    #                 cur_comp.third_attempt_bpress_res_ek = third_attempt_bpress_res
-    #                 cur_comp.third_attempt_bpress_off_ek = third_attempt_bpress_off
-    #                 cur_comp.competitor_translation = comp_transl
-    #                 cur_comp.save()
-    #                 return JsonResponse({"pil_h_bpress": pil_h_bpress, "first_attempt_bpress_res": first_attempt_bpress_res,
-    #                                      "first_attempt_bpress_off": first_attempt_bpress_off,
-    #                                      "second_attempt_bpress_res": second_attempt_bpress_res,
-    #                                      "second_attempt_bpress_off": second_attempt_bpress_off,
-    #                                      "third_attempt_bpress_res": third_attempt_bpress_res,
-    #                                      "third_attempt_bpress_off": third_attempt_bpress_off,
-    #                                      "comp_transl": comp_transl}, status=200)
-    #     if comp_transl:
-    #         cur_comp.pillar_height_bpress = pil_h_bpress
-    #         cur_comp.first_attempt_bpress_res_ek = first_attempt_bpress_res
-    #         cur_comp.first_attempt_bpress_off_ek = first_attempt_bpress_off
-    #         cur_comp.second_attempt_bpress_res_ek = second_attempt_bpress_res
-    #         cur_comp.second_attempt_bpress_off_ek = second_attempt_bpress_off
-    #         cur_comp.third_attempt_bpress_res_ek = third_attempt_bpress_res
-    #         cur_comp.third_attempt_bpress_off_ek = third_attempt_bpress_off
-    #         cur_comp.competitor_translation = comp_transl
-    #         cur_comp.save()
-    #         return JsonResponse(
-    #             {"pil_h_bpress": pil_h_bpress, "first_attempt_bpress_res": first_attempt_bpress_res,
-    #              "first_attempt_bpress_off": first_attempt_bpress_off,
-    #              "second_attempt_bpress_res": second_attempt_bpress_res,
-    #              "second_attempt_bpress_off": second_attempt_bpress_off,
-    #              "third_attempt_bpress_res": third_attempt_bpress_res,
-    #              "third_attempt_bpress_off": third_attempt_bpress_off,
-    #              "comp_transl": comp_transl}, status=200)
-    #     else:
-    #         cur_comp.pillar_height_bpress = pil_h_bpress
-    #         cur_comp.first_attempt_bpress_res_ek = first_attempt_bpress_res
-    #         cur_comp.first_attempt_bpress_off_ek = first_attempt_bpress_off
-    #         cur_comp.second_attempt_bpress_res_ek = second_attempt_bpress_res
-    #         cur_comp.second_attempt_bpress_off_ek = second_attempt_bpress_off
-    #         cur_comp.third_attempt_bpress_res_ek = third_attempt_bpress_res
-    #         cur_comp.third_attempt_bpress_off_ek = third_attempt_bpress_off
-    #         cur_comp.competitor_translation = None
-    #         cur_comp.save()
-    #         return JsonResponse(
-    #             {"pil_h_bpress": pil_h_bpress, "first_attempt_bpress_res": first_attempt_bpress_res,
-    #              "first_attempt_bpress_off": first_attempt_bpress_off,
-    #              "second_attempt_bpress_res": second_attempt_bpress_res,
-    #              "second_attempt_bpress_off": second_attempt_bpress_off,
-    #              "third_attempt_bpress_res": third_attempt_bpress_res,
-    #              "third_attempt_bpress_off": third_attempt_bpress_off,
-    #              "comp_transl": comp_transl}, status=200)
-    #
-    #     # print(first_attempt_squat_res)
-    #     # print(first_attempt_squat_off)
-    #     # print(second_attempt_squat_res)
-    #     # print(second_attempt_squat_off)
-    #     # print(third_attempt_squat_res)
-    #     # print(third_attempt_squat_off)
-    #     # print(first_attempt_bpress_res)
-    #     # print(first_attempt_bpress_off)
-    #     # print(second_attempt_bpress_res)
-    #     # print(second_attempt_bpress_off)
-    #     # print(third_attempt_bpress_res)
-    #     # print(third_attempt_bpress_off)
-    #     # print(first_attempt_dlift_res)
-    #     # print(first_attempt_dlift_off)
-    #     # print(second_attempt_dlift_res)
-    #     # print(second_attempt_dlift_off)
-    #     # print(third_attempt_dlift_res)
-    #     # print(third_attempt_dlift_off)
-    #     # print(CompetitionProtocols.objects.get(pk=comp_pk))
-    #
-    #     # print(CompetitionProtocols.objects.exclude(competitor_translation=None))
+    if 'secretarytimer' in request.POST:
+        timer_command = request.POST.get('secretarytimer')
+        if timer_command == 'start':
+            cur_transl = CompetitionProtocols.objects.exclude(competitor_translation=None)
+            if cur_transl:
+                timer_obj = TimerScoreboard.objects.first()
+                timer_obj.timer_start = True
+                timer_obj.save()
+            else:
+                return JsonResponse({"error": "Нельзя запускать таймер без открытой трансляции. Сначала запустите трансляцию."}, status=302)
+        if timer_command == 'stop':
+            timer_obj = TimerScoreboard.objects.first()
+            timer_obj.timer_start = False
+            timer_obj.save()
+        return JsonResponse({"answer": "ok"}, status=200)
     return render(request, 'pwrlftmain/secretary_page.html', response_data)
 
 
@@ -2340,12 +1008,18 @@ def scoreboard_page(request, competition_slug):
     comp_first_off = ''
     comp_sec_weight = ''
     comp_sec_off = ''
+    pillar_height = ''
     response_data = {
         'cur_competition': cur_competition,
     }
     if 'score-form_btn' in request.POST:
         cur_transl = CompetitionProtocols.objects.exclude(competitor_translation=None)
         if cur_transl:
+            timer_state_st = TimerScoreboard.objects.first().timer_start
+            if timer_state_st:
+                timer_state = "start"
+            else:
+                timer_state = "stop"
             cur_transl_val = cur_transl.values_list('competitor_translation', flat=True)[0]
             cur_transl_pk = cur_transl.values_list('id', flat=True)[0]
             competitor_transl = CompetitionProtocols.objects.get(pk=cur_transl_pk)
@@ -2356,11 +1030,13 @@ def scoreboard_page(request, competition_slug):
             if cur_transl_val == "Присед 1 класс":
                 competitor_ordered_weight = competitor_transl.first_attempt_squat_res
                 competitor_ordered_weight_offset = competitor_transl.first_attempt_squat_off
+                pillar_height = competitor_transl.pillar_height_squat
             if cur_transl_val == "Присед 2 класс":
                 competitor_ordered_weight = competitor_transl.second_attempt_squat_res
                 competitor_ordered_weight_offset = competitor_transl.second_attempt_squat_off
                 comp_first_weight = competitor_transl.first_attempt_squat_res
                 comp_first_off = competitor_transl.first_attempt_squat_off
+                pillar_height = competitor_transl.pillar_height_squat
             if cur_transl_val == "Присед 3 класс":
                 competitor_ordered_weight = competitor_transl.third_attempt_squat_res
                 competitor_ordered_weight_offset = competitor_transl.third_attempt_squat_off
@@ -2368,14 +1044,17 @@ def scoreboard_page(request, competition_slug):
                 comp_first_off = competitor_transl.first_attempt_squat_off
                 comp_sec_weight = competitor_transl.second_attempt_squat_res
                 comp_sec_off = competitor_transl.second_attempt_squat_off
+                pillar_height = competitor_transl.pillar_height_squat
             if cur_transl_val == "Жим 1 класс":
                 competitor_ordered_weight = competitor_transl.first_attempt_bpress_res
                 competitor_ordered_weight_offset = competitor_transl.first_attempt_bpress_off
+                pillar_height = competitor_transl.pillar_height_bpress
             if cur_transl_val == "Жим 2 класс":
                 competitor_ordered_weight = competitor_transl.second_attempt_bpress_res
                 competitor_ordered_weight_offset = competitor_transl.second_attempt_bpress_off
                 comp_first_weight = competitor_transl.first_attempt_bpress_res
                 comp_first_off = competitor_transl.first_attempt_bpress_off
+                pillar_height = competitor_transl.pillar_height_bpress
             if cur_transl_val == "Жим 3 класс":
                 competitor_ordered_weight = competitor_transl.third_attempt_bpress_res
                 competitor_ordered_weight_offset = competitor_transl.third_attempt_bpress_off
@@ -2383,14 +1062,17 @@ def scoreboard_page(request, competition_slug):
                 comp_first_off = competitor_transl.first_attempt_bpress_off
                 comp_sec_weight = competitor_transl.second_attempt_bpress_res
                 comp_sec_off = competitor_transl.second_attempt_bpress_off
+                pillar_height = competitor_transl.pillar_height_bpress
             if cur_transl_val == "Тяга 1 класс":
                 competitor_ordered_weight = competitor_transl.first_attempt_dlift_res
                 competitor_ordered_weight_offset = competitor_transl.first_attempt_dlift_off
+                pillar_height = ''
             if cur_transl_val == "Тяга 2 класс":
                 competitor_ordered_weight = competitor_transl.second_attempt_dlift_res
                 competitor_ordered_weight_offset = competitor_transl.second_attempt_dlift_off
                 comp_first_weight = competitor_transl.first_attempt_dlift_res
                 comp_first_off = competitor_transl.first_attempt_dlift_off
+                pillar_height = ''
             if cur_transl_val == "Тяга 3 класс":
                 competitor_ordered_weight = competitor_transl.third_attempt_dlift_res
                 competitor_ordered_weight_offset = competitor_transl.third_attempt_dlift_off
@@ -2398,14 +1080,17 @@ def scoreboard_page(request, competition_slug):
                 comp_first_off = competitor_transl.first_attempt_dlift_off
                 comp_sec_weight = competitor_transl.second_attempt_dlift_res
                 comp_sec_off = competitor_transl.second_attempt_dlift_off
+                pillar_height = ''
             if cur_transl_val == "Присед 1 экип":
                 competitor_ordered_weight = competitor_transl.first_attempt_squat_res_ek
                 competitor_ordered_weight_offset = competitor_transl.first_attempt_squat_off_ek
+                pillar_height = competitor_transl.pillar_height_squat
             if cur_transl_val == "Присед 2 экип":
                 competitor_ordered_weight = competitor_transl.second_attempt_squat_res_ek
                 competitor_ordered_weight_offset = competitor_transl.second_attempt_squat_off_ek
                 comp_first_weight = competitor_transl.first_attempt_squat_res_ek
                 comp_first_off = competitor_transl.first_attempt_squat_off_ek
+                pillar_height = competitor_transl.pillar_height_squat
             if cur_transl_val == "Присед 3 экип":
                 competitor_ordered_weight = competitor_transl.third_attempt_squat_res_ek
                 competitor_ordered_weight_offset = competitor_transl.third_attempt_squat_off_ek
@@ -2413,14 +1098,17 @@ def scoreboard_page(request, competition_slug):
                 comp_first_off = competitor_transl.first_attempt_squat_off_ek
                 comp_sec_weight = competitor_transl.second_attempt_squat_res_ek
                 comp_sec_off = competitor_transl.second_attempt_squat_off_ek
+                pillar_height = competitor_transl.pillar_height_squat
             if cur_transl_val == "Жим 1 экип":
                 competitor_ordered_weight = competitor_transl.first_attempt_bpress_res_ek
                 competitor_ordered_weight_offset = competitor_transl.first_attempt_bpress_off_ek
+                pillar_height = competitor_transl.pillar_height_bpress
             if cur_transl_val == "Жим 2 экип":
                 competitor_ordered_weight = competitor_transl.second_attempt_bpress_res_ek
                 competitor_ordered_weight_offset = competitor_transl.second_attempt_bpress_off_ek
                 comp_first_weight = competitor_transl.first_attempt_bpress_res_ek
                 comp_first_off = competitor_transl.first_attempt_bpress_off_ek
+                pillar_height = competitor_transl.pillar_height_bpress
             if cur_transl_val == "Жим 3 экип":
                 competitor_ordered_weight = competitor_transl.third_attempt_bpress_res_ek
                 competitor_ordered_weight_offset = competitor_transl.third_attempt_bpress_off_ek
@@ -2428,14 +1116,17 @@ def scoreboard_page(request, competition_slug):
                 comp_first_off = competitor_transl.first_attempt_bpress_off_ek
                 comp_sec_weight = competitor_transl.second_attempt_bpress_res_ek
                 comp_sec_off = competitor_transl.second_attempt_bpress_off_ek
+                pillar_height = competitor_transl.pillar_height_bpress
             if cur_transl_val == "Тяга 1 экип":
                 competitor_ordered_weight = competitor_transl.first_attempt_dlift_res_ek
                 competitor_ordered_weight_offset = competitor_transl.first_attempt_dlift_off_ek
+                pillar_height = ''
             if cur_transl_val == "Тяга 2 экип":
                 competitor_ordered_weight = competitor_transl.second_attempt_dlift_res_ek
                 competitor_ordered_weight_offset = competitor_transl.second_attempt_dlift_off_ek
                 comp_first_weight = competitor_transl.first_attempt_dlift_res_ek
                 comp_first_off = competitor_transl.first_attempt_dlift_off_ek
+                pillar_height = ''
             if cur_transl_val == "Тяга 3 экип":
                 competitor_ordered_weight = competitor_transl.third_attempt_dlift_res_ek
                 competitor_ordered_weight_offset = competitor_transl.third_attempt_dlift_off_ek
@@ -2443,6 +1134,7 @@ def scoreboard_page(request, competition_slug):
                 comp_first_off = competitor_transl.first_attempt_dlift_off_ek
                 comp_sec_weight = competitor_transl.second_attempt_dlift_res_ek
                 comp_sec_off = competitor_transl.second_attempt_dlift_off_ek
+                pillar_height = ''
             if not competitor_ordered_weight_offset:
                 competitor_ordered_weight_offset = ""
             return JsonResponse(
@@ -2450,90 +1142,3991 @@ def scoreboard_page(request, competition_slug):
                  "competitor_fi": competitor_fi,
                  "competitor_weight_cat": competitor_weight_cat, "competitor_ordered_weight": competitor_ordered_weight,
                  "competitor_ordered_weight_offset": competitor_ordered_weight_offset, "cur_transl_pk": cur_transl_pk, "comp_first_weight": comp_first_weight,
-                 "comp_first_off": comp_first_off, "comp_sec_weight": comp_sec_weight, "comp_sec_off": comp_sec_off},
+                 "comp_first_off": comp_first_off, "comp_sec_weight": comp_sec_weight, "comp_sec_off": comp_sec_off, "timer_state": timer_state, "pillar_height": pillar_height},
                 status=200)
         else:
+
             cur_flow = CompetitorsFlow.objects.first().comp_flow
-            cur_flow_competitors_st = CompetitionProtocols.objects.filter(competitor_stream=cur_flow, competitor__comp_title__competition_slug=competition_slug)
+            cur_flow_competitors_st = CompetitionProtocols.objects.filter(
+                competitor__comp_title__competition_slug=competition_slug, competitor_stream=cur_flow)
             competitors_stypes_st = cur_flow_competitors_st.values_list('competitor__sports_type__title', flat=True)
             competitors_stypes = []
+            competitors = ""
             for csts in competitors_stypes_st:
                 if csts not in competitors_stypes:
                     competitors_stypes.append(csts)
-            if "Троеборье классическое" in competitors_stypes:
-                cur_flow_competitors = cur_flow_competitors_st.order_by(F("first_attempt_squat_res").asc(nulls_last=True))
-                # if None not in cur_flow_competitors.filter(Q(competitor__sports_type__title="Троеборье классическое") & Q(competitor__sports_type__title="Троеборье (экип.)")).values_list('third_attempt_squat_off', flat=True):
-                if None not in cur_flow_competitors.filter(competitor__sports_type__title="Троеборье классическое").values_list('third_attempt_squat_off', flat=True):
-                    cur_flow_competitors = cur_flow_competitors_st.order_by(F("first_attempt_bpress_res").asc(nulls_last=True))
-                    # if None not in cur_flow_competitors.filter(Q(competitor__sports_type__title="Троеборье классическое") & Q(competitor__sports_type__title="Троеборье (экип.)")).values_list('third_attempt_bpress_off', flat=True):
-                    if None not in cur_flow_competitors.filter(competitor__sports_type__title="Троеборье классическое").values_list('third_attempt_bpress_off', flat=True):
-                        cur_flow_competitors = cur_flow_competitors_st.order_by(F("first_attempt_dlift_res").asc(nulls_last=True))
+            if ("Троеборье классическое" in competitors_stypes) and ("Троеборье (экип.)" in competitors_stypes):
+                if cur_flow_competitors_st.filter(competitor__sports_type__title="Троеборье классическое",
+                                                  first_attempt_squat_off__isnull=True).exists() or cur_flow_competitors_st.filter(
+                        competitor__sports_type__title="Троеборье (экип.)",
+                        first_attempt_squat_off_ek__isnull=True).exists():
+                    competitors_f = cur_flow_competitors_st.filter(
+                        competitor__sports_type__title="Троеборье классическое").annotate(
+                        sorted_value=F('first_attempt_squat_res')).values('sorted_value', 'competitor__surname_comp',
+                                                                          'competitor__name_comp', 'competitor_weight',
+                                                                          'competitor__sports_type__title',
+                                                                          'first_attempt_squat_res',
+                                                                          'first_attempt_squat_off',
+                                                                          'second_attempt_squat_res',
+                                                                          'second_attempt_squat_off',
+                                                                          'third_attempt_squat_res',
+                                                                          'third_attempt_squat_off',
+                                                                          'first_attempt_bpress_res',
+                                                                          'first_attempt_bpress_off',
+                                                                          'second_attempt_bpress_res',
+                                                                          'second_attempt_bpress_off',
+                                                                          'third_attempt_bpress_res',
+                                                                          'third_attempt_bpress_off',
+                                                                          'first_attempt_dlift_res',
+                                                                          'first_attempt_dlift_off',
+                                                                          'second_attempt_dlift_res',
+                                                                          'second_attempt_dlift_off',
+                                                                          'third_attempt_dlift_res',
+                                                                          'third_attempt_dlift_off', 'best_squat_res',
+                                                                          'best_bpress_res', 'best_dlift_res',
+                                                                          'best_sum_res', 'competitor_translation')
+                    competitors_s = cur_flow_competitors_st.filter(
+                        competitor__sports_type__title="Троеборье (экип.)").annotate(
+                        sorted_value=F('first_attempt_squat_res_ek')).values('sorted_value', 'competitor__surname_comp',
+                                                                             'competitor__sports_type__title',
+                                                                             'competitor__name_comp',
+                                                                             'competitor_weight',
+                                                                             'first_attempt_squat_res_ek',
+                                                                             'first_attempt_squat_off_ek',
+                                                                             'second_attempt_squat_res_ek',
+                                                                             'second_attempt_squat_off_ek',
+                                                                             'third_attempt_squat_res_ek',
+                                                                             'third_attempt_squat_off_ek',
+                                                                             'first_attempt_bpress_res_ek',
+                                                                             'first_attempt_bpress_off_ek',
+                                                                             'second_attempt_bpress_res_ek',
+                                                                             'second_attempt_bpress_off_ek',
+                                                                             'third_attempt_bpress_res_ek',
+                                                                             'third_attempt_bpress_off_ek',
+                                                                             'first_attempt_dlift_res_ek',
+                                                                             'first_attempt_dlift_off_ek',
+                                                                             'second_attempt_dlift_res_ek',
+                                                                             'second_attempt_dlift_off_ek',
+                                                                             'third_attempt_dlift_res_ek',
+                                                                             'third_attempt_dlift_off_ek',
+                                                                             'best_squat_res_ek', 'best_bpress_res_ek',
+                                                                             'best_dlift_res_ek', 'best_sum_res_ek',
+                                                                             'competitor_translation')
+                    competitors_f_s = list(competitors_f) + list(competitors_s)
+                    if "Жим лёжа (без экип.)" in competitors_stypes:
+                        competitors_t = cur_flow_competitors_st.filter(
+                            competitor__sports_type__title="Жим лёжа (без экип.)").annotate(
+                            sorted_value=F('first_attempt_squat_res')).exclude(
+                            competitor__sports_type__title__in=["Троеборье классическое", "Троеборье (экип.)",
+                                                                "Жим лёжа (экип.)"]).values('sorted_value',
+                                                                                            'competitor__surname_comp',
+                                                                                            'competitor__name_comp',
+                                                                                            'competitor__sports_type__title',
+                                                                                            'first_attempt_squat_res',
+                                                                                            'first_attempt_squat_off',
+                                                                                            'second_attempt_squat_res',
+                                                                                            'second_attempt_squat_off',
+                                                                                            'third_attempt_squat_res',
+                                                                                            'third_attempt_squat_off',
+                                                                                            'competitor_weight',
+                                                                                            'first_attempt_bpress_res',
+                                                                                            'first_attempt_bpress_off',
+                                                                                            'second_attempt_bpress_res',
+                                                                                            'second_attempt_bpress_off',
+                                                                                            'third_attempt_bpress_res',
+                                                                                            'third_attempt_bpress_off',
+                                                                                            'best_bpress_res',
+                                                                                            'best_sum_res',
+                                                                                            'competitor_translation',
+                                                                                            'best_squat_res',
+                                                                                            'best_dlift_res',
+                                                                                            'first_attempt_dlift_res',
+                                                                                            'first_attempt_dlift_off',
+                                                                                            'second_attempt_dlift_res',
+                                                                                            'second_attempt_dlift_off',
+                                                                                            'third_attempt_dlift_res',
+                                                                                            'third_attempt_dlift_off')
+                        competitors_f_s += list(competitors_t)
+                    if "Жим лёжа (экип.)" in competitors_stypes:
+                        competitors_fr = cur_flow_competitors_st.filter(
+                            competitor__sports_type__title="Жим лёжа (экип.)").annotate(
+                            sorted_value=F('first_attempt_squat_res_ek')).exclude(
+                            competitor__sports_type__title__in=["Троеборье классическое", "Троеборье (экип.)",
+                                                                "Жим лёжа (без экип.)"]).values('sorted_value',
+                                                                                                'competitor__surname_comp',
+                                                                                                'competitor__name_comp',
+                                                                                                'competitor__sports_type__title',
+                                                                                                'competitor_weight',
+                                                                                                'first_attempt_bpress_res_ek',
+                                                                                                'first_attempt_bpress_off_ek',
+                                                                                                'second_attempt_bpress_res_ek',
+                                                                                                'second_attempt_bpress_off_ek',
+                                                                                                'third_attempt_bpress_res_ek',
+                                                                                                'third_attempt_bpress_off_ek',
+                                                                                                'best_bpress_res_ek',
+                                                                                                'best_sum_res_ek',
+                                                                                                'competitor_translation',
+                                                                                                'best_squat_res_ek',
+                                                                                                'best_dlift_res_ek',
+                                                                                                'first_attempt_squat_res_ek',
+                                                                                                'first_attempt_squat_off_ek',
+                                                                                                'second_attempt_squat_res_ek',
+                                                                                                'second_attempt_squat_off_ek',
+                                                                                                'third_attempt_squat_res_ek',
+                                                                                                'third_attempt_squat_off_ek',
+                                                                                                'first_attempt_dlift_res_ek',
+                                                                                                'first_attempt_dlift_off_ek',
+                                                                                                'second_attempt_dlift_res_ek',
+                                                                                                'second_attempt_dlift_off_ek',
+                                                                                                'third_attempt_dlift_res_ek',
+                                                                                                'third_attempt_dlift_off_ek', )
+                        competitors_f_s += list(competitors_fr)
+                    competitors = sorted(
+                        sorted(competitors_f_s, key=lambda x: (x['sorted_value'] is not None, x['sorted_value'])),
+                        key=lambda x: bool(x['sorted_value']), reverse=True)
+                elif cur_flow_competitors_st.filter(competitor__sports_type__title="Троеборье классическое",
+                                                    second_attempt_squat_off__isnull=True).exists() or cur_flow_competitors_st.filter(
+                        competitor__sports_type__title="Троеборье (экип.)",
+                        second_attempt_squat_off_ek__isnull=True).exists():
+                    competitors_f = cur_flow_competitors_st.filter(
+                        competitor__sports_type__title="Троеборье классическое").annotate(
+                        sorted_value=F('second_attempt_squat_res')).values('sorted_value', 'competitor__surname_comp',
+                                                                           'competitor__name_comp', 'competitor_weight',
+                                                                           'competitor__sports_type__title',
+                                                                           'first_attempt_squat_res',
+                                                                           'first_attempt_squat_off',
+                                                                           'second_attempt_squat_res',
+                                                                           'second_attempt_squat_off',
+                                                                           'third_attempt_squat_res',
+                                                                           'third_attempt_squat_off',
+                                                                           'first_attempt_bpress_res',
+                                                                           'first_attempt_bpress_off',
+                                                                           'second_attempt_bpress_res',
+                                                                           'second_attempt_bpress_off',
+                                                                           'third_attempt_bpress_res',
+                                                                           'third_attempt_bpress_off',
+                                                                           'first_attempt_dlift_res',
+                                                                           'first_attempt_dlift_off',
+                                                                           'second_attempt_dlift_res',
+                                                                           'second_attempt_dlift_off',
+                                                                           'third_attempt_dlift_res',
+                                                                           'third_attempt_dlift_off', 'best_squat_res',
+                                                                           'best_bpress_res', 'best_dlift_res',
+                                                                           'best_sum_res', 'competitor_translation')
+                    competitors_s = cur_flow_competitors_st.filter(
+                        competitor__sports_type__title="Троеборье (экип.)").annotate(
+                        sorted_value=F('second_attempt_squat_res_ek')).values('sorted_value',
+                                                                              'competitor__surname_comp',
+                                                                              'competitor__sports_type__title',
+                                                                              'competitor__name_comp',
+                                                                              'competitor_weight',
+                                                                              'first_attempt_squat_res_ek',
+                                                                              'first_attempt_squat_off_ek',
+                                                                              'second_attempt_squat_res_ek',
+                                                                              'second_attempt_squat_off_ek',
+                                                                              'third_attempt_squat_res_ek',
+                                                                              'third_attempt_squat_off_ek',
+                                                                              'first_attempt_bpress_res_ek',
+                                                                              'first_attempt_bpress_off_ek',
+                                                                              'second_attempt_bpress_res_ek',
+                                                                              'second_attempt_bpress_off_ek',
+                                                                              'third_attempt_bpress_res_ek',
+                                                                              'third_attempt_bpress_off_ek',
+                                                                              'first_attempt_dlift_res_ek',
+                                                                              'first_attempt_dlift_off_ek',
+                                                                              'second_attempt_dlift_res_ek',
+                                                                              'second_attempt_dlift_off_ek',
+                                                                              'third_attempt_dlift_res_ek',
+                                                                              'third_attempt_dlift_off_ek',
+                                                                              'best_squat_res_ek', 'best_bpress_res_ek',
+                                                                              'best_dlift_res_ek', 'best_sum_res_ek',
+                                                                              'competitor_translation')
+                    competitors_f_s = list(competitors_f) + list(competitors_s)
+                    if "Жим лёжа (без экип.)" in competitors_stypes:
+                        competitors_t = cur_flow_competitors_st.filter(
+                            competitor__sports_type__title="Жим лёжа (без экип.)").annotate(
+                            sorted_value=F('second_attempt_squat_res')).exclude(
+                            competitor__sports_type__title__in=["Троеборье классическое", "Троеборье (экип.)",
+                                                                "Жим лёжа (экип.)"]).values('sorted_value',
+                                                                                            'competitor__surname_comp',
+                                                                                            'competitor__name_comp',
+                                                                                            'competitor__sports_type__title',
+                                                                                            'first_attempt_squat_res',
+                                                                                            'first_attempt_squat_off',
+                                                                                            'second_attempt_squat_res',
+                                                                                            'second_attempt_squat_off',
+                                                                                            'third_attempt_squat_res',
+                                                                                            'third_attempt_squat_off',
+                                                                                            'competitor_weight',
+                                                                                            'first_attempt_bpress_res',
+                                                                                            'first_attempt_bpress_off',
+                                                                                            'second_attempt_bpress_res',
+                                                                                            'second_attempt_bpress_off',
+                                                                                            'third_attempt_bpress_res',
+                                                                                            'third_attempt_bpress_off',
+                                                                                            'best_bpress_res',
+                                                                                            'best_sum_res',
+                                                                                            'competitor_translation',
+                                                                                            'best_squat_res',
+                                                                                            'best_dlift_res',
+                                                                                            'first_attempt_dlift_res',
+                                                                                            'first_attempt_dlift_off',
+                                                                                            'second_attempt_dlift_res',
+                                                                                            'second_attempt_dlift_off',
+                                                                                            'third_attempt_dlift_res',
+                                                                                            'third_attempt_dlift_off')
+                        competitors_f_s += list(competitors_t)
+                    if "Жим лёжа (экип.)" in competitors_stypes:
+                        competitors_fr = cur_flow_competitors_st.filter(
+                            competitor__sports_type__title="Жим лёжа (экип.)").annotate(
+                            sorted_value=F('second_attempt_squat_res_ek')).exclude(
+                            competitor__sports_type__title__in=["Троеборье классическое", "Троеборье (экип.)",
+                                                                "Жим лёжа (без экип.)"]).values('sorted_value',
+                                                                                                'competitor__surname_comp',
+                                                                                                'competitor__name_comp',
+                                                                                                'competitor__sports_type__title',
+                                                                                                'competitor_weight',
+                                                                                                'first_attempt_bpress_res_ek',
+                                                                                                'first_attempt_bpress_off_ek',
+                                                                                                'second_attempt_bpress_res_ek',
+                                                                                                'second_attempt_bpress_off_ek',
+                                                                                                'third_attempt_bpress_res_ek',
+                                                                                                'third_attempt_bpress_off_ek',
+                                                                                                'best_bpress_res_ek',
+                                                                                                'best_sum_res_ek',
+                                                                                                'competitor_translation',
+                                                                                                'best_squat_res_ek',
+                                                                                                'best_dlift_res_ek',
+                                                                                                'first_attempt_squat_res_ek',
+                                                                                                'first_attempt_squat_off_ek',
+                                                                                                'second_attempt_squat_res_ek',
+                                                                                                'second_attempt_squat_off_ek',
+                                                                                                'third_attempt_squat_res_ek',
+                                                                                                'third_attempt_squat_off_ek',
+                                                                                                'first_attempt_dlift_res_ek',
+                                                                                                'first_attempt_dlift_off_ek',
+                                                                                                'second_attempt_dlift_res_ek',
+                                                                                                'second_attempt_dlift_off_ek',
+                                                                                                'third_attempt_dlift_res_ek',
+                                                                                                'third_attempt_dlift_off_ek', )
+                        competitors_f_s += list(competitors_fr)
+                    competitors = sorted(
+                        sorted(competitors_f_s, key=lambda x: (x['sorted_value'] is not None, x['sorted_value'])),
+                        key=lambda x: bool(x['sorted_value']), reverse=True)
+                elif cur_flow_competitors_st.filter(competitor__sports_type__title="Троеборье классическое",
+                                                    third_attempt_squat_off__isnull=True).exists() or cur_flow_competitors_st.filter(
+                        competitor__sports_type__title="Троеборье (экип.)",
+                        third_attempt_squat_off_ek__isnull=True).exists():
+                    competitors_f = cur_flow_competitors_st.filter(
+                        competitor__sports_type__title="Троеборье классическое").annotate(
+                        sorted_value=F('third_attempt_squat_res')).values('sorted_value', 'competitor__surname_comp',
+                                                                          'competitor__name_comp', 'competitor_weight',
+                                                                          'competitor__sports_type__title',
+                                                                          'first_attempt_squat_res',
+                                                                          'first_attempt_squat_off',
+                                                                          'second_attempt_squat_res',
+                                                                          'second_attempt_squat_off',
+                                                                          'third_attempt_squat_res',
+                                                                          'third_attempt_squat_off',
+                                                                          'first_attempt_bpress_res',
+                                                                          'first_attempt_bpress_off',
+                                                                          'second_attempt_bpress_res',
+                                                                          'second_attempt_bpress_off',
+                                                                          'third_attempt_bpress_res',
+                                                                          'third_attempt_bpress_off',
+                                                                          'first_attempt_dlift_res',
+                                                                          'first_attempt_dlift_off',
+                                                                          'second_attempt_dlift_res',
+                                                                          'second_attempt_dlift_off',
+                                                                          'third_attempt_dlift_res',
+                                                                          'third_attempt_dlift_off', 'best_squat_res',
+                                                                          'best_bpress_res', 'best_dlift_res',
+                                                                          'best_sum_res', 'competitor_translation')
+                    competitors_s = cur_flow_competitors_st.filter(
+                        competitor__sports_type__title="Троеборье (экип.)").annotate(
+                        sorted_value=F('third_attempt_squat_res_ek')).values('sorted_value', 'competitor__surname_comp',
+                                                                             'competitor__sports_type__title',
+                                                                             'competitor__name_comp',
+                                                                             'competitor_weight',
+                                                                             'first_attempt_squat_res_ek',
+                                                                             'first_attempt_squat_off_ek',
+                                                                             'second_attempt_squat_res_ek',
+                                                                             'second_attempt_squat_off_ek',
+                                                                             'third_attempt_squat_res_ek',
+                                                                             'third_attempt_squat_off_ek',
+                                                                             'first_attempt_bpress_res_ek',
+                                                                             'first_attempt_bpress_off_ek',
+                                                                             'second_attempt_bpress_res_ek',
+                                                                             'second_attempt_bpress_off_ek',
+                                                                             'third_attempt_bpress_res_ek',
+                                                                             'third_attempt_bpress_off_ek',
+                                                                             'first_attempt_dlift_res_ek',
+                                                                             'first_attempt_dlift_off_ek',
+                                                                             'second_attempt_dlift_res_ek',
+                                                                             'second_attempt_dlift_off_ek',
+                                                                             'third_attempt_dlift_res_ek',
+                                                                             'third_attempt_dlift_off_ek',
+                                                                             'best_squat_res_ek', 'best_bpress_res_ek',
+                                                                             'best_dlift_res_ek', 'best_sum_res_ek',
+                                                                             'competitor_translation')
+                    competitors_f_s = list(competitors_f) + list(competitors_s)
+                    if "Жим лёжа (без экип.)" in competitors_stypes:
+                        competitors_t = cur_flow_competitors_st.filter(
+                            competitor__sports_type__title="Жим лёжа (без экип.)").annotate(
+                            sorted_value=F('third_attempt_squat_res')).exclude(
+                            competitor__sports_type__title__in=["Троеборье классическое", "Троеборье (экип.)",
+                                                                "Жим лёжа (экип.)"]).values('sorted_value',
+                                                                                            'competitor__surname_comp',
+                                                                                            'competitor__name_comp',
+                                                                                            'competitor__sports_type__title',
+                                                                                            'first_attempt_squat_res',
+                                                                                            'first_attempt_squat_off',
+                                                                                            'second_attempt_squat_res',
+                                                                                            'second_attempt_squat_off',
+                                                                                            'third_attempt_squat_res',
+                                                                                            'third_attempt_squat_off',
+                                                                                            'competitor_weight',
+                                                                                            'first_attempt_bpress_res',
+                                                                                            'first_attempt_bpress_off',
+                                                                                            'second_attempt_bpress_res',
+                                                                                            'second_attempt_bpress_off',
+                                                                                            'third_attempt_bpress_res',
+                                                                                            'third_attempt_bpress_off',
+                                                                                            'best_bpress_res',
+                                                                                            'best_sum_res',
+                                                                                            'competitor_translation',
+                                                                                            'best_squat_res',
+                                                                                            'best_dlift_res',
+                                                                                            'first_attempt_dlift_res',
+                                                                                            'first_attempt_dlift_off',
+                                                                                            'second_attempt_dlift_res',
+                                                                                            'second_attempt_dlift_off',
+                                                                                            'third_attempt_dlift_res',
+                                                                                            'third_attempt_dlift_off')
+                        competitors_f_s += list(competitors_t)
+                    if "Жим лёжа (экип.)" in competitors_stypes:
+                        competitors_fr = cur_flow_competitors_st.filter(
+                            competitor__sports_type__title="Жим лёжа (экип.)").annotate(
+                            sorted_value=F('third_attempt_squat_res_ek')).exclude(
+                            competitor__sports_type__title__in=["Троеборье классическое", "Троеборье (экип.)",
+                                                                "Жим лёжа (без экип.)"]).values('sorted_value',
+                                                                                                'competitor__surname_comp',
+                                                                                                'competitor__name_comp',
+                                                                                                'competitor__sports_type__title',
+                                                                                                'competitor_weight',
+                                                                                                'first_attempt_bpress_res_ek',
+                                                                                                'first_attempt_bpress_off_ek',
+                                                                                                'second_attempt_bpress_res_ek',
+                                                                                                'second_attempt_bpress_off_ek',
+                                                                                                'third_attempt_bpress_res_ek',
+                                                                                                'third_attempt_bpress_off_ek',
+                                                                                                'best_bpress_res_ek',
+                                                                                                'best_sum_res_ek',
+                                                                                                'competitor_translation',
+                                                                                                'best_squat_res_ek',
+                                                                                                'best_dlift_res_ek',
+                                                                                                'first_attempt_squat_res_ek',
+                                                                                                'first_attempt_squat_off_ek',
+                                                                                                'second_attempt_squat_res_ek',
+                                                                                                'second_attempt_squat_off_ek',
+                                                                                                'third_attempt_squat_res_ek',
+                                                                                                'third_attempt_squat_off_ek',
+                                                                                                'first_attempt_dlift_res_ek',
+                                                                                                'first_attempt_dlift_off_ek',
+                                                                                                'second_attempt_dlift_res_ek',
+                                                                                                'second_attempt_dlift_off_ek',
+                                                                                                'third_attempt_dlift_res_ek',
+                                                                                                'third_attempt_dlift_off_ek', )
+                        competitors_f_s += list(competitors_fr)
+                    competitors = sorted(
+                        sorted(competitors_f_s, key=lambda x: (x['sorted_value'] is not None, x['sorted_value'])),
+                        key=lambda x: bool(x['sorted_value']), reverse=True)
+                elif cur_flow_competitors_st.filter(competitor__sports_type__title="Троеборье классическое",
+                                                    first_attempt_bpress_off__isnull=True).exists() or cur_flow_competitors_st.filter(
+                        competitor__sports_type__title="Троеборье (экип.)",
+                        first_attempt_bpress_off_ek__isnull=True).exists() or cur_flow_competitors_st.filter(
+                        competitor__sports_type__title="Жим лёжа (экип.)",
+                        first_attempt_bpress_off_ek__isnull=True).exclude(
+                        competitor__sports_type__title__in=["Троеборье классическое", "Троеборье (экип.)",
+                                                            "Жим лёжа (без экип.)"]).exists() or cur_flow_competitors_st.filter(
+                        competitor__sports_type__title="Жим лёжа (без экип.)",
+                        first_attempt_bpress_off__isnull=True).exclude(
+                        competitor__sports_type__title__in=["Троеборье классическое", "Троеборье (экип.)",
+                                                            "Жим лёжа (экип.)"]).exists():
+                    competitors_f = cur_flow_competitors_st.filter(
+                        competitor__sports_type__title="Троеборье классическое").annotate(
+                        sorted_value=F('first_attempt_bpress_res')).values('sorted_value', 'competitor__surname_comp',
+                                                                           'competitor__name_comp', 'competitor_weight',
+                                                                           'competitor__sports_type__title',
+                                                                           'first_attempt_squat_res',
+                                                                           'first_attempt_squat_off',
+                                                                           'second_attempt_squat_res',
+                                                                           'second_attempt_squat_off',
+                                                                           'third_attempt_squat_res',
+                                                                           'third_attempt_squat_off',
+                                                                           'first_attempt_bpress_res',
+                                                                           'first_attempt_bpress_off',
+                                                                           'second_attempt_bpress_res',
+                                                                           'second_attempt_bpress_off',
+                                                                           'third_attempt_bpress_res',
+                                                                           'third_attempt_bpress_off',
+                                                                           'first_attempt_dlift_res',
+                                                                           'first_attempt_dlift_off',
+                                                                           'second_attempt_dlift_res',
+                                                                           'second_attempt_dlift_off',
+                                                                           'third_attempt_dlift_res',
+                                                                           'third_attempt_dlift_off', 'best_squat_res',
+                                                                           'best_bpress_res', 'best_dlift_res',
+                                                                           'best_sum_res', 'competitor_translation')
+                    competitors_s = cur_flow_competitors_st.filter(
+                        competitor__sports_type__title="Троеборье (экип.)").annotate(
+                        sorted_value=F('first_attempt_bpress_res_ek')).values('sorted_value',
+                                                                              'competitor__surname_comp',
+                                                                              'competitor__sports_type__title',
+                                                                              'competitor__name_comp',
+                                                                              'competitor_weight',
+                                                                              'first_attempt_squat_res_ek',
+                                                                              'first_attempt_squat_off_ek',
+                                                                              'second_attempt_squat_res_ek',
+                                                                              'second_attempt_squat_off_ek',
+                                                                              'third_attempt_squat_res_ek',
+                                                                              'third_attempt_squat_off_ek',
+                                                                              'first_attempt_bpress_res_ek',
+                                                                              'first_attempt_bpress_off_ek',
+                                                                              'second_attempt_bpress_res_ek',
+                                                                              'second_attempt_bpress_off_ek',
+                                                                              'third_attempt_bpress_res_ek',
+                                                                              'third_attempt_bpress_off_ek',
+                                                                              'first_attempt_dlift_res_ek',
+                                                                              'first_attempt_dlift_off_ek',
+                                                                              'second_attempt_dlift_res_ek',
+                                                                              'second_attempt_dlift_off_ek',
+                                                                              'third_attempt_dlift_res_ek',
+                                                                              'third_attempt_dlift_off_ek',
+                                                                              'best_squat_res_ek', 'best_bpress_res_ek',
+                                                                              'best_dlift_res_ek', 'best_sum_res_ek',
+                                                                              'competitor_translation')
+                    competitors_f_s = list(competitors_f) + list(competitors_s)
+                    if "Жим лёжа (без экип.)" in competitors_stypes:
+                        competitors_t = cur_flow_competitors_st.filter(
+                            competitor__sports_type__title="Жим лёжа (без экип.)").annotate(
+                            sorted_value=F('first_attempt_bpress_res')).exclude(
+                            competitor__sports_type__title__in=["Троеборье классическое", "Троеборье (экип.)",
+                                                                "Жим лёжа (экип.)"]).values('sorted_value',
+                                                                                            'competitor__surname_comp',
+                                                                                            'competitor__name_comp',
+                                                                                            'competitor__sports_type__title',
+                                                                                            'first_attempt_squat_res',
+                                                                                            'first_attempt_squat_off',
+                                                                                            'second_attempt_squat_res',
+                                                                                            'second_attempt_squat_off',
+                                                                                            'third_attempt_squat_res',
+                                                                                            'third_attempt_squat_off',
+                                                                                            'competitor_weight',
+                                                                                            'first_attempt_bpress_res',
+                                                                                            'first_attempt_bpress_off',
+                                                                                            'second_attempt_bpress_res',
+                                                                                            'second_attempt_bpress_off',
+                                                                                            'third_attempt_bpress_res',
+                                                                                            'third_attempt_bpress_off',
+                                                                                            'best_bpress_res',
+                                                                                            'best_sum_res',
+                                                                                            'competitor_translation',
+                                                                                            'best_squat_res',
+                                                                                            'best_dlift_res',
+                                                                                            'first_attempt_dlift_res',
+                                                                                            'first_attempt_dlift_off',
+                                                                                            'second_attempt_dlift_res',
+                                                                                            'second_attempt_dlift_off',
+                                                                                            'third_attempt_dlift_res',
+                                                                                            'third_attempt_dlift_off')
+                        competitors_f_s += list(competitors_t)
+                    if "Жим лёжа (экип.)" in competitors_stypes:
+                        competitors_fr = cur_flow_competitors_st.filter(
+                            competitor__sports_type__title="Жим лёжа (экип.)").annotate(
+                            sorted_value=F('first_attempt_bpress_res_ek')).exclude(
+                            competitor__sports_type__title__in=["Троеборье классическое", "Троеборье (экип.)",
+                                                                "Жим лёжа (без экип.)"]).values('sorted_value',
+                                                                                                'competitor__surname_comp',
+                                                                                                'competitor__name_comp',
+                                                                                                'competitor__sports_type__title',
+                                                                                                'competitor_weight',
+                                                                                                'first_attempt_bpress_res_ek',
+                                                                                                'first_attempt_bpress_off_ek',
+                                                                                                'second_attempt_bpress_res_ek',
+                                                                                                'second_attempt_bpress_off_ek',
+                                                                                                'third_attempt_bpress_res_ek',
+                                                                                                'third_attempt_bpress_off_ek',
+                                                                                                'best_bpress_res_ek',
+                                                                                                'best_sum_res_ek',
+                                                                                                'competitor_translation',
+                                                                                                'best_squat_res_ek',
+                                                                                                'best_dlift_res_ek',
+                                                                                                'first_attempt_squat_res_ek',
+                                                                                                'first_attempt_squat_off_ek',
+                                                                                                'second_attempt_squat_res_ek',
+                                                                                                'second_attempt_squat_off_ek',
+                                                                                                'third_attempt_squat_res_ek',
+                                                                                                'third_attempt_squat_off_ek',
+                                                                                                'first_attempt_dlift_res_ek',
+                                                                                                'first_attempt_dlift_off_ek',
+                                                                                                'second_attempt_dlift_res_ek',
+                                                                                                'second_attempt_dlift_off_ek',
+                                                                                                'third_attempt_dlift_res_ek',
+                                                                                                'third_attempt_dlift_off_ek', )
+                        competitors_f_s += list(competitors_fr)
+                    competitors = sorted(
+                        sorted(competitors_f_s, key=lambda x: (x['sorted_value'] is not None, x['sorted_value'])),
+                        key=lambda x: bool(x['sorted_value']), reverse=True)
+                elif cur_flow_competitors_st.filter(competitor__sports_type__title="Троеборье классическое",
+                                                    second_attempt_bpress_off__isnull=True).exists() or cur_flow_competitors_st.filter(
+                        competitor__sports_type__title="Троеборье (экип.)",
+                        second_attempt_bpress_off_ek__isnull=True).exists() or cur_flow_competitors_st.filter(
+                        competitor__sports_type__title="Жим лёжа (экип.)",
+                        second_attempt_bpress_off_ek__isnull=True).exclude(
+                        competitor__sports_type__title__in=["Троеборье классическое", "Троеборье (экип.)",
+                                                            "Жим лёжа (без экип.)"]).exists() or cur_flow_competitors_st.filter(
+                        competitor__sports_type__title="Жим лёжа (без экип.)",
+                        second_attempt_bpress_off__isnull=True).exclude(
+                        competitor__sports_type__title__in=["Троеборье классическое", "Троеборье (экип.)",
+                                                            "Жим лёжа (экип.)"]).exists():
+                    competitors_f = cur_flow_competitors_st.filter(
+                        competitor__sports_type__title="Троеборье классическое").annotate(
+                        sorted_value=F('second_attempt_bpress_res')).values('sorted_value', 'competitor__surname_comp',
+                                                                            'competitor__name_comp',
+                                                                            'competitor_weight',
+                                                                            'competitor__sports_type__title',
+                                                                            'first_attempt_squat_res',
+                                                                            'first_attempt_squat_off',
+                                                                            'second_attempt_squat_res',
+                                                                            'second_attempt_squat_off',
+                                                                            'third_attempt_squat_res',
+                                                                            'third_attempt_squat_off',
+                                                                            'first_attempt_bpress_res',
+                                                                            'first_attempt_bpress_off',
+                                                                            'second_attempt_bpress_res',
+                                                                            'second_attempt_bpress_off',
+                                                                            'third_attempt_bpress_res',
+                                                                            'third_attempt_bpress_off',
+                                                                            'first_attempt_dlift_res',
+                                                                            'first_attempt_dlift_off',
+                                                                            'second_attempt_dlift_res',
+                                                                            'second_attempt_dlift_off',
+                                                                            'third_attempt_dlift_res',
+                                                                            'third_attempt_dlift_off', 'best_squat_res',
+                                                                            'best_bpress_res', 'best_dlift_res',
+                                                                            'best_sum_res', 'competitor_translation')
+                    competitors_s = cur_flow_competitors_st.filter(
+                        competitor__sports_type__title="Троеборье (экип.)").annotate(
+                        sorted_value=F('second_attempt_bpress_res_ek')).values('sorted_value',
+                                                                               'competitor__surname_comp',
+                                                                               'competitor__sports_type__title',
+                                                                               'competitor__name_comp',
+                                                                               'competitor_weight',
+                                                                               'first_attempt_squat_res_ek',
+                                                                               'first_attempt_squat_off_ek',
+                                                                               'second_attempt_squat_res_ek',
+                                                                               'second_attempt_squat_off_ek',
+                                                                               'third_attempt_squat_res_ek',
+                                                                               'third_attempt_squat_off_ek',
+                                                                               'first_attempt_bpress_res_ek',
+                                                                               'first_attempt_bpress_off_ek',
+                                                                               'second_attempt_bpress_res_ek',
+                                                                               'second_attempt_bpress_off_ek',
+                                                                               'third_attempt_bpress_res_ek',
+                                                                               'third_attempt_bpress_off_ek',
+                                                                               'first_attempt_dlift_res_ek',
+                                                                               'first_attempt_dlift_off_ek',
+                                                                               'second_attempt_dlift_res_ek',
+                                                                               'second_attempt_dlift_off_ek',
+                                                                               'third_attempt_dlift_res_ek',
+                                                                               'third_attempt_dlift_off_ek',
+                                                                               'best_squat_res_ek',
+                                                                               'best_bpress_res_ek',
+                                                                               'best_dlift_res_ek', 'best_sum_res_ek',
+                                                                               'competitor_translation')
+                    competitors_f_s = list(competitors_f) + list(competitors_s)
+                    if "Жим лёжа (без экип.)" in competitors_stypes:
+                        competitors_t = cur_flow_competitors_st.filter(
+                            competitor__sports_type__title="Жим лёжа (без экип.)").annotate(
+                            sorted_value=F('second_attempt_bpress_res')).exclude(
+                            competitor__sports_type__title__in=["Троеборье классическое", "Троеборье (экип.)",
+                                                                "Жим лёжа (экип.)"]).values('sorted_value',
+                                                                                            'competitor__surname_comp',
+                                                                                            'competitor__name_comp',
+                                                                                            'competitor__sports_type__title',
+                                                                                            'first_attempt_squat_res',
+                                                                                            'first_attempt_squat_off',
+                                                                                            'second_attempt_squat_res',
+                                                                                            'second_attempt_squat_off',
+                                                                                            'third_attempt_squat_res',
+                                                                                            'third_attempt_squat_off',
+                                                                                            'competitor_weight',
+                                                                                            'first_attempt_bpress_res',
+                                                                                            'first_attempt_bpress_off',
+                                                                                            'second_attempt_bpress_res',
+                                                                                            'second_attempt_bpress_off',
+                                                                                            'third_attempt_bpress_res',
+                                                                                            'third_attempt_bpress_off',
+                                                                                            'best_bpress_res',
+                                                                                            'best_sum_res',
+                                                                                            'competitor_translation',
+                                                                                            'best_squat_res',
+                                                                                            'best_dlift_res',
+                                                                                            'first_attempt_dlift_res',
+                                                                                            'first_attempt_dlift_off',
+                                                                                            'second_attempt_dlift_res',
+                                                                                            'second_attempt_dlift_off',
+                                                                                            'third_attempt_dlift_res',
+                                                                                            'third_attempt_dlift_off')
+                        competitors_f_s += list(competitors_t)
+                    if "Жим лёжа (экип.)" in competitors_stypes:
+                        competitors_fr = cur_flow_competitors_st.filter(
+                            competitor__sports_type__title="Жим лёжа (экип.)").annotate(
+                            sorted_value=F('second_attempt_bpress_res_ek')).exclude(
+                            competitor__sports_type__title__in=["Троеборье классическое", "Троеборье (экип.)",
+                                                                "Жим лёжа (без экип.)"]).values('sorted_value',
+                                                                                                'competitor__surname_comp',
+                                                                                                'competitor__name_comp',
+                                                                                                'competitor__sports_type__title',
+                                                                                                'competitor_weight',
+                                                                                                'first_attempt_bpress_res_ek',
+                                                                                                'first_attempt_bpress_off_ek',
+                                                                                                'second_attempt_bpress_res_ek',
+                                                                                                'second_attempt_bpress_off_ek',
+                                                                                                'third_attempt_bpress_res_ek',
+                                                                                                'third_attempt_bpress_off_ek',
+                                                                                                'best_bpress_res_ek',
+                                                                                                'best_sum_res_ek',
+                                                                                                'competitor_translation',
+                                                                                                'best_squat_res_ek',
+                                                                                                'best_dlift_res_ek',
+                                                                                                'first_attempt_squat_res_ek',
+                                                                                                'first_attempt_squat_off_ek',
+                                                                                                'second_attempt_squat_res_ek',
+                                                                                                'second_attempt_squat_off_ek',
+                                                                                                'third_attempt_squat_res_ek',
+                                                                                                'third_attempt_squat_off_ek',
+                                                                                                'first_attempt_dlift_res_ek',
+                                                                                                'first_attempt_dlift_off_ek',
+                                                                                                'second_attempt_dlift_res_ek',
+                                                                                                'second_attempt_dlift_off_ek',
+                                                                                                'third_attempt_dlift_res_ek',
+                                                                                                'third_attempt_dlift_off_ek', )
+                        competitors_f_s += list(competitors_fr)
+                    competitors = sorted(
+                        sorted(competitors_f_s, key=lambda x: (x['sorted_value'] is not None, x['sorted_value'])),
+                        key=lambda x: bool(x['sorted_value']), reverse=True)
+                elif cur_flow_competitors_st.filter(competitor__sports_type__title="Троеборье классическое",
+                                                    third_attempt_bpress_off__isnull=True).exists() or cur_flow_competitors_st.filter(
+                        competitor__sports_type__title="Троеборье (экип.)",
+                        third_attempt_bpress_off_ek__isnull=True).exists() or cur_flow_competitors_st.filter(
+                        competitor__sports_type__title="Жим лёжа (экип.)",
+                        third_attempt_bpress_off_ek__isnull=True).exclude(
+                        competitor__sports_type__title__in=["Троеборье классическое", "Троеборье (экип.)",
+                                                            "Жим лёжа (без экип.)"]).exists() or cur_flow_competitors_st.filter(
+                        competitor__sports_type__title="Жим лёжа (без экип.)",
+                        third_attempt_bpress_off__isnull=True).exclude(
+                        competitor__sports_type__title__in=["Троеборье классическое", "Троеборье (экип.)",
+                                                            "Жим лёжа (экип.)"]).exists():
+                    competitors_f = cur_flow_competitors_st.filter(
+                        competitor__sports_type__title="Троеборье классическое").annotate(
+                        sorted_value=F('third_attempt_bpress_res')).values('sorted_value', 'competitor__surname_comp',
+                                                                           'competitor__name_comp', 'competitor_weight',
+                                                                           'competitor__sports_type__title',
+                                                                           'first_attempt_squat_res',
+                                                                           'first_attempt_squat_off',
+                                                                           'second_attempt_squat_res',
+                                                                           'second_attempt_squat_off',
+                                                                           'third_attempt_squat_res',
+                                                                           'third_attempt_squat_off',
+                                                                           'first_attempt_bpress_res',
+                                                                           'first_attempt_bpress_off',
+                                                                           'second_attempt_bpress_res',
+                                                                           'second_attempt_bpress_off',
+                                                                           'third_attempt_bpress_res',
+                                                                           'third_attempt_bpress_off',
+                                                                           'first_attempt_dlift_res',
+                                                                           'first_attempt_dlift_off',
+                                                                           'second_attempt_dlift_res',
+                                                                           'second_attempt_dlift_off',
+                                                                           'third_attempt_dlift_res',
+                                                                           'third_attempt_dlift_off', 'best_squat_res',
+                                                                           'best_bpress_res', 'best_dlift_res',
+                                                                           'best_sum_res', 'competitor_translation')
+                    competitors_s = cur_flow_competitors_st.filter(
+                        competitor__sports_type__title="Троеборье (экип.)").annotate(
+                        sorted_value=F('third_attempt_bpress_res_ek')).values('sorted_value',
+                                                                              'competitor__surname_comp',
+                                                                              'competitor__sports_type__title',
+                                                                              'competitor__name_comp',
+                                                                              'competitor_weight',
+                                                                              'first_attempt_squat_res_ek',
+                                                                              'first_attempt_squat_off_ek',
+                                                                              'second_attempt_squat_res_ek',
+                                                                              'second_attempt_squat_off_ek',
+                                                                              'third_attempt_squat_res_ek',
+                                                                              'third_attempt_squat_off_ek',
+                                                                              'first_attempt_bpress_res_ek',
+                                                                              'first_attempt_bpress_off_ek',
+                                                                              'second_attempt_bpress_res_ek',
+                                                                              'second_attempt_bpress_off_ek',
+                                                                              'third_attempt_bpress_res_ek',
+                                                                              'third_attempt_bpress_off_ek',
+                                                                              'first_attempt_dlift_res_ek',
+                                                                              'first_attempt_dlift_off_ek',
+                                                                              'second_attempt_dlift_res_ek',
+                                                                              'second_attempt_dlift_off_ek',
+                                                                              'third_attempt_dlift_res_ek',
+                                                                              'third_attempt_dlift_off_ek',
+                                                                              'best_squat_res_ek', 'best_bpress_res_ek',
+                                                                              'best_dlift_res_ek', 'best_sum_res_ek',
+                                                                              'competitor_translation')
+                    competitors_f_s = list(competitors_f) + list(competitors_s)
+                    if "Жим лёжа (без экип.)" in competitors_stypes:
+                        competitors_t = cur_flow_competitors_st.filter(
+                            competitor__sports_type__title="Жим лёжа (без экип.)").annotate(
+                            sorted_value=F('third_attempt_bpress_res')).exclude(
+                            competitor__sports_type__title__in=["Троеборье классическое", "Троеборье (экип.)",
+                                                                "Жим лёжа (экип.)"]).values('sorted_value',
+                                                                                            'competitor__surname_comp',
+                                                                                            'competitor__name_comp',
+                                                                                            'competitor__sports_type__title',
+                                                                                            'first_attempt_squat_res',
+                                                                                            'first_attempt_squat_off',
+                                                                                            'second_attempt_squat_res',
+                                                                                            'second_attempt_squat_off',
+                                                                                            'third_attempt_squat_res',
+                                                                                            'third_attempt_squat_off',
+                                                                                            'competitor_weight',
+                                                                                            'first_attempt_bpress_res',
+                                                                                            'first_attempt_bpress_off',
+                                                                                            'second_attempt_bpress_res',
+                                                                                            'second_attempt_bpress_off',
+                                                                                            'third_attempt_bpress_res',
+                                                                                            'third_attempt_bpress_off',
+                                                                                            'best_bpress_res',
+                                                                                            'best_sum_res',
+                                                                                            'competitor_translation',
+                                                                                            'best_squat_res',
+                                                                                            'best_dlift_res',
+                                                                                            'first_attempt_dlift_res',
+                                                                                            'first_attempt_dlift_off',
+                                                                                            'second_attempt_dlift_res',
+                                                                                            'second_attempt_dlift_off',
+                                                                                            'third_attempt_dlift_res',
+                                                                                            'third_attempt_dlift_off')
+                        competitors_f_s += list(competitors_t)
+                    if "Жим лёжа (экип.)" in competitors_stypes:
+                        competitors_fr = cur_flow_competitors_st.filter(
+                            competitor__sports_type__title="Жим лёжа (экип.)").annotate(
+                            sorted_value=F('third_attempt_bpress_res_ek')).exclude(
+                            competitor__sports_type__title__in=["Троеборье классическое", "Троеборье (экип.)",
+                                                                "Жим лёжа (без экип.)"]).values('sorted_value',
+                                                                                                'competitor__surname_comp',
+                                                                                                'competitor__name_comp',
+                                                                                                'competitor__sports_type__title',
+                                                                                                'competitor_weight',
+                                                                                                'first_attempt_bpress_res_ek',
+                                                                                                'first_attempt_bpress_off_ek',
+                                                                                                'second_attempt_bpress_res_ek',
+                                                                                                'second_attempt_bpress_off_ek',
+                                                                                                'third_attempt_bpress_res_ek',
+                                                                                                'third_attempt_bpress_off_ek',
+                                                                                                'best_bpress_res_ek',
+                                                                                                'best_sum_res_ek',
+                                                                                                'competitor_translation',
+                                                                                                'best_squat_res_ek',
+                                                                                                'best_dlift_res_ek',
+                                                                                                'first_attempt_squat_res_ek',
+                                                                                                'first_attempt_squat_off_ek',
+                                                                                                'second_attempt_squat_res_ek',
+                                                                                                'second_attempt_squat_off_ek',
+                                                                                                'third_attempt_squat_res_ek',
+                                                                                                'third_attempt_squat_off_ek',
+                                                                                                'first_attempt_dlift_res_ek',
+                                                                                                'first_attempt_dlift_off_ek',
+                                                                                                'second_attempt_dlift_res_ek',
+                                                                                                'second_attempt_dlift_off_ek',
+                                                                                                'third_attempt_dlift_res_ek',
+                                                                                                'third_attempt_dlift_off_ek', )
+                        competitors_f_s += list(competitors_fr)
+                    competitors = sorted(
+                        sorted(competitors_f_s, key=lambda x: (x['sorted_value'] is not None, x['sorted_value'])),
+                        key=lambda x: bool(x['sorted_value']), reverse=True)
+                elif cur_flow_competitors_st.filter(competitor__sports_type__title="Троеборье классическое",
+                                                    first_attempt_dlift_off__isnull=True).exists() or cur_flow_competitors_st.filter(
+                        competitor__sports_type__title="Троеборье (экип.)",
+                        first_attempt_dlift_off_ek__isnull=True).exists():
+                    competitors_f = cur_flow_competitors_st.filter(
+                        competitor__sports_type__title="Троеборье классическое").annotate(
+                        sorted_value=F('first_attempt_dlift_res')).values('sorted_value', 'competitor__surname_comp',
+                                                                          'competitor__name_comp', 'competitor_weight',
+                                                                          'competitor__sports_type__title',
+                                                                          'first_attempt_squat_res',
+                                                                          'first_attempt_squat_off',
+                                                                          'second_attempt_squat_res',
+                                                                          'second_attempt_squat_off',
+                                                                          'third_attempt_squat_res',
+                                                                          'third_attempt_squat_off',
+                                                                          'first_attempt_bpress_res',
+                                                                          'first_attempt_bpress_off',
+                                                                          'second_attempt_bpress_res',
+                                                                          'second_attempt_bpress_off',
+                                                                          'third_attempt_bpress_res',
+                                                                          'third_attempt_bpress_off',
+                                                                          'first_attempt_dlift_res',
+                                                                          'first_attempt_dlift_off',
+                                                                          'second_attempt_dlift_res',
+                                                                          'second_attempt_dlift_off',
+                                                                          'third_attempt_dlift_res',
+                                                                          'third_attempt_dlift_off', 'best_squat_res',
+                                                                          'best_bpress_res', 'best_dlift_res',
+                                                                          'best_sum_res', 'competitor_translation')
+                    competitors_s = cur_flow_competitors_st.filter(
+                        competitor__sports_type__title="Троеборье (экип.)").annotate(
+                        sorted_value=F('first_attempt_dlift_res_ek')).values('sorted_value', 'competitor__surname_comp',
+                                                                             'competitor__sports_type__title',
+                                                                             'competitor__name_comp',
+                                                                             'competitor_weight',
+                                                                             'first_attempt_squat_res_ek',
+                                                                             'first_attempt_squat_off_ek',
+                                                                             'second_attempt_squat_res_ek',
+                                                                             'second_attempt_squat_off_ek',
+                                                                             'third_attempt_squat_res_ek',
+                                                                             'third_attempt_squat_off_ek',
+                                                                             'first_attempt_bpress_res_ek',
+                                                                             'first_attempt_bpress_off_ek',
+                                                                             'second_attempt_bpress_res_ek',
+                                                                             'second_attempt_bpress_off_ek',
+                                                                             'third_attempt_bpress_res_ek',
+                                                                             'third_attempt_bpress_off_ek',
+                                                                             'first_attempt_dlift_res_ek',
+                                                                             'first_attempt_dlift_off_ek',
+                                                                             'second_attempt_dlift_res_ek',
+                                                                             'second_attempt_dlift_off_ek',
+                                                                             'third_attempt_dlift_res_ek',
+                                                                             'third_attempt_dlift_off_ek',
+                                                                             'best_squat_res_ek', 'best_bpress_res_ek',
+                                                                             'best_dlift_res_ek', 'best_sum_res_ek',
+                                                                             'competitor_translation')
+                    competitors_f_s = list(competitors_f) + list(competitors_s)
+                    if "Жим лёжа (без экип.)" in competitors_stypes:
+                        competitors_t = cur_flow_competitors_st.filter(
+                            competitor__sports_type__title="Жим лёжа (без экип.)").annotate(
+                            sorted_value=F('first_attempt_dlift_res')).exclude(
+                            competitor__sports_type__title__in=["Троеборье классическое", "Троеборье (экип.)",
+                                                                "Жим лёжа (экип.)"]).values('sorted_value',
+                                                                                            'competitor__surname_comp',
+                                                                                            'competitor__name_comp',
+                                                                                            'competitor__sports_type__title',
+                                                                                            'first_attempt_squat_res',
+                                                                                            'first_attempt_squat_off',
+                                                                                            'second_attempt_squat_res',
+                                                                                            'second_attempt_squat_off',
+                                                                                            'third_attempt_squat_res',
+                                                                                            'third_attempt_squat_off',
+                                                                                            'competitor_weight',
+                                                                                            'first_attempt_bpress_res',
+                                                                                            'first_attempt_bpress_off',
+                                                                                            'second_attempt_bpress_res',
+                                                                                            'second_attempt_bpress_off',
+                                                                                            'third_attempt_bpress_res',
+                                                                                            'third_attempt_bpress_off',
+                                                                                            'best_bpress_res',
+                                                                                            'best_sum_res',
+                                                                                            'competitor_translation',
+                                                                                            'best_squat_res',
+                                                                                            'best_dlift_res',
+                                                                                            'first_attempt_dlift_res',
+                                                                                            'first_attempt_dlift_off',
+                                                                                            'second_attempt_dlift_res',
+                                                                                            'second_attempt_dlift_off',
+                                                                                            'third_attempt_dlift_res',
+                                                                                            'third_attempt_dlift_off')
+                        competitors_f_s += list(competitors_t)
+                    if "Жим лёжа (экип.)" in competitors_stypes:
+                        competitors_fr = cur_flow_competitors_st.filter(
+                            competitor__sports_type__title="Жим лёжа (экип.)").annotate(
+                            sorted_value=F('first_attempt_dlift_res_ek')).exclude(
+                            competitor__sports_type__title__in=["Троеборье классическое", "Троеборье (экип.)",
+                                                                "Жим лёжа (без экип.)"]).values('sorted_value',
+                                                                                                'competitor__surname_comp',
+                                                                                                'competitor__name_comp',
+                                                                                                'competitor__sports_type__title',
+                                                                                                'competitor_weight',
+                                                                                                'first_attempt_bpress_res_ek',
+                                                                                                'first_attempt_bpress_off_ek',
+                                                                                                'second_attempt_bpress_res_ek',
+                                                                                                'second_attempt_bpress_off_ek',
+                                                                                                'third_attempt_bpress_res_ek',
+                                                                                                'third_attempt_bpress_off_ek',
+                                                                                                'best_bpress_res_ek',
+                                                                                                'best_sum_res_ek',
+                                                                                                'competitor_translation',
+                                                                                                'best_squat_res_ek',
+                                                                                                'best_dlift_res_ek',
+                                                                                                'first_attempt_squat_res_ek',
+                                                                                                'first_attempt_squat_off_ek',
+                                                                                                'second_attempt_squat_res_ek',
+                                                                                                'second_attempt_squat_off_ek',
+                                                                                                'third_attempt_squat_res_ek',
+                                                                                                'third_attempt_squat_off_ek',
+                                                                                                'first_attempt_dlift_res_ek',
+                                                                                                'first_attempt_dlift_off_ek',
+                                                                                                'second_attempt_dlift_res_ek',
+                                                                                                'second_attempt_dlift_off_ek',
+                                                                                                'third_attempt_dlift_res_ek',
+                                                                                                'third_attempt_dlift_off_ek', )
+                        competitors_f_s += list(competitors_fr)
+                    competitors = sorted(
+                        sorted(competitors_f_s, key=lambda x: (x['sorted_value'] is not None, x['sorted_value'])),
+                        key=lambda x: bool(x['sorted_value']), reverse=True)
+                elif cur_flow_competitors_st.filter(competitor__sports_type__title="Троеборье классическое",
+                                                    second_attempt_dlift_off__isnull=True).exists() or cur_flow_competitors_st.filter(
+                        competitor__sports_type__title="Троеборье (экип.)",
+                        second_attempt_dlift_off_ek__isnull=True).exists():
+                    competitors_f = cur_flow_competitors_st.filter(
+                        competitor__sports_type__title="Троеборье классическое").annotate(
+                        sorted_value=F('second_attempt_dlift_res')).values('sorted_value', 'competitor__surname_comp',
+                                                                           'competitor__name_comp', 'competitor_weight',
+                                                                           'competitor__sports_type__title',
+                                                                           'first_attempt_squat_res',
+                                                                           'first_attempt_squat_off',
+                                                                           'second_attempt_squat_res',
+                                                                           'second_attempt_squat_off',
+                                                                           'third_attempt_squat_res',
+                                                                           'third_attempt_squat_off',
+                                                                           'first_attempt_bpress_res',
+                                                                           'first_attempt_bpress_off',
+                                                                           'second_attempt_bpress_res',
+                                                                           'second_attempt_bpress_off',
+                                                                           'third_attempt_bpress_res',
+                                                                           'third_attempt_bpress_off',
+                                                                           'first_attempt_dlift_res',
+                                                                           'first_attempt_dlift_off',
+                                                                           'second_attempt_dlift_res',
+                                                                           'second_attempt_dlift_off',
+                                                                           'third_attempt_dlift_res',
+                                                                           'third_attempt_dlift_off', 'best_squat_res',
+                                                                           'best_bpress_res', 'best_dlift_res',
+                                                                           'best_sum_res', 'competitor_translation')
+                    competitors_s = cur_flow_competitors_st.filter(
+                        competitor__sports_type__title="Троеборье (экип.)").annotate(
+                        sorted_value=F('second_attempt_dlift_res_ek')).values('sorted_value',
+                                                                              'competitor__surname_comp',
+                                                                              'competitor__sports_type__title',
+                                                                              'competitor__name_comp',
+                                                                              'competitor_weight',
+                                                                              'first_attempt_squat_res_ek',
+                                                                              'first_attempt_squat_off_ek',
+                                                                              'second_attempt_squat_res_ek',
+                                                                              'second_attempt_squat_off_ek',
+                                                                              'third_attempt_squat_res_ek',
+                                                                              'third_attempt_squat_off_ek',
+                                                                              'first_attempt_bpress_res_ek',
+                                                                              'first_attempt_bpress_off_ek',
+                                                                              'second_attempt_bpress_res_ek',
+                                                                              'second_attempt_bpress_off_ek',
+                                                                              'third_attempt_bpress_res_ek',
+                                                                              'third_attempt_bpress_off_ek',
+                                                                              'first_attempt_dlift_res_ek',
+                                                                              'first_attempt_dlift_off_ek',
+                                                                              'second_attempt_dlift_res_ek',
+                                                                              'second_attempt_dlift_off_ek',
+                                                                              'third_attempt_dlift_res_ek',
+                                                                              'third_attempt_dlift_off_ek',
+                                                                              'best_squat_res_ek', 'best_bpress_res_ek',
+                                                                              'best_dlift_res_ek', 'best_sum_res_ek',
+                                                                              'competitor_translation')
+                    competitors_f_s = list(competitors_f) + list(competitors_s)
+                    if "Жим лёжа (без экип.)" in competitors_stypes:
+                        competitors_t = cur_flow_competitors_st.filter(
+                            competitor__sports_type__title="Жим лёжа (без экип.)").annotate(
+                            sorted_value=F('second_attempt_dlift_res')).exclude(
+                            competitor__sports_type__title__in=["Троеборье классическое", "Троеборье (экип.)",
+                                                                "Жим лёжа (экип.)"]).values('sorted_value',
+                                                                                            'competitor__surname_comp',
+                                                                                            'competitor__name_comp',
+                                                                                            'competitor__sports_type__title',
+                                                                                            'first_attempt_squat_res',
+                                                                                            'first_attempt_squat_off',
+                                                                                            'second_attempt_squat_res',
+                                                                                            'second_attempt_squat_off',
+                                                                                            'third_attempt_squat_res',
+                                                                                            'third_attempt_squat_off',
+                                                                                            'competitor_weight',
+                                                                                            'first_attempt_bpress_res',
+                                                                                            'first_attempt_bpress_off',
+                                                                                            'second_attempt_bpress_res',
+                                                                                            'second_attempt_bpress_off',
+                                                                                            'third_attempt_bpress_res',
+                                                                                            'third_attempt_bpress_off',
+                                                                                            'best_bpress_res',
+                                                                                            'best_sum_res',
+                                                                                            'competitor_translation',
+                                                                                            'best_squat_res',
+                                                                                            'best_dlift_res',
+                                                                                            'first_attempt_dlift_res',
+                                                                                            'first_attempt_dlift_off',
+                                                                                            'second_attempt_dlift_res',
+                                                                                            'second_attempt_dlift_off',
+                                                                                            'third_attempt_dlift_res',
+                                                                                            'third_attempt_dlift_off')
+                        competitors_f_s += list(competitors_t)
+                    if "Жим лёжа (экип.)" in competitors_stypes:
+                        competitors_fr = cur_flow_competitors_st.filter(
+                            competitor__sports_type__title="Жим лёжа (экип.)").annotate(
+                            sorted_value=F('second_attempt_dlift_res_ek')).exclude(
+                            competitor__sports_type__title__in=["Троеборье классическое", "Троеборье (экип.)",
+                                                                "Жим лёжа (без экип.)"]).values('sorted_value',
+                                                                                                'competitor__surname_comp',
+                                                                                                'competitor__name_comp',
+                                                                                                'competitor__sports_type__title',
+                                                                                                'competitor_weight',
+                                                                                                'first_attempt_bpress_res_ek',
+                                                                                                'first_attempt_bpress_off_ek',
+                                                                                                'second_attempt_bpress_res_ek',
+                                                                                                'second_attempt_bpress_off_ek',
+                                                                                                'third_attempt_bpress_res_ek',
+                                                                                                'third_attempt_bpress_off_ek',
+                                                                                                'best_bpress_res_ek',
+                                                                                                'best_sum_res_ek',
+                                                                                                'competitor_translation',
+                                                                                                'best_squat_res_ek',
+                                                                                                'best_dlift_res_ek',
+                                                                                                'first_attempt_squat_res_ek',
+                                                                                                'first_attempt_squat_off_ek',
+                                                                                                'second_attempt_squat_res_ek',
+                                                                                                'second_attempt_squat_off_ek',
+                                                                                                'third_attempt_squat_res_ek',
+                                                                                                'third_attempt_squat_off_ek',
+                                                                                                'first_attempt_dlift_res_ek',
+                                                                                                'first_attempt_dlift_off_ek',
+                                                                                                'second_attempt_dlift_res_ek',
+                                                                                                'second_attempt_dlift_off_ek',
+                                                                                                'third_attempt_dlift_res_ek',
+                                                                                                'third_attempt_dlift_off_ek', )
+                        competitors_f_s += list(competitors_fr)
+                    competitors = sorted(
+                        sorted(competitors_f_s, key=lambda x: (x['sorted_value'] is not None, x['sorted_value'])),
+                        key=lambda x: bool(x['sorted_value']), reverse=True)
+                elif cur_flow_competitors_st.filter(competitor__sports_type__title="Троеборье классическое",
+                                                    third_attempt_dlift_off__isnull=True).exists() or cur_flow_competitors_st.filter(
+                        competitor__sports_type__title="Троеборье (экип.)",
+                        third_attempt_dlift_off_ek__isnull=True).exists():
+                    competitors_f = cur_flow_competitors_st.filter(
+                        competitor__sports_type__title="Троеборье классическое").annotate(
+                        sorted_value=F('third_attempt_dlift_res')).values('sorted_value', 'competitor__surname_comp',
+                                                                          'competitor__name_comp', 'competitor_weight',
+                                                                          'competitor__sports_type__title',
+                                                                          'first_attempt_squat_res',
+                                                                          'first_attempt_squat_off',
+                                                                          'second_attempt_squat_res',
+                                                                          'second_attempt_squat_off',
+                                                                          'third_attempt_squat_res',
+                                                                          'third_attempt_squat_off',
+                                                                          'first_attempt_bpress_res',
+                                                                          'first_attempt_bpress_off',
+                                                                          'second_attempt_bpress_res',
+                                                                          'second_attempt_bpress_off',
+                                                                          'third_attempt_bpress_res',
+                                                                          'third_attempt_bpress_off',
+                                                                          'first_attempt_dlift_res',
+                                                                          'first_attempt_dlift_off',
+                                                                          'second_attempt_dlift_res',
+                                                                          'second_attempt_dlift_off',
+                                                                          'third_attempt_dlift_res',
+                                                                          'third_attempt_dlift_off', 'best_squat_res',
+                                                                          'best_bpress_res', 'best_dlift_res',
+                                                                          'best_sum_res', 'competitor_translation')
+                    competitors_s = cur_flow_competitors_st.filter(
+                        competitor__sports_type__title="Троеборье (экип.)").annotate(
+                        sorted_value=F('third_attempt_dlift_res_ek')).values('sorted_value', 'competitor__surname_comp',
+                                                                             'competitor__sports_type__title',
+                                                                             'competitor__name_comp',
+                                                                             'competitor_weight',
+                                                                             'first_attempt_squat_res_ek',
+                                                                             'first_attempt_squat_off_ek',
+                                                                             'second_attempt_squat_res_ek',
+                                                                             'second_attempt_squat_off_ek',
+                                                                             'third_attempt_squat_res_ek',
+                                                                             'third_attempt_squat_off_ek',
+                                                                             'first_attempt_bpress_res_ek',
+                                                                             'first_attempt_bpress_off_ek',
+                                                                             'second_attempt_bpress_res_ek',
+                                                                             'second_attempt_bpress_off_ek',
+                                                                             'third_attempt_bpress_res_ek',
+                                                                             'third_attempt_bpress_off_ek',
+                                                                             'first_attempt_dlift_res_ek',
+                                                                             'first_attempt_dlift_off_ek',
+                                                                             'second_attempt_dlift_res_ek',
+                                                                             'second_attempt_dlift_off_ek',
+                                                                             'third_attempt_dlift_res_ek',
+                                                                             'third_attempt_dlift_off_ek',
+                                                                             'best_squat_res_ek', 'best_bpress_res_ek',
+                                                                             'best_dlift_res_ek', 'best_sum_res_ek',
+                                                                             'competitor_translation')
+                    competitors_f_s = list(competitors_f) + list(competitors_s)
+                    if "Жим лёжа (без экип.)" in competitors_stypes:
+                        competitors_t = cur_flow_competitors_st.filter(
+                            competitor__sports_type__title="Жим лёжа (без экип.)").annotate(
+                            sorted_value=F('third_attempt_dlift_res')).exclude(
+                            competitor__sports_type__title__in=["Троеборье классическое", "Троеборье (экип.)",
+                                                                "Жим лёжа (экип.)"]).values('sorted_value',
+                                                                                            'competitor__surname_comp',
+                                                                                            'competitor__name_comp',
+                                                                                            'competitor__sports_type__title',
+                                                                                            'first_attempt_squat_res',
+                                                                                            'first_attempt_squat_off',
+                                                                                            'second_attempt_squat_res',
+                                                                                            'second_attempt_squat_off',
+                                                                                            'third_attempt_squat_res',
+                                                                                            'third_attempt_squat_off',
+                                                                                            'competitor_weight',
+                                                                                            'first_attempt_bpress_res',
+                                                                                            'first_attempt_bpress_off',
+                                                                                            'second_attempt_bpress_res',
+                                                                                            'second_attempt_bpress_off',
+                                                                                            'third_attempt_bpress_res',
+                                                                                            'third_attempt_bpress_off',
+                                                                                            'best_bpress_res',
+                                                                                            'best_sum_res',
+                                                                                            'competitor_translation',
+                                                                                            'best_squat_res',
+                                                                                            'best_dlift_res',
+                                                                                            'first_attempt_dlift_res',
+                                                                                            'first_attempt_dlift_off',
+                                                                                            'second_attempt_dlift_res',
+                                                                                            'second_attempt_dlift_off',
+                                                                                            'third_attempt_dlift_res',
+                                                                                            'third_attempt_dlift_off')
+                        competitors_f_s += list(competitors_t)
+                    if "Жим лёжа (экип.)" in competitors_stypes:
+                        competitors_fr = cur_flow_competitors_st.filter(
+                            competitor__sports_type__title="Жим лёжа (экип.)").annotate(
+                            sorted_value=F('third_attempt_dlift_res_ek')).exclude(
+                            competitor__sports_type__title__in=["Троеборье классическое", "Троеборье (экип.)",
+                                                                "Жим лёжа (без экип.)"]).values('sorted_value',
+                                                                                                'competitor__surname_comp',
+                                                                                                'competitor__name_comp',
+                                                                                                'competitor__sports_type__title',
+                                                                                                'competitor_weight',
+                                                                                                'first_attempt_bpress_res_ek',
+                                                                                                'first_attempt_bpress_off_ek',
+                                                                                                'second_attempt_bpress_res_ek',
+                                                                                                'second_attempt_bpress_off_ek',
+                                                                                                'third_attempt_bpress_res_ek',
+                                                                                                'third_attempt_bpress_off_ek',
+                                                                                                'best_bpress_res_ek',
+                                                                                                'best_sum_res_ek',
+                                                                                                'competitor_translation',
+                                                                                                'best_squat_res_ek',
+                                                                                                'best_dlift_res_ek',
+                                                                                                'first_attempt_squat_res_ek',
+                                                                                                'first_attempt_squat_off_ek',
+                                                                                                'second_attempt_squat_res_ek',
+                                                                                                'second_attempt_squat_off_ek',
+                                                                                                'third_attempt_squat_res_ek',
+                                                                                                'third_attempt_squat_off_ek',
+                                                                                                'first_attempt_dlift_res_ek',
+                                                                                                'first_attempt_dlift_off_ek',
+                                                                                                'second_attempt_dlift_res_ek',
+                                                                                                'second_attempt_dlift_off_ek',
+                                                                                                'third_attempt_dlift_res_ek',
+                                                                                                'third_attempt_dlift_off_ek', )
+                        competitors_f_s += list(competitors_fr)
+                    competitors = sorted(
+                        sorted(competitors_f_s, key=lambda x: (x['sorted_value'] is not None, x['sorted_value'])),
+                        key=lambda x: bool(x['sorted_value']), reverse=True)
+                else:
+                    competitors_f = cur_flow_competitors_st.filter(
+                        competitor__sports_type__title="Троеборье классическое").annotate(
+                        sorted_value=F('best_sum_res')).values('sorted_value', 'competitor__surname_comp',
+                                                               'competitor__name_comp', 'competitor_weight',
+                                                               'competitor__sports_type__title',
+                                                               'first_attempt_squat_res',
+                                                               'first_attempt_squat_off', 'second_attempt_squat_res',
+                                                               'second_attempt_squat_off', 'third_attempt_squat_res',
+                                                               'third_attempt_squat_off',
+                                                               'first_attempt_bpress_res', 'first_attempt_bpress_off',
+                                                               'second_attempt_bpress_res', 'second_attempt_bpress_off',
+                                                               'third_attempt_bpress_res',
+                                                               'third_attempt_bpress_off', 'first_attempt_dlift_res',
+                                                               'first_attempt_dlift_off', 'second_attempt_dlift_res',
+                                                               'second_attempt_dlift_off',
+                                                               'third_attempt_dlift_res', 'third_attempt_dlift_off',
+                                                               'best_squat_res', 'best_bpress_res', 'best_dlift_res',
+                                                               'best_sum_res', 'competitor_translation')
+                    competitors_s = cur_flow_competitors_st.filter(
+                        competitor__sports_type__title="Троеборье (экип.)").annotate(
+                        sorted_value=F('best_sum_res_ek')).values('sorted_value', 'competitor__surname_comp',
+                                                                  'competitor__sports_type__title',
+                                                                  'competitor__name_comp', 'competitor_weight',
+                                                                  'first_attempt_squat_res_ek',
+                                                                  'first_attempt_squat_off_ek',
+                                                                  'second_attempt_squat_res_ek',
+                                                                  'second_attempt_squat_off_ek',
+                                                                  'third_attempt_squat_res_ek',
+                                                                  'third_attempt_squat_off_ek',
+                                                                  'first_attempt_bpress_res_ek',
+                                                                  'first_attempt_bpress_off_ek',
+                                                                  'second_attempt_bpress_res_ek',
+                                                                  'second_attempt_bpress_off_ek',
+                                                                  'third_attempt_bpress_res_ek',
+                                                                  'third_attempt_bpress_off_ek',
+                                                                  'first_attempt_dlift_res_ek',
+                                                                  'first_attempt_dlift_off_ek',
+                                                                  'second_attempt_dlift_res_ek',
+                                                                  'second_attempt_dlift_off_ek',
+                                                                  'third_attempt_dlift_res_ek',
+                                                                  'third_attempt_dlift_off_ek', 'best_squat_res_ek',
+                                                                  'best_bpress_res_ek', 'best_dlift_res_ek',
+                                                                  'best_sum_res_ek', 'competitor_translation')
+                    competitors_f_s = list(competitors_f) + list(competitors_s)
+                    if "Жим лёжа (без экип.)" in competitors_stypes:
+                        competitors_t = cur_flow_competitors_st.filter(
+                            competitor__sports_type__title="Жим лёжа (без экип.)").annotate(
+                            sorted_value=F('best_sum_res')).exclude(
+                            competitor__sports_type__title__in=["Троеборье классическое", "Троеборье (экип.)",
+                                                                "Жим лёжа (экип.)"]).values('sorted_value',
+                                                                                            'competitor__surname_comp',
+                                                                                            'competitor__name_comp',
+                                                                                            'competitor__sports_type__title',
+                                                                                            'first_attempt_squat_res',
+                                                                                            'first_attempt_squat_off',
+                                                                                            'second_attempt_squat_res',
+                                                                                            'second_attempt_squat_off',
+                                                                                            'third_attempt_squat_res',
+                                                                                            'third_attempt_squat_off',
+                                                                                            'competitor_weight',
+                                                                                            'first_attempt_bpress_res',
+                                                                                            'first_attempt_bpress_off',
+                                                                                            'second_attempt_bpress_res',
+                                                                                            'second_attempt_bpress_off',
+                                                                                            'third_attempt_bpress_res',
+                                                                                            'third_attempt_bpress_off',
+                                                                                            'best_bpress_res',
+                                                                                            'best_sum_res',
+                                                                                            'competitor_translation',
+                                                                                            'best_squat_res',
+                                                                                            'best_dlift_res',
+                                                                                            'first_attempt_dlift_res',
+                                                                                            'first_attempt_dlift_off',
+                                                                                            'second_attempt_dlift_res',
+                                                                                            'second_attempt_dlift_off',
+                                                                                            'third_attempt_dlift_res',
+                                                                                            'third_attempt_dlift_off')
+                        competitors_f_s += list(competitors_t)
+                    if "Жим лёжа (экип.)" in competitors_stypes:
+                        competitors_fr = cur_flow_competitors_st.filter(
+                            competitor__sports_type__title="Жим лёжа (экип.)").annotate(
+                            sorted_value=F('best_sum_res_ek')).exclude(
+                            competitor__sports_type__title__in=["Троеборье классическое", "Троеборье (экип.)",
+                                                                "Жим лёжа (без экип.)"]).values('sorted_value',
+                                                                                                'competitor__surname_comp',
+                                                                                                'competitor__name_comp',
+                                                                                                'competitor__sports_type__title',
+                                                                                                'competitor_weight',
+                                                                                                'first_attempt_bpress_res_ek',
+                                                                                                'first_attempt_bpress_off_ek',
+                                                                                                'second_attempt_bpress_res_ek',
+                                                                                                'second_attempt_bpress_off_ek',
+                                                                                                'third_attempt_bpress_res_ek',
+                                                                                                'third_attempt_bpress_off_ek',
+                                                                                                'best_bpress_res_ek',
+                                                                                                'best_sum_res_ek',
+                                                                                                'competitor_translation',
+                                                                                                'best_squat_res_ek',
+                                                                                                'best_dlift_res_ek',
+                                                                                                'first_attempt_squat_res_ek',
+                                                                                                'first_attempt_squat_off_ek',
+                                                                                                'second_attempt_squat_res_ek',
+                                                                                                'second_attempt_squat_off_ek',
+                                                                                                'third_attempt_squat_res_ek',
+                                                                                                'third_attempt_squat_off_ek',
+                                                                                                'first_attempt_dlift_res_ek',
+                                                                                                'first_attempt_dlift_off_ek',
+                                                                                                'second_attempt_dlift_res_ek',
+                                                                                                'second_attempt_dlift_off_ek',
+                                                                                                'third_attempt_dlift_res_ek',
+                                                                                                'third_attempt_dlift_off_ek', )
+                        competitors_f_s += list(competitors_fr)
+                    competitors = sorted(
+                        sorted(competitors_f_s, key=lambda x: (x['sorted_value'] is not None, x['sorted_value']),
+                               reverse=True), key=lambda x: bool(x['sorted_value']), reverse=True)
+            elif "Троеборье классическое" in competitors_stypes:
+                if cur_flow_competitors_st.filter(competitor__sports_type__title="Троеборье классическое",
+                                                  first_attempt_squat_off__isnull=True).exists():
+                    competitors_f = cur_flow_competitors_st.filter(
+                        competitor__sports_type__title="Троеборье классическое").annotate(
+                        sorted_value=F('first_attempt_squat_res')).values('sorted_value', 'competitor__surname_comp',
+                                                                          'competitor__name_comp', 'competitor_weight',
+                                                                          'competitor__sports_type__title',
+                                                                          'first_attempt_squat_res',
+                                                                          'first_attempt_squat_off',
+                                                                          'second_attempt_squat_res',
+                                                                          'second_attempt_squat_off',
+                                                                          'third_attempt_squat_res',
+                                                                          'third_attempt_squat_off',
+                                                                          'first_attempt_bpress_res',
+                                                                          'first_attempt_bpress_off',
+                                                                          'second_attempt_bpress_res',
+                                                                          'second_attempt_bpress_off',
+                                                                          'third_attempt_bpress_res',
+                                                                          'third_attempt_bpress_off',
+                                                                          'first_attempt_dlift_res',
+                                                                          'first_attempt_dlift_off',
+                                                                          'second_attempt_dlift_res',
+                                                                          'second_attempt_dlift_off',
+                                                                          'third_attempt_dlift_res',
+                                                                          'third_attempt_dlift_off', 'best_squat_res',
+                                                                          'best_bpress_res', 'best_dlift_res',
+                                                                          'best_sum_res', 'competitor_translation')
+                    competitors_f_s = list(competitors_f)
+                    if "Жим лёжа (без экип.)" in competitors_stypes:
+                        competitors_t = cur_flow_competitors_st.filter(
+                            competitor__sports_type__title="Жим лёжа (без экип.)").annotate(
+                            sorted_value=F('first_attempt_squat_res')).exclude(
+                            competitor__sports_type__title__in=["Троеборье классическое", "Троеборье (экип.)",
+                                                                "Жим лёжа (экип.)"]).values('sorted_value',
+                                                                                            'competitor__surname_comp',
+                                                                                            'competitor__name_comp',
+                                                                                            'competitor__sports_type__title',
+                                                                                            'first_attempt_squat_res',
+                                                                                            'first_attempt_squat_off',
+                                                                                            'second_attempt_squat_res',
+                                                                                            'second_attempt_squat_off',
+                                                                                            'third_attempt_squat_res',
+                                                                                            'third_attempt_squat_off',
+                                                                                            'competitor_weight',
+                                                                                            'first_attempt_bpress_res',
+                                                                                            'first_attempt_bpress_off',
+                                                                                            'second_attempt_bpress_res',
+                                                                                            'second_attempt_bpress_off',
+                                                                                            'third_attempt_bpress_res',
+                                                                                            'third_attempt_bpress_off',
+                                                                                            'best_bpress_res',
+                                                                                            'best_sum_res',
+                                                                                            'competitor_translation',
+                                                                                            'best_squat_res',
+                                                                                            'best_dlift_res',
+                                                                                            'first_attempt_dlift_res',
+                                                                                            'first_attempt_dlift_off',
+                                                                                            'second_attempt_dlift_res',
+                                                                                            'second_attempt_dlift_off',
+                                                                                            'third_attempt_dlift_res',
+                                                                                            'third_attempt_dlift_off')
+                        competitors_f_s += list(competitors_t)
+                    if "Жим лёжа (экип.)" in competitors_stypes:
+                        competitors_fr = cur_flow_competitors_st.filter(
+                            competitor__sports_type__title="Жим лёжа (экип.)").annotate(
+                            sorted_value=F('first_attempt_squat_res_ek')).exclude(
+                            competitor__sports_type__title__in=["Троеборье классическое", "Троеборье (экип.)",
+                                                                "Жим лёжа (без экип.)"]).values('sorted_value',
+                                                                                                'competitor__surname_comp',
+                                                                                                'competitor__name_comp',
+                                                                                                'competitor__sports_type__title',
+                                                                                                'competitor_weight',
+                                                                                                'first_attempt_bpress_res_ek',
+                                                                                                'first_attempt_bpress_off_ek',
+                                                                                                'second_attempt_bpress_res_ek',
+                                                                                                'second_attempt_bpress_off_ek',
+                                                                                                'third_attempt_bpress_res_ek',
+                                                                                                'third_attempt_bpress_off_ek',
+                                                                                                'best_bpress_res_ek',
+                                                                                                'best_sum_res_ek',
+                                                                                                'competitor_translation',
+                                                                                                'best_squat_res_ek',
+                                                                                                'best_dlift_res_ek',
+                                                                                                'first_attempt_squat_res_ek',
+                                                                                                'first_attempt_squat_off_ek',
+                                                                                                'second_attempt_squat_res_ek',
+                                                                                                'second_attempt_squat_off_ek',
+                                                                                                'third_attempt_squat_res_ek',
+                                                                                                'third_attempt_squat_off_ek',
+                                                                                                'first_attempt_dlift_res_ek',
+                                                                                                'first_attempt_dlift_off_ek',
+                                                                                                'second_attempt_dlift_res_ek',
+                                                                                                'second_attempt_dlift_off_ek',
+                                                                                                'third_attempt_dlift_res_ek',
+                                                                                                'third_attempt_dlift_off_ek', )
+                        competitors_f_s += list(competitors_fr)
+                    competitors = sorted(
+                        sorted(competitors_f_s, key=lambda x: (x['sorted_value'] is not None, x['sorted_value'])),
+                        key=lambda x: bool(x['sorted_value']), reverse=True)
+                elif cur_flow_competitors_st.filter(competitor__sports_type__title="Троеборье классическое",
+                                                    second_attempt_squat_off__isnull=True).exists():
+                    competitors_f = cur_flow_competitors_st.filter(
+                        competitor__sports_type__title="Троеборье классическое").annotate(
+                        sorted_value=F('second_attempt_squat_res')).values('sorted_value', 'competitor__surname_comp',
+                                                                           'competitor__name_comp', 'competitor_weight',
+                                                                           'competitor__sports_type__title',
+                                                                           'first_attempt_squat_res',
+                                                                           'first_attempt_squat_off',
+                                                                           'second_attempt_squat_res',
+                                                                           'second_attempt_squat_off',
+                                                                           'third_attempt_squat_res',
+                                                                           'third_attempt_squat_off',
+                                                                           'first_attempt_bpress_res',
+                                                                           'first_attempt_bpress_off',
+                                                                           'second_attempt_bpress_res',
+                                                                           'second_attempt_bpress_off',
+                                                                           'third_attempt_bpress_res',
+                                                                           'third_attempt_bpress_off',
+                                                                           'first_attempt_dlift_res',
+                                                                           'first_attempt_dlift_off',
+                                                                           'second_attempt_dlift_res',
+                                                                           'second_attempt_dlift_off',
+                                                                           'third_attempt_dlift_res',
+                                                                           'third_attempt_dlift_off', 'best_squat_res',
+                                                                           'best_bpress_res', 'best_dlift_res',
+                                                                           'best_sum_res', 'competitor_translation')
+                    competitors_f_s = list(competitors_f)
+                    if "Жим лёжа (без экип.)" in competitors_stypes:
+                        competitors_t = cur_flow_competitors_st.filter(
+                            competitor__sports_type__title="Жим лёжа (без экип.)").annotate(
+                            sorted_value=F('second_attempt_squat_res')).exclude(
+                            competitor__sports_type__title__in=["Троеборье классическое", "Троеборье (экип.)",
+                                                                "Жим лёжа (экип.)"]).values('sorted_value',
+                                                                                            'competitor__surname_comp',
+                                                                                            'competitor__name_comp',
+                                                                                            'competitor__sports_type__title',
+                                                                                            'first_attempt_squat_res',
+                                                                                            'first_attempt_squat_off',
+                                                                                            'second_attempt_squat_res',
+                                                                                            'second_attempt_squat_off',
+                                                                                            'third_attempt_squat_res',
+                                                                                            'third_attempt_squat_off',
+                                                                                            'competitor_weight',
+                                                                                            'first_attempt_bpress_res',
+                                                                                            'first_attempt_bpress_off',
+                                                                                            'second_attempt_bpress_res',
+                                                                                            'second_attempt_bpress_off',
+                                                                                            'third_attempt_bpress_res',
+                                                                                            'third_attempt_bpress_off',
+                                                                                            'best_bpress_res',
+                                                                                            'best_sum_res',
+                                                                                            'competitor_translation',
+                                                                                            'best_squat_res',
+                                                                                            'best_dlift_res',
+                                                                                            'first_attempt_dlift_res',
+                                                                                            'first_attempt_dlift_off',
+                                                                                            'second_attempt_dlift_res',
+                                                                                            'second_attempt_dlift_off',
+                                                                                            'third_attempt_dlift_res',
+                                                                                            'third_attempt_dlift_off')
+                        competitors_f_s += list(competitors_t)
+                    if "Жим лёжа (экип.)" in competitors_stypes:
+                        competitors_fr = cur_flow_competitors_st.filter(
+                            competitor__sports_type__title="Жим лёжа (экип.)").annotate(
+                            sorted_value=F('second_attempt_squat_res_ek')).exclude(
+                            competitor__sports_type__title__in=["Троеборье классическое", "Троеборье (экип.)",
+                                                                "Жим лёжа (без экип.)"]).values('sorted_value',
+                                                                                                'competitor__surname_comp',
+                                                                                                'competitor__name_comp',
+                                                                                                'competitor__sports_type__title',
+                                                                                                'competitor_weight',
+                                                                                                'first_attempt_bpress_res_ek',
+                                                                                                'first_attempt_bpress_off_ek',
+                                                                                                'second_attempt_bpress_res_ek',
+                                                                                                'second_attempt_bpress_off_ek',
+                                                                                                'third_attempt_bpress_res_ek',
+                                                                                                'third_attempt_bpress_off_ek',
+                                                                                                'best_bpress_res_ek',
+                                                                                                'best_sum_res_ek',
+                                                                                                'competitor_translation',
+                                                                                                'best_squat_res_ek',
+                                                                                                'best_dlift_res_ek',
+                                                                                                'first_attempt_squat_res_ek',
+                                                                                                'first_attempt_squat_off_ek',
+                                                                                                'second_attempt_squat_res_ek',
+                                                                                                'second_attempt_squat_off_ek',
+                                                                                                'third_attempt_squat_res_ek',
+                                                                                                'third_attempt_squat_off_ek',
+                                                                                                'first_attempt_dlift_res_ek',
+                                                                                                'first_attempt_dlift_off_ek',
+                                                                                                'second_attempt_dlift_res_ek',
+                                                                                                'second_attempt_dlift_off_ek',
+                                                                                                'third_attempt_dlift_res_ek',
+                                                                                                'third_attempt_dlift_off_ek', )
+                        competitors_f_s += list(competitors_fr)
+                    competitors = sorted(
+                        sorted(competitors_f_s, key=lambda x: (x['sorted_value'] is not None, x['sorted_value'])),
+                        key=lambda x: bool(x['sorted_value']), reverse=True)
+                elif cur_flow_competitors_st.filter(competitor__sports_type__title="Троеборье классическое",
+                                                    third_attempt_squat_off__isnull=True).exists():
+                    competitors_f = cur_flow_competitors_st.filter(
+                        competitor__sports_type__title="Троеборье классическое").annotate(
+                        sorted_value=F('third_attempt_squat_res')).values('sorted_value', 'competitor__surname_comp',
+                                                                          'competitor__name_comp', 'competitor_weight',
+                                                                          'competitor__sports_type__title',
+                                                                          'first_attempt_squat_res',
+                                                                          'first_attempt_squat_off',
+                                                                          'second_attempt_squat_res',
+                                                                          'second_attempt_squat_off',
+                                                                          'third_attempt_squat_res',
+                                                                          'third_attempt_squat_off',
+                                                                          'first_attempt_bpress_res',
+                                                                          'first_attempt_bpress_off',
+                                                                          'second_attempt_bpress_res',
+                                                                          'second_attempt_bpress_off',
+                                                                          'third_attempt_bpress_res',
+                                                                          'third_attempt_bpress_off',
+                                                                          'first_attempt_dlift_res',
+                                                                          'first_attempt_dlift_off',
+                                                                          'second_attempt_dlift_res',
+                                                                          'second_attempt_dlift_off',
+                                                                          'third_attempt_dlift_res',
+                                                                          'third_attempt_dlift_off', 'best_squat_res',
+                                                                          'best_bpress_res', 'best_dlift_res',
+                                                                          'best_sum_res', 'competitor_translation')
+                    competitors_f_s = list(competitors_f)
+                    if "Жим лёжа (без экип.)" in competitors_stypes:
+                        competitors_t = cur_flow_competitors_st.filter(
+                            competitor__sports_type__title="Жим лёжа (без экип.)").annotate(
+                            sorted_value=F('third_attempt_squat_res')).exclude(
+                            competitor__sports_type__title__in=["Троеборье классическое", "Троеборье (экип.)",
+                                                                "Жим лёжа (экип.)"]).values('sorted_value',
+                                                                                            'competitor__surname_comp',
+                                                                                            'competitor__name_comp',
+                                                                                            'competitor__sports_type__title',
+                                                                                            'first_attempt_squat_res',
+                                                                                            'first_attempt_squat_off',
+                                                                                            'second_attempt_squat_res',
+                                                                                            'second_attempt_squat_off',
+                                                                                            'third_attempt_squat_res',
+                                                                                            'third_attempt_squat_off',
+                                                                                            'competitor_weight',
+                                                                                            'first_attempt_bpress_res',
+                                                                                            'first_attempt_bpress_off',
+                                                                                            'second_attempt_bpress_res',
+                                                                                            'second_attempt_bpress_off',
+                                                                                            'third_attempt_bpress_res',
+                                                                                            'third_attempt_bpress_off',
+                                                                                            'best_bpress_res',
+                                                                                            'best_sum_res',
+                                                                                            'competitor_translation',
+                                                                                            'best_squat_res',
+                                                                                            'best_dlift_res',
+                                                                                            'first_attempt_dlift_res',
+                                                                                            'first_attempt_dlift_off',
+                                                                                            'second_attempt_dlift_res',
+                                                                                            'second_attempt_dlift_off',
+                                                                                            'third_attempt_dlift_res',
+                                                                                            'third_attempt_dlift_off')
+                        competitors_f_s += list(competitors_t)
+                    if "Жим лёжа (экип.)" in competitors_stypes:
+                        competitors_fr = cur_flow_competitors_st.filter(
+                            competitor__sports_type__title="Жим лёжа (экип.)").annotate(
+                            sorted_value=F('third_attempt_squat_res_ek')).exclude(
+                            competitor__sports_type__title__in=["Троеборье классическое", "Троеборье (экип.)",
+                                                                "Жим лёжа (без экип.)"]).values('sorted_value',
+                                                                                                'competitor__surname_comp',
+                                                                                                'competitor__name_comp',
+                                                                                                'competitor__sports_type__title',
+                                                                                                'competitor_weight',
+                                                                                                'first_attempt_bpress_res_ek',
+                                                                                                'first_attempt_bpress_off_ek',
+                                                                                                'second_attempt_bpress_res_ek',
+                                                                                                'second_attempt_bpress_off_ek',
+                                                                                                'third_attempt_bpress_res_ek',
+                                                                                                'third_attempt_bpress_off_ek',
+                                                                                                'best_bpress_res_ek',
+                                                                                                'best_sum_res_ek',
+                                                                                                'competitor_translation',
+                                                                                                'best_squat_res_ek',
+                                                                                                'best_dlift_res_ek',
+                                                                                                'first_attempt_squat_res_ek',
+                                                                                                'first_attempt_squat_off_ek',
+                                                                                                'second_attempt_squat_res_ek',
+                                                                                                'second_attempt_squat_off_ek',
+                                                                                                'third_attempt_squat_res_ek',
+                                                                                                'third_attempt_squat_off_ek',
+                                                                                                'first_attempt_dlift_res_ek',
+                                                                                                'first_attempt_dlift_off_ek',
+                                                                                                'second_attempt_dlift_res_ek',
+                                                                                                'second_attempt_dlift_off_ek',
+                                                                                                'third_attempt_dlift_res_ek',
+                                                                                                'third_attempt_dlift_off_ek', )
+                        competitors_f_s += list(competitors_fr)
+                    competitors = sorted(
+                        sorted(competitors_f_s, key=lambda x: (x['sorted_value'] is not None, x['sorted_value'])),
+                        key=lambda x: bool(x['sorted_value']), reverse=True)
+                elif cur_flow_competitors_st.filter(competitor__sports_type__title="Троеборье классическое",
+                                                    first_attempt_bpress_off__isnull=True).exists() or cur_flow_competitors_st.filter(
+                        competitor__sports_type__title="Жим лёжа (экип.)",
+                        first_attempt_bpress_off_ek__isnull=True).exclude(
+                        competitor__sports_type__title__in=["Троеборье классическое", "Троеборье (экип.)",
+                                                            "Жим лёжа (без экип.)"]).exists() or cur_flow_competitors_st.filter(
+                        competitor__sports_type__title="Жим лёжа (без экип.)",
+                        first_attempt_bpress_off__isnull=True).exclude(
+                        competitor__sports_type__title__in=["Троеборье классическое", "Троеборье (экип.)",
+                                                            "Жим лёжа (экип.)"]).exists():
+                    competitors_f = cur_flow_competitors_st.filter(
+                        competitor__sports_type__title="Троеборье классическое").annotate(
+                        sorted_value=F('first_attempt_bpress_res')).values('sorted_value', 'competitor__surname_comp',
+                                                                           'competitor__name_comp', 'competitor_weight',
+                                                                           'competitor__sports_type__title',
+                                                                           'first_attempt_squat_res',
+                                                                           'first_attempt_squat_off',
+                                                                           'second_attempt_squat_res',
+                                                                           'second_attempt_squat_off',
+                                                                           'third_attempt_squat_res',
+                                                                           'third_attempt_squat_off',
+                                                                           'first_attempt_bpress_res',
+                                                                           'first_attempt_bpress_off',
+                                                                           'second_attempt_bpress_res',
+                                                                           'second_attempt_bpress_off',
+                                                                           'third_attempt_bpress_res',
+                                                                           'third_attempt_bpress_off',
+                                                                           'first_attempt_dlift_res',
+                                                                           'first_attempt_dlift_off',
+                                                                           'second_attempt_dlift_res',
+                                                                           'second_attempt_dlift_off',
+                                                                           'third_attempt_dlift_res',
+                                                                           'third_attempt_dlift_off', 'best_squat_res',
+                                                                           'best_bpress_res', 'best_dlift_res',
+                                                                           'best_sum_res', 'competitor_translation')
+                    competitors_f_s = list(competitors_f)
+                    if "Жим лёжа (без экип.)" in competitors_stypes:
+                        competitors_t = cur_flow_competitors_st.filter(
+                            competitor__sports_type__title="Жим лёжа (без экип.)").annotate(
+                            sorted_value=F('first_attempt_bpress_res')).exclude(
+                            competitor__sports_type__title__in=["Троеборье классическое", "Троеборье (экип.)",
+                                                                "Жим лёжа (экип.)"]).values('sorted_value',
+                                                                                            'competitor__surname_comp',
+                                                                                            'competitor__name_comp',
+                                                                                            'competitor__sports_type__title',
+                                                                                            'first_attempt_squat_res',
+                                                                                            'first_attempt_squat_off',
+                                                                                            'second_attempt_squat_res',
+                                                                                            'second_attempt_squat_off',
+                                                                                            'third_attempt_squat_res',
+                                                                                            'third_attempt_squat_off',
+                                                                                            'competitor_weight',
+                                                                                            'first_attempt_bpress_res',
+                                                                                            'first_attempt_bpress_off',
+                                                                                            'second_attempt_bpress_res',
+                                                                                            'second_attempt_bpress_off',
+                                                                                            'third_attempt_bpress_res',
+                                                                                            'third_attempt_bpress_off',
+                                                                                            'best_bpress_res',
+                                                                                            'best_sum_res',
+                                                                                            'competitor_translation',
+                                                                                            'best_squat_res',
+                                                                                            'best_dlift_res',
+                                                                                            'first_attempt_dlift_res',
+                                                                                            'first_attempt_dlift_off',
+                                                                                            'second_attempt_dlift_res',
+                                                                                            'second_attempt_dlift_off',
+                                                                                            'third_attempt_dlift_res',
+                                                                                            'third_attempt_dlift_off')
+                        competitors_f_s += list(competitors_t)
+                    if "Жим лёжа (экип.)" in competitors_stypes:
+                        competitors_fr = cur_flow_competitors_st.filter(
+                            competitor__sports_type__title="Жим лёжа (экип.)").annotate(
+                            sorted_value=F('first_attempt_bpress_res_ek')).exclude(
+                            competitor__sports_type__title__in=["Троеборье классическое", "Троеборье (экип.)",
+                                                                "Жим лёжа (без экип.)"]).values('sorted_value',
+                                                                                                'competitor__surname_comp',
+                                                                                                'competitor__name_comp',
+                                                                                                'competitor__sports_type__title',
+                                                                                                'competitor_weight',
+                                                                                                'first_attempt_bpress_res_ek',
+                                                                                                'first_attempt_bpress_off_ek',
+                                                                                                'second_attempt_bpress_res_ek',
+                                                                                                'second_attempt_bpress_off_ek',
+                                                                                                'third_attempt_bpress_res_ek',
+                                                                                                'third_attempt_bpress_off_ek',
+                                                                                                'best_bpress_res_ek',
+                                                                                                'best_sum_res_ek',
+                                                                                                'competitor_translation',
+                                                                                                'best_squat_res_ek',
+                                                                                                'best_dlift_res_ek',
+                                                                                                'first_attempt_squat_res_ek',
+                                                                                                'first_attempt_squat_off_ek',
+                                                                                                'second_attempt_squat_res_ek',
+                                                                                                'second_attempt_squat_off_ek',
+                                                                                                'third_attempt_squat_res_ek',
+                                                                                                'third_attempt_squat_off_ek',
+                                                                                                'first_attempt_dlift_res_ek',
+                                                                                                'first_attempt_dlift_off_ek',
+                                                                                                'second_attempt_dlift_res_ek',
+                                                                                                'second_attempt_dlift_off_ek',
+                                                                                                'third_attempt_dlift_res_ek',
+                                                                                                'third_attempt_dlift_off_ek', )
+                        competitors_f_s += list(competitors_fr)
+                    competitors = sorted(
+                        sorted(competitors_f_s, key=lambda x: (x['sorted_value'] is not None, x['sorted_value'])),
+                        key=lambda x: bool(x['sorted_value']), reverse=True)
+                elif cur_flow_competitors_st.filter(competitor__sports_type__title="Троеборье классическое",
+                                                    second_attempt_bpress_off__isnull=True).exists() or cur_flow_competitors_st.filter(
+                        competitor__sports_type__title="Жим лёжа (экип.)",
+                        second_attempt_bpress_off_ek__isnull=True).exclude(
+                        competitor__sports_type__title__in=["Троеборье классическое", "Троеборье (экип.)",
+                                                            "Жим лёжа (без экип.)"]).exists() or cur_flow_competitors_st.filter(
+                        competitor__sports_type__title="Жим лёжа (без экип.)",
+                        second_attempt_bpress_off__isnull=True).exclude(
+                        competitor__sports_type__title__in=["Троеборье классическое", "Троеборье (экип.)",
+                                                            "Жим лёжа (экип.)"]).exists():
+                    competitors_f = cur_flow_competitors_st.filter(
+                        competitor__sports_type__title="Троеборье классическое").annotate(
+                        sorted_value=F('second_attempt_bpress_res')).values('sorted_value', 'competitor__surname_comp',
+                                                                            'competitor__name_comp',
+                                                                            'competitor_weight',
+                                                                            'competitor__sports_type__title',
+                                                                            'first_attempt_squat_res',
+                                                                            'first_attempt_squat_off',
+                                                                            'second_attempt_squat_res',
+                                                                            'second_attempt_squat_off',
+                                                                            'third_attempt_squat_res',
+                                                                            'third_attempt_squat_off',
+                                                                            'first_attempt_bpress_res',
+                                                                            'first_attempt_bpress_off',
+                                                                            'second_attempt_bpress_res',
+                                                                            'second_attempt_bpress_off',
+                                                                            'third_attempt_bpress_res',
+                                                                            'third_attempt_bpress_off',
+                                                                            'first_attempt_dlift_res',
+                                                                            'first_attempt_dlift_off',
+                                                                            'second_attempt_dlift_res',
+                                                                            'second_attempt_dlift_off',
+                                                                            'third_attempt_dlift_res',
+                                                                            'third_attempt_dlift_off', 'best_squat_res',
+                                                                            'best_bpress_res', 'best_dlift_res',
+                                                                            'best_sum_res', 'competitor_translation')
+                    competitors_f_s = list(competitors_f)
+                    if "Жим лёжа (без экип.)" in competitors_stypes:
+                        competitors_t = cur_flow_competitors_st.filter(
+                            competitor__sports_type__title="Жим лёжа (без экип.)").annotate(
+                            sorted_value=F('second_attempt_bpress_res')).exclude(
+                            competitor__sports_type__title__in=["Троеборье классическое", "Троеборье (экип.)",
+                                                                "Жим лёжа (экип.)"]).values('sorted_value',
+                                                                                            'competitor__surname_comp',
+                                                                                            'competitor__name_comp',
+                                                                                            'competitor__sports_type__title',
+                                                                                            'first_attempt_squat_res',
+                                                                                            'first_attempt_squat_off',
+                                                                                            'second_attempt_squat_res',
+                                                                                            'second_attempt_squat_off',
+                                                                                            'third_attempt_squat_res',
+                                                                                            'third_attempt_squat_off',
+                                                                                            'competitor_weight',
+                                                                                            'first_attempt_bpress_res',
+                                                                                            'first_attempt_bpress_off',
+                                                                                            'second_attempt_bpress_res',
+                                                                                            'second_attempt_bpress_off',
+                                                                                            'third_attempt_bpress_res',
+                                                                                            'third_attempt_bpress_off',
+                                                                                            'best_bpress_res',
+                                                                                            'best_sum_res',
+                                                                                            'competitor_translation',
+                                                                                            'best_squat_res',
+                                                                                            'best_dlift_res',
+                                                                                            'first_attempt_dlift_res',
+                                                                                            'first_attempt_dlift_off',
+                                                                                            'second_attempt_dlift_res',
+                                                                                            'second_attempt_dlift_off',
+                                                                                            'third_attempt_dlift_res',
+                                                                                            'third_attempt_dlift_off')
+                        competitors_f_s += list(competitors_t)
+                    if "Жим лёжа (экип.)" in competitors_stypes:
+                        competitors_fr = cur_flow_competitors_st.filter(
+                            competitor__sports_type__title="Жим лёжа (экип.)").annotate(
+                            sorted_value=F('second_attempt_bpress_res_ek')).exclude(
+                            competitor__sports_type__title__in=["Троеборье классическое", "Троеборье (экип.)",
+                                                                "Жим лёжа (без экип.)"]).values('sorted_value',
+                                                                                                'competitor__surname_comp',
+                                                                                                'competitor__name_comp',
+                                                                                                'competitor__sports_type__title',
+                                                                                                'competitor_weight',
+                                                                                                'first_attempt_bpress_res_ek',
+                                                                                                'first_attempt_bpress_off_ek',
+                                                                                                'second_attempt_bpress_res_ek',
+                                                                                                'second_attempt_bpress_off_ek',
+                                                                                                'third_attempt_bpress_res_ek',
+                                                                                                'third_attempt_bpress_off_ek',
+                                                                                                'best_bpress_res_ek',
+                                                                                                'best_sum_res_ek',
+                                                                                                'competitor_translation',
+                                                                                                'best_squat_res_ek',
+                                                                                                'best_dlift_res_ek',
+                                                                                                'first_attempt_squat_res_ek',
+                                                                                                'first_attempt_squat_off_ek',
+                                                                                                'second_attempt_squat_res_ek',
+                                                                                                'second_attempt_squat_off_ek',
+                                                                                                'third_attempt_squat_res_ek',
+                                                                                                'third_attempt_squat_off_ek',
+                                                                                                'first_attempt_dlift_res_ek',
+                                                                                                'first_attempt_dlift_off_ek',
+                                                                                                'second_attempt_dlift_res_ek',
+                                                                                                'second_attempt_dlift_off_ek',
+                                                                                                'third_attempt_dlift_res_ek',
+                                                                                                'third_attempt_dlift_off_ek', )
+                        competitors_f_s += list(competitors_fr)
+                    competitors = sorted(
+                        sorted(competitors_f_s, key=lambda x: (x['sorted_value'] is not None, x['sorted_value'])),
+                        key=lambda x: bool(x['sorted_value']), reverse=True)
+                elif cur_flow_competitors_st.filter(competitor__sports_type__title="Троеборье классическое",
+                                                    third_attempt_bpress_off__isnull=True).exists() or cur_flow_competitors_st.filter(
+                        competitor__sports_type__title="Жим лёжа (экип.)",
+                        third_attempt_bpress_off_ek__isnull=True).exclude(
+                        competitor__sports_type__title__in=["Троеборье классическое", "Троеборье (экип.)",
+                                                            "Жим лёжа (без экип.)"]).exists() or cur_flow_competitors_st.filter(
+                        competitor__sports_type__title="Жим лёжа (без экип.)",
+                        third_attempt_bpress_off__isnull=True).exclude(
+                        competitor__sports_type__title__in=["Троеборье классическое", "Троеборье (экип.)",
+                                                            "Жим лёжа (экип.)"]).exists():
+                    competitors_f = cur_flow_competitors_st.filter(
+                        competitor__sports_type__title="Троеборье классическое").annotate(
+                        sorted_value=F('third_attempt_bpress_res')).values('sorted_value', 'competitor__surname_comp',
+                                                                           'competitor__name_comp', 'competitor_weight',
+                                                                           'competitor__sports_type__title',
+                                                                           'first_attempt_squat_res',
+                                                                           'first_attempt_squat_off',
+                                                                           'second_attempt_squat_res',
+                                                                           'second_attempt_squat_off',
+                                                                           'third_attempt_squat_res',
+                                                                           'third_attempt_squat_off',
+                                                                           'first_attempt_bpress_res',
+                                                                           'first_attempt_bpress_off',
+                                                                           'second_attempt_bpress_res',
+                                                                           'second_attempt_bpress_off',
+                                                                           'third_attempt_bpress_res',
+                                                                           'third_attempt_bpress_off',
+                                                                           'first_attempt_dlift_res',
+                                                                           'first_attempt_dlift_off',
+                                                                           'second_attempt_dlift_res',
+                                                                           'second_attempt_dlift_off',
+                                                                           'third_attempt_dlift_res',
+                                                                           'third_attempt_dlift_off', 'best_squat_res',
+                                                                           'best_bpress_res', 'best_dlift_res',
+                                                                           'best_sum_res', 'competitor_translation')
+                    competitors_f_s = list(competitors_f)
+                    if "Жим лёжа (без экип.)" in competitors_stypes:
+                        competitors_t = cur_flow_competitors_st.filter(
+                            competitor__sports_type__title="Жим лёжа (без экип.)").annotate(
+                            sorted_value=F('third_attempt_bpress_res')).exclude(
+                            competitor__sports_type__title__in=["Троеборье классическое", "Троеборье (экип.)",
+                                                                "Жим лёжа (экип.)"]).values('sorted_value',
+                                                                                            'competitor__surname_comp',
+                                                                                            'competitor__name_comp',
+                                                                                            'competitor__sports_type__title',
+                                                                                            'first_attempt_squat_res',
+                                                                                            'first_attempt_squat_off',
+                                                                                            'second_attempt_squat_res',
+                                                                                            'second_attempt_squat_off',
+                                                                                            'third_attempt_squat_res',
+                                                                                            'third_attempt_squat_off',
+                                                                                            'competitor_weight',
+                                                                                            'first_attempt_bpress_res',
+                                                                                            'first_attempt_bpress_off',
+                                                                                            'second_attempt_bpress_res',
+                                                                                            'second_attempt_bpress_off',
+                                                                                            'third_attempt_bpress_res',
+                                                                                            'third_attempt_bpress_off',
+                                                                                            'best_bpress_res',
+                                                                                            'best_sum_res',
+                                                                                            'competitor_translation',
+                                                                                            'best_squat_res',
+                                                                                            'best_dlift_res',
+                                                                                            'first_attempt_dlift_res',
+                                                                                            'first_attempt_dlift_off',
+                                                                                            'second_attempt_dlift_res',
+                                                                                            'second_attempt_dlift_off',
+                                                                                            'third_attempt_dlift_res',
+                                                                                            'third_attempt_dlift_off')
+                        competitors_f_s += list(competitors_t)
+                    if "Жим лёжа (экип.)" in competitors_stypes:
+                        competitors_fr = cur_flow_competitors_st.filter(
+                            competitor__sports_type__title="Жим лёжа (экип.)").annotate(
+                            sorted_value=F('third_attempt_bpress_res_ek')).exclude(
+                            competitor__sports_type__title__in=["Троеборье классическое", "Троеборье (экип.)",
+                                                                "Жим лёжа (без экип.)"]).values('sorted_value',
+                                                                                                'competitor__surname_comp',
+                                                                                                'competitor__name_comp',
+                                                                                                'competitor__sports_type__title',
+                                                                                                'competitor_weight',
+                                                                                                'first_attempt_bpress_res_ek',
+                                                                                                'first_attempt_bpress_off_ek',
+                                                                                                'second_attempt_bpress_res_ek',
+                                                                                                'second_attempt_bpress_off_ek',
+                                                                                                'third_attempt_bpress_res_ek',
+                                                                                                'third_attempt_bpress_off_ek',
+                                                                                                'best_bpress_res_ek',
+                                                                                                'best_sum_res_ek',
+                                                                                                'competitor_translation',
+                                                                                                'best_squat_res_ek',
+                                                                                                'best_dlift_res_ek',
+                                                                                                'first_attempt_squat_res_ek',
+                                                                                                'first_attempt_squat_off_ek',
+                                                                                                'second_attempt_squat_res_ek',
+                                                                                                'second_attempt_squat_off_ek',
+                                                                                                'third_attempt_squat_res_ek',
+                                                                                                'third_attempt_squat_off_ek',
+                                                                                                'first_attempt_dlift_res_ek',
+                                                                                                'first_attempt_dlift_off_ek',
+                                                                                                'second_attempt_dlift_res_ek',
+                                                                                                'second_attempt_dlift_off_ek',
+                                                                                                'third_attempt_dlift_res_ek',
+                                                                                                'third_attempt_dlift_off_ek', )
+                        competitors_f_s += list(competitors_fr)
+                    competitors = sorted(
+                        sorted(competitors_f_s, key=lambda x: (x['sorted_value'] is not None, x['sorted_value'])),
+                        key=lambda x: bool(x['sorted_value']), reverse=True)
+                elif cur_flow_competitors_st.filter(competitor__sports_type__title="Троеборье классическое",
+                                                    first_attempt_dlift_off__isnull=True).exists():
+                    competitors_f = cur_flow_competitors_st.filter(
+                        competitor__sports_type__title="Троеборье классическое").annotate(
+                        sorted_value=F('first_attempt_dlift_res')).values('sorted_value', 'competitor__surname_comp',
+                                                                          'competitor__name_comp', 'competitor_weight',
+                                                                          'competitor__sports_type__title',
+                                                                          'first_attempt_squat_res',
+                                                                          'first_attempt_squat_off',
+                                                                          'second_attempt_squat_res',
+                                                                          'second_attempt_squat_off',
+                                                                          'third_attempt_squat_res',
+                                                                          'third_attempt_squat_off',
+                                                                          'first_attempt_bpress_res',
+                                                                          'first_attempt_bpress_off',
+                                                                          'second_attempt_bpress_res',
+                                                                          'second_attempt_bpress_off',
+                                                                          'third_attempt_bpress_res',
+                                                                          'third_attempt_bpress_off',
+                                                                          'first_attempt_dlift_res',
+                                                                          'first_attempt_dlift_off',
+                                                                          'second_attempt_dlift_res',
+                                                                          'second_attempt_dlift_off',
+                                                                          'third_attempt_dlift_res',
+                                                                          'third_attempt_dlift_off', 'best_squat_res',
+                                                                          'best_bpress_res', 'best_dlift_res',
+                                                                          'best_sum_res', 'competitor_translation')
+                    competitors_f_s = list(competitors_f)
+                    if "Жим лёжа (без экип.)" in competitors_stypes:
+                        competitors_t = cur_flow_competitors_st.filter(
+                            competitor__sports_type__title="Жим лёжа (без экип.)").annotate(
+                            sorted_value=F('first_attempt_dlift_res')).exclude(
+                            competitor__sports_type__title__in=["Троеборье классическое", "Троеборье (экип.)",
+                                                                "Жим лёжа (экип.)"]).values('sorted_value',
+                                                                                            'competitor__surname_comp',
+                                                                                            'competitor__name_comp',
+                                                                                            'competitor__sports_type__title',
+                                                                                            'first_attempt_squat_res',
+                                                                                            'first_attempt_squat_off',
+                                                                                            'second_attempt_squat_res',
+                                                                                            'second_attempt_squat_off',
+                                                                                            'third_attempt_squat_res',
+                                                                                            'third_attempt_squat_off',
+                                                                                            'competitor_weight',
+                                                                                            'first_attempt_bpress_res',
+                                                                                            'first_attempt_bpress_off',
+                                                                                            'second_attempt_bpress_res',
+                                                                                            'second_attempt_bpress_off',
+                                                                                            'third_attempt_bpress_res',
+                                                                                            'third_attempt_bpress_off',
+                                                                                            'best_bpress_res',
+                                                                                            'best_sum_res',
+                                                                                            'competitor_translation',
+                                                                                            'best_squat_res',
+                                                                                            'best_dlift_res',
+                                                                                            'first_attempt_dlift_res',
+                                                                                            'first_attempt_dlift_off',
+                                                                                            'second_attempt_dlift_res',
+                                                                                            'second_attempt_dlift_off',
+                                                                                            'third_attempt_dlift_res',
+                                                                                            'third_attempt_dlift_off')
+                        competitors_f_s += list(competitors_t)
+                    if "Жим лёжа (экип.)" in competitors_stypes:
+                        competitors_fr = cur_flow_competitors_st.filter(
+                            competitor__sports_type__title="Жим лёжа (экип.)").annotate(
+                            sorted_value=F('first_attempt_dlift_res_ek')).exclude(
+                            competitor__sports_type__title__in=["Троеборье классическое", "Троеборье (экип.)",
+                                                                "Жим лёжа (без экип.)"]).values('sorted_value',
+                                                                                                'competitor__surname_comp',
+                                                                                                'competitor__name_comp',
+                                                                                                'competitor__sports_type__title',
+                                                                                                'competitor_weight',
+                                                                                                'first_attempt_bpress_res_ek',
+                                                                                                'first_attempt_bpress_off_ek',
+                                                                                                'second_attempt_bpress_res_ek',
+                                                                                                'second_attempt_bpress_off_ek',
+                                                                                                'third_attempt_bpress_res_ek',
+                                                                                                'third_attempt_bpress_off_ek',
+                                                                                                'best_bpress_res_ek',
+                                                                                                'best_sum_res_ek',
+                                                                                                'competitor_translation',
+                                                                                                'best_squat_res_ek',
+                                                                                                'best_dlift_res_ek',
+                                                                                                'first_attempt_squat_res_ek',
+                                                                                                'first_attempt_squat_off_ek',
+                                                                                                'second_attempt_squat_res_ek',
+                                                                                                'second_attempt_squat_off_ek',
+                                                                                                'third_attempt_squat_res_ek',
+                                                                                                'third_attempt_squat_off_ek',
+                                                                                                'first_attempt_dlift_res_ek',
+                                                                                                'first_attempt_dlift_off_ek',
+                                                                                                'second_attempt_dlift_res_ek',
+                                                                                                'second_attempt_dlift_off_ek',
+                                                                                                'third_attempt_dlift_res_ek',
+                                                                                                'third_attempt_dlift_off_ek', )
+                        competitors_f_s += list(competitors_fr)
+                    competitors = sorted(
+                        sorted(competitors_f_s, key=lambda x: (x['sorted_value'] is not None, x['sorted_value'])),
+                        key=lambda x: bool(x['sorted_value']), reverse=True)
+                elif cur_flow_competitors_st.filter(competitor__sports_type__title="Троеборье классическое",
+                                                    second_attempt_dlift_off__isnull=True).exists():
+                    competitors_f = cur_flow_competitors_st.filter(
+                        competitor__sports_type__title="Троеборье классическое").annotate(
+                        sorted_value=F('second_attempt_dlift_res')).values('sorted_value', 'competitor__surname_comp',
+                                                                           'competitor__name_comp', 'competitor_weight',
+                                                                           'competitor__sports_type__title',
+                                                                           'first_attempt_squat_res',
+                                                                           'first_attempt_squat_off',
+                                                                           'second_attempt_squat_res',
+                                                                           'second_attempt_squat_off',
+                                                                           'third_attempt_squat_res',
+                                                                           'third_attempt_squat_off',
+                                                                           'first_attempt_bpress_res',
+                                                                           'first_attempt_bpress_off',
+                                                                           'second_attempt_bpress_res',
+                                                                           'second_attempt_bpress_off',
+                                                                           'third_attempt_bpress_res',
+                                                                           'third_attempt_bpress_off',
+                                                                           'first_attempt_dlift_res',
+                                                                           'first_attempt_dlift_off',
+                                                                           'second_attempt_dlift_res',
+                                                                           'second_attempt_dlift_off',
+                                                                           'third_attempt_dlift_res',
+                                                                           'third_attempt_dlift_off', 'best_squat_res',
+                                                                           'best_bpress_res', 'best_dlift_res',
+                                                                           'best_sum_res', 'competitor_translation')
+                    competitors_f_s = list(competitors_f)
+                    if "Жим лёжа (без экип.)" in competitors_stypes:
+                        competitors_t = cur_flow_competitors_st.filter(
+                            competitor__sports_type__title="Жим лёжа (без экип.)").annotate(
+                            sorted_value=F('second_attempt_dlift_res')).exclude(
+                            competitor__sports_type__title__in=["Троеборье классическое", "Троеборье (экип.)",
+                                                                "Жим лёжа (экип.)"]).values('sorted_value',
+                                                                                            'competitor__surname_comp',
+                                                                                            'competitor__name_comp',
+                                                                                            'competitor__sports_type__title',
+                                                                                            'first_attempt_squat_res',
+                                                                                            'first_attempt_squat_off',
+                                                                                            'second_attempt_squat_res',
+                                                                                            'second_attempt_squat_off',
+                                                                                            'third_attempt_squat_res',
+                                                                                            'third_attempt_squat_off',
+                                                                                            'competitor_weight',
+                                                                                            'first_attempt_bpress_res',
+                                                                                            'first_attempt_bpress_off',
+                                                                                            'second_attempt_bpress_res',
+                                                                                            'second_attempt_bpress_off',
+                                                                                            'third_attempt_bpress_res',
+                                                                                            'third_attempt_bpress_off',
+                                                                                            'best_bpress_res',
+                                                                                            'best_sum_res',
+                                                                                            'competitor_translation',
+                                                                                            'best_squat_res',
+                                                                                            'best_dlift_res',
+                                                                                            'first_attempt_dlift_res',
+                                                                                            'first_attempt_dlift_off',
+                                                                                            'second_attempt_dlift_res',
+                                                                                            'second_attempt_dlift_off',
+                                                                                            'third_attempt_dlift_res',
+                                                                                            'third_attempt_dlift_off')
+                        competitors_f_s += list(competitors_t)
+                    if "Жим лёжа (экип.)" in competitors_stypes:
+                        competitors_fr = cur_flow_competitors_st.filter(
+                            competitor__sports_type__title="Жим лёжа (экип.)").annotate(
+                            sorted_value=F('second_attempt_dlift_res_ek')).exclude(
+                            competitor__sports_type__title__in=["Троеборье классическое", "Троеборье (экип.)",
+                                                                "Жим лёжа (без экип.)"]).values('sorted_value',
+                                                                                                'competitor__surname_comp',
+                                                                                                'competitor__name_comp',
+                                                                                                'competitor__sports_type__title',
+                                                                                                'competitor_weight',
+                                                                                                'first_attempt_bpress_res_ek',
+                                                                                                'first_attempt_bpress_off_ek',
+                                                                                                'second_attempt_bpress_res_ek',
+                                                                                                'second_attempt_bpress_off_ek',
+                                                                                                'third_attempt_bpress_res_ek',
+                                                                                                'third_attempt_bpress_off_ek',
+                                                                                                'best_bpress_res_ek',
+                                                                                                'best_sum_res_ek',
+                                                                                                'competitor_translation',
+                                                                                                'best_squat_res_ek',
+                                                                                                'best_dlift_res_ek',
+                                                                                                'first_attempt_squat_res_ek',
+                                                                                                'first_attempt_squat_off_ek',
+                                                                                                'second_attempt_squat_res_ek',
+                                                                                                'second_attempt_squat_off_ek',
+                                                                                                'third_attempt_squat_res_ek',
+                                                                                                'third_attempt_squat_off_ek',
+                                                                                                'first_attempt_dlift_res_ek',
+                                                                                                'first_attempt_dlift_off_ek',
+                                                                                                'second_attempt_dlift_res_ek',
+                                                                                                'second_attempt_dlift_off_ek',
+                                                                                                'third_attempt_dlift_res_ek',
+                                                                                                'third_attempt_dlift_off_ek', )
+                        competitors_f_s += list(competitors_fr)
+                    competitors = sorted(
+                        sorted(competitors_f_s, key=lambda x: (x['sorted_value'] is not None, x['sorted_value'])),
+                        key=lambda x: bool(x['sorted_value']), reverse=True)
+                elif cur_flow_competitors_st.filter(competitor__sports_type__title="Троеборье классическое",
+                                                    third_attempt_dlift_off__isnull=True).exists():
+                    competitors_f = cur_flow_competitors_st.filter(
+                        competitor__sports_type__title="Троеборье классическое").annotate(
+                        sorted_value=F('third_attempt_dlift_res')).values('sorted_value', 'competitor__surname_comp',
+                                                                          'competitor__name_comp', 'competitor_weight',
+                                                                          'competitor__sports_type__title',
+                                                                          'first_attempt_squat_res',
+                                                                          'first_attempt_squat_off',
+                                                                          'second_attempt_squat_res',
+                                                                          'second_attempt_squat_off',
+                                                                          'third_attempt_squat_res',
+                                                                          'third_attempt_squat_off',
+                                                                          'first_attempt_bpress_res',
+                                                                          'first_attempt_bpress_off',
+                                                                          'second_attempt_bpress_res',
+                                                                          'second_attempt_bpress_off',
+                                                                          'third_attempt_bpress_res',
+                                                                          'third_attempt_bpress_off',
+                                                                          'first_attempt_dlift_res',
+                                                                          'first_attempt_dlift_off',
+                                                                          'second_attempt_dlift_res',
+                                                                          'second_attempt_dlift_off',
+                                                                          'third_attempt_dlift_res',
+                                                                          'third_attempt_dlift_off', 'best_squat_res',
+                                                                          'best_bpress_res', 'best_dlift_res',
+                                                                          'best_sum_res', 'competitor_translation')
+                    competitors_f_s = list(competitors_f)
+                    if "Жим лёжа (без экип.)" in competitors_stypes:
+                        competitors_t = cur_flow_competitors_st.filter(
+                            competitor__sports_type__title="Жим лёжа (без экип.)").annotate(
+                            sorted_value=F('third_attempt_dlift_res')).exclude(
+                            competitor__sports_type__title__in=["Троеборье классическое", "Троеборье (экип.)",
+                                                                "Жим лёжа (экип.)"]).values('sorted_value',
+                                                                                            'competitor__surname_comp',
+                                                                                            'competitor__name_comp',
+                                                                                            'competitor__sports_type__title',
+                                                                                            'first_attempt_squat_res',
+                                                                                            'first_attempt_squat_off',
+                                                                                            'second_attempt_squat_res',
+                                                                                            'second_attempt_squat_off',
+                                                                                            'third_attempt_squat_res',
+                                                                                            'third_attempt_squat_off',
+                                                                                            'competitor_weight',
+                                                                                            'first_attempt_bpress_res',
+                                                                                            'first_attempt_bpress_off',
+                                                                                            'second_attempt_bpress_res',
+                                                                                            'second_attempt_bpress_off',
+                                                                                            'third_attempt_bpress_res',
+                                                                                            'third_attempt_bpress_off',
+                                                                                            'best_bpress_res',
+                                                                                            'best_sum_res',
+                                                                                            'competitor_translation',
+                                                                                            'best_squat_res',
+                                                                                            'best_dlift_res',
+                                                                                            'first_attempt_dlift_res',
+                                                                                            'first_attempt_dlift_off',
+                                                                                            'second_attempt_dlift_res',
+                                                                                            'second_attempt_dlift_off',
+                                                                                            'third_attempt_dlift_res',
+                                                                                            'third_attempt_dlift_off')
+                        competitors_f_s += list(competitors_t)
+                    if "Жим лёжа (экип.)" in competitors_stypes:
+                        competitors_fr = cur_flow_competitors_st.filter(
+                            competitor__sports_type__title="Жим лёжа (экип.)").annotate(
+                            sorted_value=F('third_attempt_dlift_res_ek')).exclude(
+                            competitor__sports_type__title__in=["Троеборье классическое", "Троеборье (экип.)",
+                                                                "Жим лёжа (без экип.)"]).values('sorted_value',
+                                                                                                'competitor__surname_comp',
+                                                                                                'competitor__name_comp',
+                                                                                                'competitor__sports_type__title',
+                                                                                                'competitor_weight',
+                                                                                                'first_attempt_bpress_res_ek',
+                                                                                                'first_attempt_bpress_off_ek',
+                                                                                                'second_attempt_bpress_res_ek',
+                                                                                                'second_attempt_bpress_off_ek',
+                                                                                                'third_attempt_bpress_res_ek',
+                                                                                                'third_attempt_bpress_off_ek',
+                                                                                                'best_bpress_res_ek',
+                                                                                                'best_sum_res_ek',
+                                                                                                'competitor_translation',
+                                                                                                'best_squat_res_ek',
+                                                                                                'best_dlift_res_ek',
+                                                                                                'first_attempt_squat_res_ek',
+                                                                                                'first_attempt_squat_off_ek',
+                                                                                                'second_attempt_squat_res_ek',
+                                                                                                'second_attempt_squat_off_ek',
+                                                                                                'third_attempt_squat_res_ek',
+                                                                                                'third_attempt_squat_off_ek',
+                                                                                                'first_attempt_dlift_res_ek',
+                                                                                                'first_attempt_dlift_off_ek',
+                                                                                                'second_attempt_dlift_res_ek',
+                                                                                                'second_attempt_dlift_off_ek',
+                                                                                                'third_attempt_dlift_res_ek',
+                                                                                                'third_attempt_dlift_off_ek', )
+                        competitors_f_s += list(competitors_fr)
+                    competitors = sorted(
+                        sorted(competitors_f_s, key=lambda x: (x['sorted_value'] is not None, x['sorted_value'])),
+                        key=lambda x: bool(x['sorted_value']), reverse=True)
+                else:
+                    competitors_f = cur_flow_competitors_st.filter(
+                        competitor__sports_type__title="Троеборье классическое").annotate(
+                        sorted_value=F('best_sum_res')).values('sorted_value', 'competitor__surname_comp',
+                                                               'competitor__name_comp', 'competitor_weight',
+                                                               'competitor__sports_type__title',
+                                                               'first_attempt_squat_res',
+                                                               'first_attempt_squat_off', 'second_attempt_squat_res',
+                                                               'second_attempt_squat_off', 'third_attempt_squat_res',
+                                                               'third_attempt_squat_off',
+                                                               'first_attempt_bpress_res', 'first_attempt_bpress_off',
+                                                               'second_attempt_bpress_res', 'second_attempt_bpress_off',
+                                                               'third_attempt_bpress_res',
+                                                               'third_attempt_bpress_off', 'first_attempt_dlift_res',
+                                                               'first_attempt_dlift_off', 'second_attempt_dlift_res',
+                                                               'second_attempt_dlift_off',
+                                                               'third_attempt_dlift_res', 'third_attempt_dlift_off',
+                                                               'best_squat_res', 'best_bpress_res', 'best_dlift_res',
+                                                               'best_sum_res', 'competitor_translation')
+                    competitors_f_s = list(competitors_f)
+                    if "Жим лёжа (без экип.)" in competitors_stypes:
+                        competitors_t = cur_flow_competitors_st.filter(
+                            competitor__sports_type__title="Жим лёжа (без экип.)").annotate(
+                            sorted_value=F('best_sum_res')).exclude(
+                            competitor__sports_type__title__in=["Троеборье классическое", "Троеборье (экип.)",
+                                                                "Жим лёжа (экип.)"]).values('sorted_value',
+                                                                                            'competitor__surname_comp',
+                                                                                            'competitor__name_comp',
+                                                                                            'competitor__sports_type__title',
+                                                                                            'first_attempt_squat_res',
+                                                                                            'first_attempt_squat_off',
+                                                                                            'second_attempt_squat_res',
+                                                                                            'second_attempt_squat_off',
+                                                                                            'third_attempt_squat_res',
+                                                                                            'third_attempt_squat_off',
+                                                                                            'competitor_weight',
+                                                                                            'first_attempt_bpress_res',
+                                                                                            'first_attempt_bpress_off',
+                                                                                            'second_attempt_bpress_res',
+                                                                                            'second_attempt_bpress_off',
+                                                                                            'third_attempt_bpress_res',
+                                                                                            'third_attempt_bpress_off',
+                                                                                            'best_bpress_res',
+                                                                                            'best_sum_res',
+                                                                                            'competitor_translation',
+                                                                                            'best_squat_res',
+                                                                                            'best_dlift_res',
+                                                                                            'first_attempt_dlift_res',
+                                                                                            'first_attempt_dlift_off',
+                                                                                            'second_attempt_dlift_res',
+                                                                                            'second_attempt_dlift_off',
+                                                                                            'third_attempt_dlift_res',
+                                                                                            'third_attempt_dlift_off')
+                        competitors_f_s += list(competitors_t)
+                    if "Жим лёжа (экип.)" in competitors_stypes:
+                        competitors_fr = cur_flow_competitors_st.filter(
+                            competitor__sports_type__title="Жим лёжа (экип.)").annotate(
+                            sorted_value=F('best_sum_res_ek')).exclude(
+                            competitor__sports_type__title__in=["Троеборье классическое", "Троеборье (экип.)",
+                                                                "Жим лёжа (без экип.)"]).values('sorted_value',
+                                                                                                'competitor__surname_comp',
+                                                                                                'competitor__name_comp',
+                                                                                                'competitor__sports_type__title',
+                                                                                                'competitor_weight',
+                                                                                                'first_attempt_bpress_res_ek',
+                                                                                                'first_attempt_bpress_off_ek',
+                                                                                                'second_attempt_bpress_res_ek',
+                                                                                                'second_attempt_bpress_off_ek',
+                                                                                                'third_attempt_bpress_res_ek',
+                                                                                                'third_attempt_bpress_off_ek',
+                                                                                                'best_bpress_res_ek',
+                                                                                                'best_sum_res_ek',
+                                                                                                'competitor_translation',
+                                                                                                'best_squat_res_ek',
+                                                                                                'best_dlift_res_ek',
+                                                                                                'first_attempt_squat_res_ek',
+                                                                                                'first_attempt_squat_off_ek',
+                                                                                                'second_attempt_squat_res_ek',
+                                                                                                'second_attempt_squat_off_ek',
+                                                                                                'third_attempt_squat_res_ek',
+                                                                                                'third_attempt_squat_off_ek',
+                                                                                                'first_attempt_dlift_res_ek',
+                                                                                                'first_attempt_dlift_off_ek',
+                                                                                                'second_attempt_dlift_res_ek',
+                                                                                                'second_attempt_dlift_off_ek',
+                                                                                                'third_attempt_dlift_res_ek',
+                                                                                                'third_attempt_dlift_off_ek', )
+                        competitors_f_s += list(competitors_fr)
+                    competitors = sorted(
+                        sorted(competitors_f_s, key=lambda x: (x['sorted_value'] is not None, x['sorted_value']),
+                               reverse=True), key=lambda x: bool(x['sorted_value']), reverse=True)
             elif "Троеборье (экип.)" in competitors_stypes:
-                cur_flow_competitors = cur_flow_competitors_st.order_by(F("first_attempt_squat_res_ek").asc(nulls_last=True))
-                if None not in cur_flow_competitors.filter(competitor__sports_type__title="Троеборье (экип.)").values_list('third_attempt_squat_off_ek', flat=True):
-                    cur_flow_competitors = cur_flow_competitors_st.order_by(F("first_attempt_bpress_res_ek").asc(nulls_last=True))
-                    if None not in cur_flow_competitors.filter(competitor__sports_type__title="Троеборье (экип.)").values_list('third_attempt_bpress_off_ek', flat=True):
-                        cur_flow_competitors = cur_flow_competitors_st.order_by(F("first_attempt_dlift_res_ek").asc(nulls_last=True))
+                if cur_flow_competitors_st.filter(competitor__sports_type__title="Троеборье (экип.)",
+                                                  first_attempt_squat_off_ek__isnull=True).exists():
+                    competitors_s = cur_flow_competitors_st.filter(
+                        competitor__sports_type__title="Троеборье (экип.)").annotate(
+                        sorted_value=F('first_attempt_squat_res_ek')).values('sorted_value', 'competitor__surname_comp',
+                                                                             'competitor__sports_type__title',
+                                                                             'competitor__name_comp',
+                                                                             'competitor_weight',
+                                                                             'first_attempt_squat_res_ek',
+                                                                             'first_attempt_squat_off_ek',
+                                                                             'second_attempt_squat_res_ek',
+                                                                             'second_attempt_squat_off_ek',
+                                                                             'third_attempt_squat_res_ek',
+                                                                             'third_attempt_squat_off_ek',
+                                                                             'first_attempt_bpress_res_ek',
+                                                                             'first_attempt_bpress_off_ek',
+                                                                             'second_attempt_bpress_res_ek',
+                                                                             'second_attempt_bpress_off_ek',
+                                                                             'third_attempt_bpress_res_ek',
+                                                                             'third_attempt_bpress_off_ek',
+                                                                             'first_attempt_dlift_res_ek',
+                                                                             'first_attempt_dlift_off_ek',
+                                                                             'second_attempt_dlift_res_ek',
+                                                                             'second_attempt_dlift_off_ek',
+                                                                             'third_attempt_dlift_res_ek',
+                                                                             'third_attempt_dlift_off_ek',
+                                                                             'best_squat_res_ek', 'best_bpress_res_ek',
+                                                                             'best_dlift_res_ek', 'best_sum_res_ek',
+                                                                             'competitor_translation')
+                    competitors_f_s = list(competitors_s)
+                    if "Жим лёжа (без экип.)" in competitors_stypes:
+                        competitors_t = cur_flow_competitors_st.filter(
+                            competitor__sports_type__title="Жим лёжа (без экип.)").annotate(
+                            sorted_value=F('first_attempt_squat_res')).exclude(
+                            competitor__sports_type__title__in=["Троеборье классическое", "Троеборье (экип.)",
+                                                                "Жим лёжа (экип.)"]).values('sorted_value',
+                                                                                            'competitor__surname_comp',
+                                                                                            'competitor__name_comp',
+                                                                                            'competitor__sports_type__title',
+                                                                                            'first_attempt_squat_res',
+                                                                                            'first_attempt_squat_off',
+                                                                                            'second_attempt_squat_res',
+                                                                                            'second_attempt_squat_off',
+                                                                                            'third_attempt_squat_res',
+                                                                                            'third_attempt_squat_off',
+                                                                                            'competitor_weight',
+                                                                                            'first_attempt_bpress_res',
+                                                                                            'first_attempt_bpress_off',
+                                                                                            'second_attempt_bpress_res',
+                                                                                            'second_attempt_bpress_off',
+                                                                                            'third_attempt_bpress_res',
+                                                                                            'third_attempt_bpress_off',
+                                                                                            'best_bpress_res',
+                                                                                            'best_sum_res',
+                                                                                            'competitor_translation',
+                                                                                            'best_squat_res',
+                                                                                            'best_dlift_res',
+                                                                                            'first_attempt_dlift_res',
+                                                                                            'first_attempt_dlift_off',
+                                                                                            'second_attempt_dlift_res',
+                                                                                            'second_attempt_dlift_off',
+                                                                                            'third_attempt_dlift_res',
+                                                                                            'third_attempt_dlift_off')
+                        competitors_f_s += list(competitors_t)
+                    if "Жим лёжа (экип.)" in competitors_stypes:
+                        competitors_fr = cur_flow_competitors_st.filter(
+                            competitor__sports_type__title="Жим лёжа (экип.)").annotate(
+                            sorted_value=F('first_attempt_squat_res_ek')).exclude(
+                            competitor__sports_type__title__in=["Троеборье классическое", "Троеборье (экип.)",
+                                                                "Жим лёжа (без экип.)"]).values('sorted_value',
+                                                                                                'competitor__surname_comp',
+                                                                                                'competitor__name_comp',
+                                                                                                'competitor__sports_type__title',
+                                                                                                'competitor_weight',
+                                                                                                'first_attempt_bpress_res_ek',
+                                                                                                'first_attempt_bpress_off_ek',
+                                                                                                'second_attempt_bpress_res_ek',
+                                                                                                'second_attempt_bpress_off_ek',
+                                                                                                'third_attempt_bpress_res_ek',
+                                                                                                'third_attempt_bpress_off_ek',
+                                                                                                'best_bpress_res_ek',
+                                                                                                'best_sum_res_ek',
+                                                                                                'competitor_translation',
+                                                                                                'best_squat_res_ek',
+                                                                                                'best_dlift_res_ek',
+                                                                                                'first_attempt_squat_res_ek',
+                                                                                                'first_attempt_squat_off_ek',
+                                                                                                'second_attempt_squat_res_ek',
+                                                                                                'second_attempt_squat_off_ek',
+                                                                                                'third_attempt_squat_res_ek',
+                                                                                                'third_attempt_squat_off_ek',
+                                                                                                'first_attempt_dlift_res_ek',
+                                                                                                'first_attempt_dlift_off_ek',
+                                                                                                'second_attempt_dlift_res_ek',
+                                                                                                'second_attempt_dlift_off_ek',
+                                                                                                'third_attempt_dlift_res_ek',
+                                                                                                'third_attempt_dlift_off_ek', )
+                        competitors_f_s += list(competitors_fr)
+                    competitors = sorted(
+                        sorted(competitors_f_s, key=lambda x: (x['sorted_value'] is not None, x['sorted_value'])),
+                        key=lambda x: bool(x['sorted_value']), reverse=True)
+                elif cur_flow_competitors_st.filter(competitor__sports_type__title="Троеборье (экип.)",
+                                                    second_attempt_squat_off_ek__isnull=True).exists():
+                    competitors_s = cur_flow_competitors_st.filter(
+                        competitor__sports_type__title="Троеборье (экип.)").annotate(
+                        sorted_value=F('second_attempt_squat_res_ek')).values('sorted_value',
+                                                                              'competitor__surname_comp',
+                                                                              'competitor__sports_type__title',
+                                                                              'competitor__name_comp',
+                                                                              'competitor_weight',
+                                                                              'first_attempt_squat_res_ek',
+                                                                              'first_attempt_squat_off_ek',
+                                                                              'second_attempt_squat_res_ek',
+                                                                              'second_attempt_squat_off_ek',
+                                                                              'third_attempt_squat_res_ek',
+                                                                              'third_attempt_squat_off_ek',
+                                                                              'first_attempt_bpress_res_ek',
+                                                                              'first_attempt_bpress_off_ek',
+                                                                              'second_attempt_bpress_res_ek',
+                                                                              'second_attempt_bpress_off_ek',
+                                                                              'third_attempt_bpress_res_ek',
+                                                                              'third_attempt_bpress_off_ek',
+                                                                              'first_attempt_dlift_res_ek',
+                                                                              'first_attempt_dlift_off_ek',
+                                                                              'second_attempt_dlift_res_ek',
+                                                                              'second_attempt_dlift_off_ek',
+                                                                              'third_attempt_dlift_res_ek',
+                                                                              'third_attempt_dlift_off_ek',
+                                                                              'best_squat_res_ek', 'best_bpress_res_ek',
+                                                                              'best_dlift_res_ek', 'best_sum_res_ek',
+                                                                              'competitor_translation')
+                    competitors_f_s = list(competitors_s)
+                    if "Жим лёжа (без экип.)" in competitors_stypes:
+                        competitors_t = cur_flow_competitors_st.filter(
+                            competitor__sports_type__title="Жим лёжа (без экип.)").annotate(
+                            sorted_value=F('second_attempt_squat_res')).exclude(
+                            competitor__sports_type__title__in=["Троеборье классическое", "Троеборье (экип.)",
+                                                                "Жим лёжа (экип.)"]).values('sorted_value',
+                                                                                            'competitor__surname_comp',
+                                                                                            'competitor__name_comp',
+                                                                                            'competitor__sports_type__title',
+                                                                                            'first_attempt_squat_res',
+                                                                                            'first_attempt_squat_off',
+                                                                                            'second_attempt_squat_res',
+                                                                                            'second_attempt_squat_off',
+                                                                                            'third_attempt_squat_res',
+                                                                                            'third_attempt_squat_off',
+                                                                                            'competitor_weight',
+                                                                                            'first_attempt_bpress_res',
+                                                                                            'first_attempt_bpress_off',
+                                                                                            'second_attempt_bpress_res',
+                                                                                            'second_attempt_bpress_off',
+                                                                                            'third_attempt_bpress_res',
+                                                                                            'third_attempt_bpress_off',
+                                                                                            'best_bpress_res',
+                                                                                            'best_sum_res',
+                                                                                            'competitor_translation',
+                                                                                            'best_squat_res',
+                                                                                            'best_dlift_res',
+                                                                                            'first_attempt_dlift_res',
+                                                                                            'first_attempt_dlift_off',
+                                                                                            'second_attempt_dlift_res',
+                                                                                            'second_attempt_dlift_off',
+                                                                                            'third_attempt_dlift_res',
+                                                                                            'third_attempt_dlift_off')
+                        competitors_f_s += list(competitors_t)
+                    if "Жим лёжа (экип.)" in competitors_stypes:
+                        competitors_fr = cur_flow_competitors_st.filter(
+                            competitor__sports_type__title="Жим лёжа (экип.)").annotate(
+                            sorted_value=F('second_attempt_squat_res_ek')).exclude(
+                            competitor__sports_type__title__in=["Троеборье классическое", "Троеборье (экип.)",
+                                                                "Жим лёжа (без экип.)"]).values('sorted_value',
+                                                                                                'competitor__surname_comp',
+                                                                                                'competitor__name_comp',
+                                                                                                'competitor__sports_type__title',
+                                                                                                'competitor_weight',
+                                                                                                'first_attempt_bpress_res_ek',
+                                                                                                'first_attempt_bpress_off_ek',
+                                                                                                'second_attempt_bpress_res_ek',
+                                                                                                'second_attempt_bpress_off_ek',
+                                                                                                'third_attempt_bpress_res_ek',
+                                                                                                'third_attempt_bpress_off_ek',
+                                                                                                'best_bpress_res_ek',
+                                                                                                'best_sum_res_ek',
+                                                                                                'competitor_translation',
+                                                                                                'best_squat_res_ek',
+                                                                                                'best_dlift_res_ek',
+                                                                                                'first_attempt_squat_res_ek',
+                                                                                                'first_attempt_squat_off_ek',
+                                                                                                'second_attempt_squat_res_ek',
+                                                                                                'second_attempt_squat_off_ek',
+                                                                                                'third_attempt_squat_res_ek',
+                                                                                                'third_attempt_squat_off_ek',
+                                                                                                'first_attempt_dlift_res_ek',
+                                                                                                'first_attempt_dlift_off_ek',
+                                                                                                'second_attempt_dlift_res_ek',
+                                                                                                'second_attempt_dlift_off_ek',
+                                                                                                'third_attempt_dlift_res_ek',
+                                                                                                'third_attempt_dlift_off_ek', )
+                        competitors_f_s += list(competitors_fr)
+                    competitors = sorted(
+                        sorted(competitors_f_s, key=lambda x: (x['sorted_value'] is not None, x['sorted_value'])),
+                        key=lambda x: bool(x['sorted_value']), reverse=True)
+                elif cur_flow_competitors_st.filter(competitor__sports_type__title="Троеборье (экип.)",
+                                                    third_attempt_squat_off_ek__isnull=True).exists():
+                    competitors_s = cur_flow_competitors_st.filter(
+                        competitor__sports_type__title="Троеборье (экип.)").annotate(
+                        sorted_value=F('third_attempt_squat_res_ek')).values('sorted_value', 'competitor__surname_comp',
+                                                                             'competitor__sports_type__title',
+                                                                             'competitor__name_comp',
+                                                                             'competitor_weight',
+                                                                             'first_attempt_squat_res_ek',
+                                                                             'first_attempt_squat_off_ek',
+                                                                             'second_attempt_squat_res_ek',
+                                                                             'second_attempt_squat_off_ek',
+                                                                             'third_attempt_squat_res_ek',
+                                                                             'third_attempt_squat_off_ek',
+                                                                             'first_attempt_bpress_res_ek',
+                                                                             'first_attempt_bpress_off_ek',
+                                                                             'second_attempt_bpress_res_ek',
+                                                                             'second_attempt_bpress_off_ek',
+                                                                             'third_attempt_bpress_res_ek',
+                                                                             'third_attempt_bpress_off_ek',
+                                                                             'first_attempt_dlift_res_ek',
+                                                                             'first_attempt_dlift_off_ek',
+                                                                             'second_attempt_dlift_res_ek',
+                                                                             'second_attempt_dlift_off_ek',
+                                                                             'third_attempt_dlift_res_ek',
+                                                                             'third_attempt_dlift_off_ek',
+                                                                             'best_squat_res_ek', 'best_bpress_res_ek',
+                                                                             'best_dlift_res_ek', 'best_sum_res_ek',
+                                                                             'competitor_translation')
+                    competitors_f_s = list(competitors_s)
+                    if "Жим лёжа (без экип.)" in competitors_stypes:
+                        competitors_t = cur_flow_competitors_st.filter(
+                            competitor__sports_type__title="Жим лёжа (без экип.)").annotate(
+                            sorted_value=F('third_attempt_squat_res')).exclude(
+                            competitor__sports_type__title__in=["Троеборье классическое", "Троеборье (экип.)",
+                                                                "Жим лёжа (экип.)"]).values('sorted_value',
+                                                                                            'competitor__surname_comp',
+                                                                                            'competitor__name_comp',
+                                                                                            'competitor__sports_type__title',
+                                                                                            'first_attempt_squat_res',
+                                                                                            'first_attempt_squat_off',
+                                                                                            'second_attempt_squat_res',
+                                                                                            'second_attempt_squat_off',
+                                                                                            'third_attempt_squat_res',
+                                                                                            'third_attempt_squat_off',
+                                                                                            'competitor_weight',
+                                                                                            'first_attempt_bpress_res',
+                                                                                            'first_attempt_bpress_off',
+                                                                                            'second_attempt_bpress_res',
+                                                                                            'second_attempt_bpress_off',
+                                                                                            'third_attempt_bpress_res',
+                                                                                            'third_attempt_bpress_off',
+                                                                                            'best_bpress_res',
+                                                                                            'best_sum_res',
+                                                                                            'competitor_translation',
+                                                                                            'best_squat_res',
+                                                                                            'best_dlift_res',
+                                                                                            'first_attempt_dlift_res',
+                                                                                            'first_attempt_dlift_off',
+                                                                                            'second_attempt_dlift_res',
+                                                                                            'second_attempt_dlift_off',
+                                                                                            'third_attempt_dlift_res',
+                                                                                            'third_attempt_dlift_off')
+                        competitors_f_s += list(competitors_t)
+                    if "Жим лёжа (экип.)" in competitors_stypes:
+                        competitors_fr = cur_flow_competitors_st.filter(
+                            competitor__sports_type__title="Жим лёжа (экип.)").annotate(
+                            sorted_value=F('third_attempt_squat_res_ek')).exclude(
+                            competitor__sports_type__title__in=["Троеборье классическое", "Троеборье (экип.)",
+                                                                "Жим лёжа (без экип.)"]).values('sorted_value',
+                                                                                                'competitor__surname_comp',
+                                                                                                'competitor__name_comp',
+                                                                                                'competitor__sports_type__title',
+                                                                                                'competitor_weight',
+                                                                                                'first_attempt_bpress_res_ek',
+                                                                                                'first_attempt_bpress_off_ek',
+                                                                                                'second_attempt_bpress_res_ek',
+                                                                                                'second_attempt_bpress_off_ek',
+                                                                                                'third_attempt_bpress_res_ek',
+                                                                                                'third_attempt_bpress_off_ek',
+                                                                                                'best_bpress_res_ek',
+                                                                                                'best_sum_res_ek',
+                                                                                                'competitor_translation',
+                                                                                                'best_squat_res_ek',
+                                                                                                'best_dlift_res_ek',
+                                                                                                'first_attempt_squat_res_ek',
+                                                                                                'first_attempt_squat_off_ek',
+                                                                                                'second_attempt_squat_res_ek',
+                                                                                                'second_attempt_squat_off_ek',
+                                                                                                'third_attempt_squat_res_ek',
+                                                                                                'third_attempt_squat_off_ek',
+                                                                                                'first_attempt_dlift_res_ek',
+                                                                                                'first_attempt_dlift_off_ek',
+                                                                                                'second_attempt_dlift_res_ek',
+                                                                                                'second_attempt_dlift_off_ek',
+                                                                                                'third_attempt_dlift_res_ek',
+                                                                                                'third_attempt_dlift_off_ek', )
+                        competitors_f_s += list(competitors_fr)
+                    competitors = sorted(
+                        sorted(competitors_f_s, key=lambda x: (x['sorted_value'] is not None, x['sorted_value'])),
+                        key=lambda x: bool(x['sorted_value']), reverse=True)
+                elif cur_flow_competitors_st.filter(competitor__sports_type__title="Троеборье (экип.)",
+                                                    first_attempt_bpress_off_ek__isnull=True).exists() or cur_flow_competitors_st.filter(
+                        competitor__sports_type__title="Жим лёжа (экип.)",
+                        first_attempt_bpress_off_ek__isnull=True).exclude(
+                        competitor__sports_type__title__in=["Троеборье классическое", "Троеборье (экип.)",
+                                                            "Жим лёжа (без экип.)"]).exists() or cur_flow_competitors_st.filter(
+                        competitor__sports_type__title="Жим лёжа (без экип.)",
+                        first_attempt_bpress_off__isnull=True).exclude(
+                        competitor__sports_type__title__in=["Троеборье классическое", "Троеборье (экип.)",
+                                                            "Жим лёжа (экип.)"]).exists():
+                    competitors_s = cur_flow_competitors_st.filter(
+                        competitor__sports_type__title="Троеборье (экип.)").annotate(
+                        sorted_value=F('first_attempt_bpress_res_ek')).values('sorted_value',
+                                                                              'competitor__surname_comp',
+                                                                              'competitor__sports_type__title',
+                                                                              'competitor__name_comp',
+                                                                              'competitor_weight',
+                                                                              'first_attempt_squat_res_ek',
+                                                                              'first_attempt_squat_off_ek',
+                                                                              'second_attempt_squat_res_ek',
+                                                                              'second_attempt_squat_off_ek',
+                                                                              'third_attempt_squat_res_ek',
+                                                                              'third_attempt_squat_off_ek',
+                                                                              'first_attempt_bpress_res_ek',
+                                                                              'first_attempt_bpress_off_ek',
+                                                                              'second_attempt_bpress_res_ek',
+                                                                              'second_attempt_bpress_off_ek',
+                                                                              'third_attempt_bpress_res_ek',
+                                                                              'third_attempt_bpress_off_ek',
+                                                                              'first_attempt_dlift_res_ek',
+                                                                              'first_attempt_dlift_off_ek',
+                                                                              'second_attempt_dlift_res_ek',
+                                                                              'second_attempt_dlift_off_ek',
+                                                                              'third_attempt_dlift_res_ek',
+                                                                              'third_attempt_dlift_off_ek',
+                                                                              'best_squat_res_ek', 'best_bpress_res_ek',
+                                                                              'best_dlift_res_ek', 'best_sum_res_ek',
+                                                                              'competitor_translation')
+                    competitors_f_s = list(competitors_s)
+                    if "Жим лёжа (без экип.)" in competitors_stypes:
+                        competitors_t = cur_flow_competitors_st.filter(
+                            competitor__sports_type__title="Жим лёжа (без экип.)").annotate(
+                            sorted_value=F('first_attempt_bpress_res')).exclude(
+                            competitor__sports_type__title__in=["Троеборье классическое", "Троеборье (экип.)",
+                                                                "Жим лёжа (экип.)"]).values('sorted_value',
+                                                                                            'competitor__surname_comp',
+                                                                                            'competitor__name_comp',
+                                                                                            'competitor__sports_type__title',
+                                                                                            'first_attempt_squat_res',
+                                                                                            'first_attempt_squat_off',
+                                                                                            'second_attempt_squat_res',
+                                                                                            'second_attempt_squat_off',
+                                                                                            'third_attempt_squat_res',
+                                                                                            'third_attempt_squat_off',
+                                                                                            'competitor_weight',
+                                                                                            'first_attempt_bpress_res',
+                                                                                            'first_attempt_bpress_off',
+                                                                                            'second_attempt_bpress_res',
+                                                                                            'second_attempt_bpress_off',
+                                                                                            'third_attempt_bpress_res',
+                                                                                            'third_attempt_bpress_off',
+                                                                                            'best_bpress_res',
+                                                                                            'best_sum_res',
+                                                                                            'competitor_translation',
+                                                                                            'best_squat_res',
+                                                                                            'best_dlift_res',
+                                                                                            'first_attempt_dlift_res',
+                                                                                            'first_attempt_dlift_off',
+                                                                                            'second_attempt_dlift_res',
+                                                                                            'second_attempt_dlift_off',
+                                                                                            'third_attempt_dlift_res',
+                                                                                            'third_attempt_dlift_off')
+                        competitors_f_s += list(competitors_t)
+                    if "Жим лёжа (экип.)" in competitors_stypes:
+                        competitors_fr = cur_flow_competitors_st.filter(
+                            competitor__sports_type__title="Жим лёжа (экип.)").annotate(
+                            sorted_value=F('first_attempt_bpress_res_ek')).exclude(
+                            competitor__sports_type__title__in=["Троеборье классическое", "Троеборье (экип.)",
+                                                                "Жим лёжа (без экип.)"]).values('sorted_value',
+                                                                                                'competitor__surname_comp',
+                                                                                                'competitor__name_comp',
+                                                                                                'competitor__sports_type__title',
+                                                                                                'competitor_weight',
+                                                                                                'first_attempt_bpress_res_ek',
+                                                                                                'first_attempt_bpress_off_ek',
+                                                                                                'second_attempt_bpress_res_ek',
+                                                                                                'second_attempt_bpress_off_ek',
+                                                                                                'third_attempt_bpress_res_ek',
+                                                                                                'third_attempt_bpress_off_ek',
+                                                                                                'best_bpress_res_ek',
+                                                                                                'best_sum_res_ek',
+                                                                                                'competitor_translation',
+                                                                                                'best_squat_res_ek',
+                                                                                                'best_dlift_res_ek',
+                                                                                                'first_attempt_squat_res_ek',
+                                                                                                'first_attempt_squat_off_ek',
+                                                                                                'second_attempt_squat_res_ek',
+                                                                                                'second_attempt_squat_off_ek',
+                                                                                                'third_attempt_squat_res_ek',
+                                                                                                'third_attempt_squat_off_ek',
+                                                                                                'first_attempt_dlift_res_ek',
+                                                                                                'first_attempt_dlift_off_ek',
+                                                                                                'second_attempt_dlift_res_ek',
+                                                                                                'second_attempt_dlift_off_ek',
+                                                                                                'third_attempt_dlift_res_ek',
+                                                                                                'third_attempt_dlift_off_ek', )
+                        competitors_f_s += list(competitors_fr)
+                    competitors = sorted(
+                        sorted(competitors_f_s, key=lambda x: (x['sorted_value'] is not None, x['sorted_value'])),
+                        key=lambda x: bool(x['sorted_value']), reverse=True)
+                elif cur_flow_competitors_st.filter(competitor__sports_type__title="Троеборье (экип.)",
+                                                    second_attempt_bpress_off_ek__isnull=True).exists() or cur_flow_competitors_st.filter(
+                        competitor__sports_type__title="Жим лёжа (экип.)",
+                        second_attempt_bpress_off_ek__isnull=True).exclude(
+                        competitor__sports_type__title__in=["Троеборье классическое", "Троеборье (экип.)",
+                                                            "Жим лёжа (без экип.)"]).exists() or cur_flow_competitors_st.filter(
+                        competitor__sports_type__title="Жим лёжа (без экип.)",
+                        second_attempt_bpress_off__isnull=True).exclude(
+                        competitor__sports_type__title__in=["Троеборье классическое", "Троеборье (экип.)",
+                                                            "Жим лёжа (экип.)"]).exists():
+                    competitors_s = cur_flow_competitors_st.filter(
+                        competitor__sports_type__title="Троеборье (экип.)").annotate(
+                        sorted_value=F('second_attempt_bpress_res_ek')).values('sorted_value',
+                                                                               'competitor__surname_comp',
+                                                                               'competitor__sports_type__title',
+                                                                               'competitor__name_comp',
+                                                                               'competitor_weight',
+                                                                               'first_attempt_squat_res_ek',
+                                                                               'first_attempt_squat_off_ek',
+                                                                               'second_attempt_squat_res_ek',
+                                                                               'second_attempt_squat_off_ek',
+                                                                               'third_attempt_squat_res_ek',
+                                                                               'third_attempt_squat_off_ek',
+                                                                               'first_attempt_bpress_res_ek',
+                                                                               'first_attempt_bpress_off_ek',
+                                                                               'second_attempt_bpress_res_ek',
+                                                                               'second_attempt_bpress_off_ek',
+                                                                               'third_attempt_bpress_res_ek',
+                                                                               'third_attempt_bpress_off_ek',
+                                                                               'first_attempt_dlift_res_ek',
+                                                                               'first_attempt_dlift_off_ek',
+                                                                               'second_attempt_dlift_res_ek',
+                                                                               'second_attempt_dlift_off_ek',
+                                                                               'third_attempt_dlift_res_ek',
+                                                                               'third_attempt_dlift_off_ek',
+                                                                               'best_squat_res_ek',
+                                                                               'best_bpress_res_ek',
+                                                                               'best_dlift_res_ek', 'best_sum_res_ek',
+                                                                               'competitor_translation')
+                    competitors_f_s = list(competitors_s)
+                    if "Жим лёжа (без экип.)" in competitors_stypes:
+                        competitors_t = cur_flow_competitors_st.filter(
+                            competitor__sports_type__title="Жим лёжа (без экип.)").annotate(
+                            sorted_value=F('second_attempt_bpress_res')).exclude(
+                            competitor__sports_type__title__in=["Троеборье классическое", "Троеборье (экип.)",
+                                                                "Жим лёжа (экип.)"]).values('sorted_value',
+                                                                                            'competitor__surname_comp',
+                                                                                            'competitor__name_comp',
+                                                                                            'competitor__sports_type__title',
+                                                                                            'first_attempt_squat_res',
+                                                                                            'first_attempt_squat_off',
+                                                                                            'second_attempt_squat_res',
+                                                                                            'second_attempt_squat_off',
+                                                                                            'third_attempt_squat_res',
+                                                                                            'third_attempt_squat_off',
+                                                                                            'competitor_weight',
+                                                                                            'first_attempt_bpress_res',
+                                                                                            'first_attempt_bpress_off',
+                                                                                            'second_attempt_bpress_res',
+                                                                                            'second_attempt_bpress_off',
+                                                                                            'third_attempt_bpress_res',
+                                                                                            'third_attempt_bpress_off',
+                                                                                            'best_bpress_res',
+                                                                                            'best_sum_res',
+                                                                                            'competitor_translation',
+                                                                                            'best_squat_res',
+                                                                                            'best_dlift_res',
+                                                                                            'first_attempt_dlift_res',
+                                                                                            'first_attempt_dlift_off',
+                                                                                            'second_attempt_dlift_res',
+                                                                                            'second_attempt_dlift_off',
+                                                                                            'third_attempt_dlift_res',
+                                                                                            'third_attempt_dlift_off')
+                        competitors_f_s += list(competitors_t)
+                    if "Жим лёжа (экип.)" in competitors_stypes:
+                        competitors_fr = cur_flow_competitors_st.filter(
+                            competitor__sports_type__title="Жим лёжа (экип.)").annotate(
+                            sorted_value=F('second_attempt_bpress_res_ek')).exclude(
+                            competitor__sports_type__title__in=["Троеборье классическое", "Троеборье (экип.)",
+                                                                "Жим лёжа (без экип.)"]).values('sorted_value',
+                                                                                                'competitor__surname_comp',
+                                                                                                'competitor__name_comp',
+                                                                                                'competitor__sports_type__title',
+                                                                                                'competitor_weight',
+                                                                                                'first_attempt_bpress_res_ek',
+                                                                                                'first_attempt_bpress_off_ek',
+                                                                                                'second_attempt_bpress_res_ek',
+                                                                                                'second_attempt_bpress_off_ek',
+                                                                                                'third_attempt_bpress_res_ek',
+                                                                                                'third_attempt_bpress_off_ek',
+                                                                                                'best_bpress_res_ek',
+                                                                                                'best_sum_res_ek',
+                                                                                                'competitor_translation',
+                                                                                                'best_squat_res_ek',
+                                                                                                'best_dlift_res_ek',
+                                                                                                'first_attempt_squat_res_ek',
+                                                                                                'first_attempt_squat_off_ek',
+                                                                                                'second_attempt_squat_res_ek',
+                                                                                                'second_attempt_squat_off_ek',
+                                                                                                'third_attempt_squat_res_ek',
+                                                                                                'third_attempt_squat_off_ek',
+                                                                                                'first_attempt_dlift_res_ek',
+                                                                                                'first_attempt_dlift_off_ek',
+                                                                                                'second_attempt_dlift_res_ek',
+                                                                                                'second_attempt_dlift_off_ek',
+                                                                                                'third_attempt_dlift_res_ek',
+                                                                                                'third_attempt_dlift_off_ek', )
+                        competitors_f_s += list(competitors_fr)
+                    competitors = sorted(
+                        sorted(competitors_f_s, key=lambda x: (x['sorted_value'] is not None, x['sorted_value'])),
+                        key=lambda x: bool(x['sorted_value']), reverse=True)
+                elif cur_flow_competitors_st.filter(competitor__sports_type__title="Троеборье (экип.)",
+                                                    third_attempt_bpress_off_ek__isnull=True).exists() or cur_flow_competitors_st.filter(
+                        competitor__sports_type__title="Жим лёжа (экип.)",
+                        third_attempt_bpress_off_ek__isnull=True).exclude(
+                        competitor__sports_type__title__in=["Троеборье классическое", "Троеборье (экип.)",
+                                                            "Жим лёжа (без экип.)"]).exists() or cur_flow_competitors_st.filter(
+                        competitor__sports_type__title="Жим лёжа (без экип.)",
+                        third_attempt_bpress_off__isnull=True).exclude(
+                        competitor__sports_type__title__in=["Троеборье классическое", "Троеборье (экип.)",
+                                                            "Жим лёжа (экип.)"]).exists():
+                    competitors_s = cur_flow_competitors_st.filter(
+                        competitor__sports_type__title="Троеборье (экип.)").annotate(
+                        sorted_value=F('third_attempt_bpress_res_ek')).values('sorted_value',
+                                                                              'competitor__surname_comp',
+                                                                              'competitor__sports_type__title',
+                                                                              'competitor__name_comp',
+                                                                              'competitor_weight',
+                                                                              'first_attempt_squat_res_ek',
+                                                                              'first_attempt_squat_off_ek',
+                                                                              'second_attempt_squat_res_ek',
+                                                                              'second_attempt_squat_off_ek',
+                                                                              'third_attempt_squat_res_ek',
+                                                                              'third_attempt_squat_off_ek',
+                                                                              'first_attempt_bpress_res_ek',
+                                                                              'first_attempt_bpress_off_ek',
+                                                                              'second_attempt_bpress_res_ek',
+                                                                              'second_attempt_bpress_off_ek',
+                                                                              'third_attempt_bpress_res_ek',
+                                                                              'third_attempt_bpress_off_ek',
+                                                                              'first_attempt_dlift_res_ek',
+                                                                              'first_attempt_dlift_off_ek',
+                                                                              'second_attempt_dlift_res_ek',
+                                                                              'second_attempt_dlift_off_ek',
+                                                                              'third_attempt_dlift_res_ek',
+                                                                              'third_attempt_dlift_off_ek',
+                                                                              'best_squat_res_ek', 'best_bpress_res_ek',
+                                                                              'best_dlift_res_ek', 'best_sum_res_ek',
+                                                                              'competitor_translation')
+                    competitors_f_s = list(competitors_s)
+                    if "Жим лёжа (без экип.)" in competitors_stypes:
+                        competitors_t = cur_flow_competitors_st.filter(
+                            competitor__sports_type__title="Жим лёжа (без экип.)").annotate(
+                            sorted_value=F('third_attempt_bpress_res')).exclude(
+                            competitor__sports_type__title__in=["Троеборье классическое", "Троеборье (экип.)",
+                                                                "Жим лёжа (экип.)"]).values('sorted_value',
+                                                                                            'competitor__surname_comp',
+                                                                                            'competitor__name_comp',
+                                                                                            'competitor__sports_type__title',
+                                                                                            'first_attempt_squat_res',
+                                                                                            'first_attempt_squat_off',
+                                                                                            'second_attempt_squat_res',
+                                                                                            'second_attempt_squat_off',
+                                                                                            'third_attempt_squat_res',
+                                                                                            'third_attempt_squat_off',
+                                                                                            'competitor_weight',
+                                                                                            'first_attempt_bpress_res',
+                                                                                            'first_attempt_bpress_off',
+                                                                                            'second_attempt_bpress_res',
+                                                                                            'second_attempt_bpress_off',
+                                                                                            'third_attempt_bpress_res',
+                                                                                            'third_attempt_bpress_off',
+                                                                                            'best_bpress_res',
+                                                                                            'best_sum_res',
+                                                                                            'competitor_translation',
+                                                                                            'best_squat_res',
+                                                                                            'best_dlift_res',
+                                                                                            'first_attempt_dlift_res',
+                                                                                            'first_attempt_dlift_off',
+                                                                                            'second_attempt_dlift_res',
+                                                                                            'second_attempt_dlift_off',
+                                                                                            'third_attempt_dlift_res',
+                                                                                            'third_attempt_dlift_off')
+                        competitors_f_s += list(competitors_t)
+                    if "Жим лёжа (экип.)" in competitors_stypes:
+                        competitors_fr = cur_flow_competitors_st.filter(
+                            competitor__sports_type__title="Жим лёжа (экип.)").annotate(
+                            sorted_value=F('third_attempt_bpress_res_ek')).exclude(
+                            competitor__sports_type__title__in=["Троеборье классическое", "Троеборье (экип.)",
+                                                                "Жим лёжа (без экип.)"]).values('sorted_value',
+                                                                                                'competitor__surname_comp',
+                                                                                                'competitor__name_comp',
+                                                                                                'competitor__sports_type__title',
+                                                                                                'competitor_weight',
+                                                                                                'first_attempt_bpress_res_ek',
+                                                                                                'first_attempt_bpress_off_ek',
+                                                                                                'second_attempt_bpress_res_ek',
+                                                                                                'second_attempt_bpress_off_ek',
+                                                                                                'third_attempt_bpress_res_ek',
+                                                                                                'third_attempt_bpress_off_ek',
+                                                                                                'best_bpress_res_ek',
+                                                                                                'best_sum_res_ek',
+                                                                                                'competitor_translation',
+                                                                                                'best_squat_res_ek',
+                                                                                                'best_dlift_res_ek',
+                                                                                                'first_attempt_squat_res_ek',
+                                                                                                'first_attempt_squat_off_ek',
+                                                                                                'second_attempt_squat_res_ek',
+                                                                                                'second_attempt_squat_off_ek',
+                                                                                                'third_attempt_squat_res_ek',
+                                                                                                'third_attempt_squat_off_ek',
+                                                                                                'first_attempt_dlift_res_ek',
+                                                                                                'first_attempt_dlift_off_ek',
+                                                                                                'second_attempt_dlift_res_ek',
+                                                                                                'second_attempt_dlift_off_ek',
+                                                                                                'third_attempt_dlift_res_ek',
+                                                                                                'third_attempt_dlift_off_ek', )
+                        competitors_f_s += list(competitors_fr)
+                    competitors = sorted(
+                        sorted(competitors_f_s, key=lambda x: (x['sorted_value'] is not None, x['sorted_value'])),
+                        key=lambda x: bool(x['sorted_value']), reverse=True)
+                elif cur_flow_competitors_st.filter(competitor__sports_type__title="Троеборье (экип.)",
+                                                    first_attempt_dlift_off_ek__isnull=True).exists():
+                    competitors_s = cur_flow_competitors_st.filter(
+                        competitor__sports_type__title="Троеборье (экип.)").annotate(
+                        sorted_value=F('first_attempt_dlift_res_ek')).values('sorted_value', 'competitor__surname_comp',
+                                                                             'competitor__sports_type__title',
+                                                                             'competitor__name_comp',
+                                                                             'competitor_weight',
+                                                                             'first_attempt_squat_res_ek',
+                                                                             'first_attempt_squat_off_ek',
+                                                                             'second_attempt_squat_res_ek',
+                                                                             'second_attempt_squat_off_ek',
+                                                                             'third_attempt_squat_res_ek',
+                                                                             'third_attempt_squat_off_ek',
+                                                                             'first_attempt_bpress_res_ek',
+                                                                             'first_attempt_bpress_off_ek',
+                                                                             'second_attempt_bpress_res_ek',
+                                                                             'second_attempt_bpress_off_ek',
+                                                                             'third_attempt_bpress_res_ek',
+                                                                             'third_attempt_bpress_off_ek',
+                                                                             'first_attempt_dlift_res_ek',
+                                                                             'first_attempt_dlift_off_ek',
+                                                                             'second_attempt_dlift_res_ek',
+                                                                             'second_attempt_dlift_off_ek',
+                                                                             'third_attempt_dlift_res_ek',
+                                                                             'third_attempt_dlift_off_ek',
+                                                                             'best_squat_res_ek', 'best_bpress_res_ek',
+                                                                             'best_dlift_res_ek', 'best_sum_res_ek',
+                                                                             'competitor_translation')
+                    competitors_f_s = list(competitors_s)
+                    if "Жим лёжа (без экип.)" in competitors_stypes:
+                        competitors_t = cur_flow_competitors_st.filter(
+                            competitor__sports_type__title="Жим лёжа (без экип.)").annotate(
+                            sorted_value=F('first_attempt_dlift_res')).exclude(
+                            competitor__sports_type__title__in=["Троеборье классическое", "Троеборье (экип.)",
+                                                                "Жим лёжа (экип.)"]).values('sorted_value',
+                                                                                            'competitor__surname_comp',
+                                                                                            'competitor__name_comp',
+                                                                                            'competitor__sports_type__title',
+                                                                                            'first_attempt_squat_res',
+                                                                                            'first_attempt_squat_off',
+                                                                                            'second_attempt_squat_res',
+                                                                                            'second_attempt_squat_off',
+                                                                                            'third_attempt_squat_res',
+                                                                                            'third_attempt_squat_off',
+                                                                                            'competitor_weight',
+                                                                                            'first_attempt_bpress_res',
+                                                                                            'first_attempt_bpress_off',
+                                                                                            'second_attempt_bpress_res',
+                                                                                            'second_attempt_bpress_off',
+                                                                                            'third_attempt_bpress_res',
+                                                                                            'third_attempt_bpress_off',
+                                                                                            'best_bpress_res',
+                                                                                            'best_sum_res',
+                                                                                            'competitor_translation',
+                                                                                            'best_squat_res',
+                                                                                            'best_dlift_res',
+                                                                                            'first_attempt_dlift_res',
+                                                                                            'first_attempt_dlift_off',
+                                                                                            'second_attempt_dlift_res',
+                                                                                            'second_attempt_dlift_off',
+                                                                                            'third_attempt_dlift_res',
+                                                                                            'third_attempt_dlift_off')
+                        competitors_f_s += list(competitors_t)
+                    if "Жим лёжа (экип.)" in competitors_stypes:
+                        competitors_fr = cur_flow_competitors_st.filter(
+                            competitor__sports_type__title="Жим лёжа (экип.)").annotate(
+                            sorted_value=F('first_attempt_dlift_res_ek')).exclude(
+                            competitor__sports_type__title__in=["Троеборье классическое", "Троеборье (экип.)",
+                                                                "Жим лёжа (без экип.)"]).values('sorted_value',
+                                                                                                'competitor__surname_comp',
+                                                                                                'competitor__name_comp',
+                                                                                                'competitor__sports_type__title',
+                                                                                                'competitor_weight',
+                                                                                                'first_attempt_bpress_res_ek',
+                                                                                                'first_attempt_bpress_off_ek',
+                                                                                                'second_attempt_bpress_res_ek',
+                                                                                                'second_attempt_bpress_off_ek',
+                                                                                                'third_attempt_bpress_res_ek',
+                                                                                                'third_attempt_bpress_off_ek',
+                                                                                                'best_bpress_res_ek',
+                                                                                                'best_sum_res_ek',
+                                                                                                'competitor_translation',
+                                                                                                'best_squat_res_ek',
+                                                                                                'best_dlift_res_ek',
+                                                                                                'first_attempt_squat_res_ek',
+                                                                                                'first_attempt_squat_off_ek',
+                                                                                                'second_attempt_squat_res_ek',
+                                                                                                'second_attempt_squat_off_ek',
+                                                                                                'third_attempt_squat_res_ek',
+                                                                                                'third_attempt_squat_off_ek',
+                                                                                                'first_attempt_dlift_res_ek',
+                                                                                                'first_attempt_dlift_off_ek',
+                                                                                                'second_attempt_dlift_res_ek',
+                                                                                                'second_attempt_dlift_off_ek',
+                                                                                                'third_attempt_dlift_res_ek',
+                                                                                                'third_attempt_dlift_off_ek', )
+                        competitors_f_s += list(competitors_fr)
+                    competitors = sorted(
+                        sorted(competitors_f_s, key=lambda x: (x['sorted_value'] is not None, x['sorted_value'])),
+                        key=lambda x: bool(x['sorted_value']), reverse=True)
+                elif cur_flow_competitors_st.filter(competitor__sports_type__title="Троеборье (экип.)",
+                                                    second_attempt_dlift_off_ek__isnull=True).exists():
+                    competitors_s = cur_flow_competitors_st.filter(
+                        competitor__sports_type__title="Троеборье (экип.)").annotate(
+                        sorted_value=F('second_attempt_dlift_res_ek')).values('sorted_value',
+                                                                              'competitor__surname_comp',
+                                                                              'competitor__sports_type__title',
+                                                                              'competitor__name_comp',
+                                                                              'competitor_weight',
+                                                                              'first_attempt_squat_res_ek',
+                                                                              'first_attempt_squat_off_ek',
+                                                                              'second_attempt_squat_res_ek',
+                                                                              'second_attempt_squat_off_ek',
+                                                                              'third_attempt_squat_res_ek',
+                                                                              'third_attempt_squat_off_ek',
+                                                                              'first_attempt_bpress_res_ek',
+                                                                              'first_attempt_bpress_off_ek',
+                                                                              'second_attempt_bpress_res_ek',
+                                                                              'second_attempt_bpress_off_ek',
+                                                                              'third_attempt_bpress_res_ek',
+                                                                              'third_attempt_bpress_off_ek',
+                                                                              'first_attempt_dlift_res_ek',
+                                                                              'first_attempt_dlift_off_ek',
+                                                                              'second_attempt_dlift_res_ek',
+                                                                              'second_attempt_dlift_off_ek',
+                                                                              'third_attempt_dlift_res_ek',
+                                                                              'third_attempt_dlift_off_ek',
+                                                                              'best_squat_res_ek', 'best_bpress_res_ek',
+                                                                              'best_dlift_res_ek', 'best_sum_res_ek',
+                                                                              'competitor_translation')
+                    competitors_f_s = list(competitors_s)
+                    if "Жим лёжа (без экип.)" in competitors_stypes:
+                        competitors_t = cur_flow_competitors_st.filter(
+                            competitor__sports_type__title="Жим лёжа (без экип.)").annotate(
+                            sorted_value=F('second_attempt_dlift_res')).exclude(
+                            competitor__sports_type__title__in=["Троеборье классическое", "Троеборье (экип.)",
+                                                                "Жим лёжа (экип.)"]).values('sorted_value',
+                                                                                            'competitor__surname_comp',
+                                                                                            'competitor__name_comp',
+                                                                                            'competitor__sports_type__title',
+                                                                                            'first_attempt_squat_res',
+                                                                                            'first_attempt_squat_off',
+                                                                                            'second_attempt_squat_res',
+                                                                                            'second_attempt_squat_off',
+                                                                                            'third_attempt_squat_res',
+                                                                                            'third_attempt_squat_off',
+                                                                                            'competitor_weight',
+                                                                                            'first_attempt_bpress_res',
+                                                                                            'first_attempt_bpress_off',
+                                                                                            'second_attempt_bpress_res',
+                                                                                            'second_attempt_bpress_off',
+                                                                                            'third_attempt_bpress_res',
+                                                                                            'third_attempt_bpress_off',
+                                                                                            'best_bpress_res',
+                                                                                            'best_sum_res',
+                                                                                            'competitor_translation',
+                                                                                            'best_squat_res',
+                                                                                            'best_dlift_res',
+                                                                                            'first_attempt_dlift_res',
+                                                                                            'first_attempt_dlift_off',
+                                                                                            'second_attempt_dlift_res',
+                                                                                            'second_attempt_dlift_off',
+                                                                                            'third_attempt_dlift_res',
+                                                                                            'third_attempt_dlift_off')
+                        competitors_f_s += list(competitors_t)
+                    if "Жим лёжа (экип.)" in competitors_stypes:
+                        competitors_fr = cur_flow_competitors_st.filter(
+                            competitor__sports_type__title="Жим лёжа (экип.)").annotate(
+                            sorted_value=F('second_attempt_dlift_res_ek')).exclude(
+                            competitor__sports_type__title__in=["Троеборье классическое", "Троеборье (экип.)",
+                                                                "Жим лёжа (без экип.)"]).values('sorted_value',
+                                                                                                'competitor__surname_comp',
+                                                                                                'competitor__name_comp',
+                                                                                                'competitor__sports_type__title',
+                                                                                                'competitor_weight',
+                                                                                                'first_attempt_bpress_res_ek',
+                                                                                                'first_attempt_bpress_off_ek',
+                                                                                                'second_attempt_bpress_res_ek',
+                                                                                                'second_attempt_bpress_off_ek',
+                                                                                                'third_attempt_bpress_res_ek',
+                                                                                                'third_attempt_bpress_off_ek',
+                                                                                                'best_bpress_res_ek',
+                                                                                                'best_sum_res_ek',
+                                                                                                'competitor_translation',
+                                                                                                'best_squat_res_ek',
+                                                                                                'best_dlift_res_ek',
+                                                                                                'first_attempt_squat_res_ek',
+                                                                                                'first_attempt_squat_off_ek',
+                                                                                                'second_attempt_squat_res_ek',
+                                                                                                'second_attempt_squat_off_ek',
+                                                                                                'third_attempt_squat_res_ek',
+                                                                                                'third_attempt_squat_off_ek',
+                                                                                                'first_attempt_dlift_res_ek',
+                                                                                                'first_attempt_dlift_off_ek',
+                                                                                                'second_attempt_dlift_res_ek',
+                                                                                                'second_attempt_dlift_off_ek',
+                                                                                                'third_attempt_dlift_res_ek',
+                                                                                                'third_attempt_dlift_off_ek', )
+                        competitors_f_s += list(competitors_fr)
+                    competitors = sorted(
+                        sorted(competitors_f_s, key=lambda x: (x['sorted_value'] is not None, x['sorted_value'])),
+                        key=lambda x: bool(x['sorted_value']), reverse=True)
+                elif cur_flow_competitors_st.filter(competitor__sports_type__title="Троеборье (экип.)",
+                                                    third_attempt_dlift_off_ek__isnull=True).exists():
+                    competitors_s = cur_flow_competitors_st.filter(
+                        competitor__sports_type__title="Троеборье (экип.)").annotate(
+                        sorted_value=F('third_attempt_dlift_res_ek')).values('sorted_value', 'competitor__surname_comp',
+                                                                             'competitor__sports_type__title',
+                                                                             'competitor__name_comp',
+                                                                             'competitor_weight',
+                                                                             'first_attempt_squat_res_ek',
+                                                                             'first_attempt_squat_off_ek',
+                                                                             'second_attempt_squat_res_ek',
+                                                                             'second_attempt_squat_off_ek',
+                                                                             'third_attempt_squat_res_ek',
+                                                                             'third_attempt_squat_off_ek',
+                                                                             'first_attempt_bpress_res_ek',
+                                                                             'first_attempt_bpress_off_ek',
+                                                                             'second_attempt_bpress_res_ek',
+                                                                             'second_attempt_bpress_off_ek',
+                                                                             'third_attempt_bpress_res_ek',
+                                                                             'third_attempt_bpress_off_ek',
+                                                                             'first_attempt_dlift_res_ek',
+                                                                             'first_attempt_dlift_off_ek',
+                                                                             'second_attempt_dlift_res_ek',
+                                                                             'second_attempt_dlift_off_ek',
+                                                                             'third_attempt_dlift_res_ek',
+                                                                             'third_attempt_dlift_off_ek',
+                                                                             'best_squat_res_ek', 'best_bpress_res_ek',
+                                                                             'best_dlift_res_ek', 'best_sum_res_ek',
+                                                                             'competitor_translation')
+                    competitors_f_s = list(competitors_s)
+                    if "Жим лёжа (без экип.)" in competitors_stypes:
+                        competitors_t = cur_flow_competitors_st.filter(
+                            competitor__sports_type__title="Жим лёжа (без экип.)").annotate(
+                            sorted_value=F('third_attempt_dlift_res')).exclude(
+                            competitor__sports_type__title__in=["Троеборье классическое", "Троеборье (экип.)",
+                                                                "Жим лёжа (экип.)"]).values('sorted_value',
+                                                                                            'competitor__surname_comp',
+                                                                                            'competitor__name_comp',
+                                                                                            'competitor__sports_type__title',
+                                                                                            'first_attempt_squat_res',
+                                                                                            'first_attempt_squat_off',
+                                                                                            'second_attempt_squat_res',
+                                                                                            'second_attempt_squat_off',
+                                                                                            'third_attempt_squat_res',
+                                                                                            'third_attempt_squat_off',
+                                                                                            'competitor_weight',
+                                                                                            'first_attempt_bpress_res',
+                                                                                            'first_attempt_bpress_off',
+                                                                                            'second_attempt_bpress_res',
+                                                                                            'second_attempt_bpress_off',
+                                                                                            'third_attempt_bpress_res',
+                                                                                            'third_attempt_bpress_off',
+                                                                                            'best_bpress_res',
+                                                                                            'best_sum_res',
+                                                                                            'competitor_translation',
+                                                                                            'best_squat_res',
+                                                                                            'best_dlift_res',
+                                                                                            'first_attempt_dlift_res',
+                                                                                            'first_attempt_dlift_off',
+                                                                                            'second_attempt_dlift_res',
+                                                                                            'second_attempt_dlift_off',
+                                                                                            'third_attempt_dlift_res',
+                                                                                            'third_attempt_dlift_off')
+                        competitors_f_s += list(competitors_t)
+                    if "Жим лёжа (экип.)" in competitors_stypes:
+                        competitors_fr = cur_flow_competitors_st.filter(
+                            competitor__sports_type__title="Жим лёжа (экип.)").annotate(
+                            sorted_value=F('third_attempt_dlift_res_ek')).exclude(
+                            competitor__sports_type__title__in=["Троеборье классическое", "Троеборье (экип.)",
+                                                                "Жим лёжа (без экип.)"]).values('sorted_value',
+                                                                                                'competitor__surname_comp',
+                                                                                                'competitor__name_comp',
+                                                                                                'competitor__sports_type__title',
+                                                                                                'competitor_weight',
+                                                                                                'first_attempt_bpress_res_ek',
+                                                                                                'first_attempt_bpress_off_ek',
+                                                                                                'second_attempt_bpress_res_ek',
+                                                                                                'second_attempt_bpress_off_ek',
+                                                                                                'third_attempt_bpress_res_ek',
+                                                                                                'third_attempt_bpress_off_ek',
+                                                                                                'best_bpress_res_ek',
+                                                                                                'best_sum_res_ek',
+                                                                                                'competitor_translation',
+                                                                                                'best_squat_res_ek',
+                                                                                                'best_dlift_res_ek',
+                                                                                                'first_attempt_squat_res_ek',
+                                                                                                'first_attempt_squat_off_ek',
+                                                                                                'second_attempt_squat_res_ek',
+                                                                                                'second_attempt_squat_off_ek',
+                                                                                                'third_attempt_squat_res_ek',
+                                                                                                'third_attempt_squat_off_ek',
+                                                                                                'first_attempt_dlift_res_ek',
+                                                                                                'first_attempt_dlift_off_ek',
+                                                                                                'second_attempt_dlift_res_ek',
+                                                                                                'second_attempt_dlift_off_ek',
+                                                                                                'third_attempt_dlift_res_ek',
+                                                                                                'third_attempt_dlift_off_ek', )
+                        competitors_f_s += list(competitors_fr)
+                    competitors = sorted(
+                        sorted(competitors_f_s, key=lambda x: (x['sorted_value'] is not None, x['sorted_value'])),
+                        key=lambda x: bool(x['sorted_value']), reverse=True)
+                else:
+                    competitors_s = cur_flow_competitors_st.filter(
+                        competitor__sports_type__title="Троеборье (экип.)").annotate(
+                        sorted_value=F('best_sum_res_ek')).values('sorted_value', 'competitor__surname_comp',
+                                                                  'competitor__sports_type__title',
+                                                                  'competitor__name_comp', 'competitor_weight',
+                                                                  'first_attempt_squat_res_ek',
+                                                                  'first_attempt_squat_off_ek',
+                                                                  'second_attempt_squat_res_ek',
+                                                                  'second_attempt_squat_off_ek',
+                                                                  'third_attempt_squat_res_ek',
+                                                                  'third_attempt_squat_off_ek',
+                                                                  'first_attempt_bpress_res_ek',
+                                                                  'first_attempt_bpress_off_ek',
+                                                                  'second_attempt_bpress_res_ek',
+                                                                  'second_attempt_bpress_off_ek',
+                                                                  'third_attempt_bpress_res_ek',
+                                                                  'third_attempt_bpress_off_ek',
+                                                                  'first_attempt_dlift_res_ek',
+                                                                  'first_attempt_dlift_off_ek',
+                                                                  'second_attempt_dlift_res_ek',
+                                                                  'second_attempt_dlift_off_ek',
+                                                                  'third_attempt_dlift_res_ek',
+                                                                  'third_attempt_dlift_off_ek', 'best_squat_res_ek',
+                                                                  'best_bpress_res_ek', 'best_dlift_res_ek',
+                                                                  'best_sum_res_ek', 'competitor_translation')
+                    competitors_f_s = list(competitors_s)
+                    if "Жим лёжа (без экип.)" in competitors_stypes:
+                        competitors_t = cur_flow_competitors_st.filter(
+                            competitor__sports_type__title="Жим лёжа (без экип.)").annotate(
+                            sorted_value=F('best_sum_res')).exclude(
+                            competitor__sports_type__title__in=["Троеборье классическое", "Троеборье (экип.)",
+                                                                "Жим лёжа (экип.)"]).values('sorted_value',
+                                                                                            'competitor__surname_comp',
+                                                                                            'competitor__name_comp',
+                                                                                            'competitor__sports_type__title',
+                                                                                            'first_attempt_squat_res',
+                                                                                            'first_attempt_squat_off',
+                                                                                            'second_attempt_squat_res',
+                                                                                            'second_attempt_squat_off',
+                                                                                            'third_attempt_squat_res',
+                                                                                            'third_attempt_squat_off',
+                                                                                            'competitor_weight',
+                                                                                            'first_attempt_bpress_res',
+                                                                                            'first_attempt_bpress_off',
+                                                                                            'second_attempt_bpress_res',
+                                                                                            'second_attempt_bpress_off',
+                                                                                            'third_attempt_bpress_res',
+                                                                                            'third_attempt_bpress_off',
+                                                                                            'best_bpress_res',
+                                                                                            'best_sum_res',
+                                                                                            'competitor_translation',
+                                                                                            'best_squat_res',
+                                                                                            'best_dlift_res',
+                                                                                            'first_attempt_dlift_res',
+                                                                                            'first_attempt_dlift_off',
+                                                                                            'second_attempt_dlift_res',
+                                                                                            'second_attempt_dlift_off',
+                                                                                            'third_attempt_dlift_res',
+                                                                                            'third_attempt_dlift_off')
+                        competitors_f_s += list(competitors_t)
+                    if "Жим лёжа (экип.)" in competitors_stypes:
+                        competitors_fr = cur_flow_competitors_st.filter(
+                            competitor__sports_type__title="Жим лёжа (экип.)").annotate(
+                            sorted_value=F('best_sum_res_ek')).exclude(
+                            competitor__sports_type__title__in=["Троеборье классическое", "Троеборье (экип.)",
+                                                                "Жим лёжа (без экип.)"]).values('sorted_value',
+                                                                                                'competitor__surname_comp',
+                                                                                                'competitor__name_comp',
+                                                                                                'competitor__sports_type__title',
+                                                                                                'competitor_weight',
+                                                                                                'first_attempt_bpress_res_ek',
+                                                                                                'first_attempt_bpress_off_ek',
+                                                                                                'second_attempt_bpress_res_ek',
+                                                                                                'second_attempt_bpress_off_ek',
+                                                                                                'third_attempt_bpress_res_ek',
+                                                                                                'third_attempt_bpress_off_ek',
+                                                                                                'best_bpress_res_ek',
+                                                                                                'best_sum_res_ek',
+                                                                                                'competitor_translation',
+                                                                                                'best_squat_res_ek',
+                                                                                                'best_dlift_res_ek',
+                                                                                                'first_attempt_squat_res_ek',
+                                                                                                'first_attempt_squat_off_ek',
+                                                                                                'second_attempt_squat_res_ek',
+                                                                                                'second_attempt_squat_off_ek',
+                                                                                                'third_attempt_squat_res_ek',
+                                                                                                'third_attempt_squat_off_ek',
+                                                                                                'first_attempt_dlift_res_ek',
+                                                                                                'first_attempt_dlift_off_ek',
+                                                                                                'second_attempt_dlift_res_ek',
+                                                                                                'second_attempt_dlift_off_ek',
+                                                                                                'third_attempt_dlift_res_ek',
+                                                                                                'third_attempt_dlift_off_ek', )
+                        competitors_f_s += list(competitors_fr)
+                    competitors = sorted(
+                        sorted(competitors_f_s, key=lambda x: (x['sorted_value'] is not None, x['sorted_value']),
+                               reverse=True), key=lambda x: bool(x['sorted_value']), reverse=True)
+            elif ("Жим лёжа (без экип.)" in competitors_stypes) and ("Жим лёжа (экип.)" in competitors_stypes):
+                if cur_flow_competitors_st.filter(competitor__sports_type__title="Жим лёжа (экип.)",
+                                                  first_attempt_bpress_off_ek__isnull=True).exclude(
+                        competitor__sports_type__title__in=[
+                            "Жим лёжа (без экип.)"]).exists() or cur_flow_competitors_st.filter(
+                        competitor__sports_type__title="Жим лёжа (без экип.)",
+                        first_attempt_bpress_off__isnull=True).exclude(
+                        competitor__sports_type__title__in=["Жим лёжа (экип.)"]).exists():
+                    competitors_t = cur_flow_competitors_st.filter(
+                        competitor__sports_type__title="Жим лёжа (без экип.)").annotate(
+                        sorted_value=F('first_attempt_bpress_res')).exclude(
+                        competitor__sports_type__title__in=["Троеборье классическое", "Троеборье (экип.)",
+                                                            "Жим лёжа (экип.)"]).values('sorted_value',
+                                                                                        'competitor__surname_comp',
+                                                                                        'competitor__name_comp',
+                                                                                        'competitor__sports_type__title',
+                                                                                        'first_attempt_squat_res',
+                                                                                        'first_attempt_squat_off',
+                                                                                        'second_attempt_squat_res',
+                                                                                        'second_attempt_squat_off',
+                                                                                        'third_attempt_squat_res',
+                                                                                        'third_attempt_squat_off',
+                                                                                        'competitor_weight',
+                                                                                        'first_attempt_bpress_res',
+                                                                                        'first_attempt_bpress_off',
+                                                                                        'second_attempt_bpress_res',
+                                                                                        'second_attempt_bpress_off',
+                                                                                        'third_attempt_bpress_res',
+                                                                                        'third_attempt_bpress_off',
+                                                                                        'best_bpress_res',
+                                                                                        'best_sum_res',
+                                                                                        'competitor_translation',
+                                                                                        'best_squat_res',
+                                                                                        'best_dlift_res',
+                                                                                        'first_attempt_dlift_res',
+                                                                                        'first_attempt_dlift_off',
+                                                                                        'second_attempt_dlift_res',
+                                                                                        'second_attempt_dlift_off',
+                                                                                        'third_attempt_dlift_res',
+                                                                                        'third_attempt_dlift_off')
+                    competitors_fr = cur_flow_competitors_st.filter(
+                        competitor__sports_type__title="Жим лёжа (экип.)").annotate(
+                        sorted_value=F('first_attempt_bpress_res_ek')).exclude(
+                        competitor__sports_type__title__in=["Троеборье классическое", "Троеборье (экип.)",
+                                                            "Жим лёжа (без экип.)"]).values('sorted_value',
+                                                                                            'competitor__surname_comp',
+                                                                                            'competitor__name_comp',
+                                                                                            'competitor__sports_type__title',
+                                                                                            'competitor_weight',
+                                                                                            'first_attempt_bpress_res_ek',
+                                                                                            'first_attempt_bpress_off_ek',
+                                                                                            'second_attempt_bpress_res_ek',
+                                                                                            'second_attempt_bpress_off_ek',
+                                                                                            'third_attempt_bpress_res_ek',
+                                                                                            'third_attempt_bpress_off_ek',
+                                                                                            'best_bpress_res_ek',
+                                                                                            'best_sum_res_ek',
+                                                                                            'competitor_translation',
+                                                                                            'best_squat_res_ek',
+                                                                                            'best_dlift_res_ek',
+                                                                                            'first_attempt_squat_res_ek',
+                                                                                            'first_attempt_squat_off_ek',
+                                                                                            'second_attempt_squat_res_ek',
+                                                                                            'second_attempt_squat_off_ek',
+                                                                                            'third_attempt_squat_res_ek',
+                                                                                            'third_attempt_squat_off_ek',
+                                                                                            'first_attempt_dlift_res_ek',
+                                                                                            'first_attempt_dlift_off_ek',
+                                                                                            'second_attempt_dlift_res_ek',
+                                                                                            'second_attempt_dlift_off_ek',
+                                                                                            'third_attempt_dlift_res_ek',
+                                                                                            'third_attempt_dlift_off_ek', )
+                    competitors_f_s = list(competitors_t) + list(competitors_fr)
+                    competitors = sorted(
+                        sorted(competitors_f_s, key=lambda x: (x['sorted_value'] is not None, x['sorted_value'])),
+                        key=lambda x: bool(x['sorted_value']), reverse=True)
+                elif cur_flow_competitors_st.filter(competitor__sports_type__title="Жим лёжа (экип.)",
+                                                    second_attempt_bpress_off_ek__isnull=True).exclude(
+                        competitor__sports_type__title__in=[
+                            "Жим лёжа (без экип.)"]).exists() or cur_flow_competitors_st.filter(
+                        competitor__sports_type__title="Жим лёжа (без экип.)",
+                        second_attempt_bpress_off__isnull=True).exclude(
+                        competitor__sports_type__title__in=["Жим лёжа (экип.)"]).exists():
+                    competitors_t = cur_flow_competitors_st.filter(
+                        competitor__sports_type__title="Жим лёжа (без экип.)").annotate(
+                        sorted_value=F('second_attempt_bpress_res')).exclude(
+                        competitor__sports_type__title__in=["Троеборье классическое", "Троеборье (экип.)",
+                                                            "Жим лёжа (экип.)"]).values('sorted_value',
+                                                                                        'competitor__surname_comp',
+                                                                                        'competitor__name_comp',
+                                                                                        'competitor__sports_type__title',
+                                                                                        'first_attempt_squat_res',
+                                                                                        'first_attempt_squat_off',
+                                                                                        'second_attempt_squat_res',
+                                                                                        'second_attempt_squat_off',
+                                                                                        'third_attempt_squat_res',
+                                                                                        'third_attempt_squat_off',
+                                                                                        'competitor_weight',
+                                                                                        'first_attempt_bpress_res',
+                                                                                        'first_attempt_bpress_off',
+                                                                                        'second_attempt_bpress_res',
+                                                                                        'second_attempt_bpress_off',
+                                                                                        'third_attempt_bpress_res',
+                                                                                        'third_attempt_bpress_off',
+                                                                                        'best_bpress_res',
+                                                                                        'best_sum_res',
+                                                                                        'competitor_translation',
+                                                                                        'best_squat_res',
+                                                                                        'best_dlift_res',
+                                                                                        'first_attempt_dlift_res',
+                                                                                        'first_attempt_dlift_off',
+                                                                                        'second_attempt_dlift_res',
+                                                                                        'second_attempt_dlift_off',
+                                                                                        'third_attempt_dlift_res',
+                                                                                        'third_attempt_dlift_off')
+                    competitors_fr = cur_flow_competitors_st.filter(
+                        competitor__sports_type__title="Жим лёжа (экип.)").annotate(
+                        sorted_value=F('second_attempt_bpress_res_ek')).exclude(
+                        competitor__sports_type__title__in=["Троеборье классическое", "Троеборье (экип.)",
+                                                            "Жим лёжа (без экип.)"]).values('sorted_value',
+                                                                                            'competitor__surname_comp',
+                                                                                            'competitor__name_comp',
+                                                                                            'competitor__sports_type__title',
+                                                                                            'competitor_weight',
+                                                                                            'first_attempt_bpress_res_ek',
+                                                                                            'first_attempt_bpress_off_ek',
+                                                                                            'second_attempt_bpress_res_ek',
+                                                                                            'second_attempt_bpress_off_ek',
+                                                                                            'third_attempt_bpress_res_ek',
+                                                                                            'third_attempt_bpress_off_ek',
+                                                                                            'best_bpress_res_ek',
+                                                                                            'best_sum_res_ek',
+                                                                                            'competitor_translation',
+                                                                                            'best_squat_res_ek',
+                                                                                            'best_dlift_res_ek',
+                                                                                            'first_attempt_squat_res_ek',
+                                                                                            'first_attempt_squat_off_ek',
+                                                                                            'second_attempt_squat_res_ek',
+                                                                                            'second_attempt_squat_off_ek',
+                                                                                            'third_attempt_squat_res_ek',
+                                                                                            'third_attempt_squat_off_ek',
+                                                                                            'first_attempt_dlift_res_ek',
+                                                                                            'first_attempt_dlift_off_ek',
+                                                                                            'second_attempt_dlift_res_ek',
+                                                                                            'second_attempt_dlift_off_ek',
+                                                                                            'third_attempt_dlift_res_ek',
+                                                                                            'third_attempt_dlift_off_ek', )
+                    competitors_f_s = list(competitors_t) + list(competitors_fr)
+                    competitors = sorted(
+                        sorted(competitors_f_s, key=lambda x: (x['sorted_value'] is not None, x['sorted_value'])),
+                        key=lambda x: bool(x['sorted_value']), reverse=True)
+                elif cur_flow_competitors_st.filter(competitor__sports_type__title="Жим лёжа (экип.)",
+                                                    third_attempt_bpress_off_ek__isnull=True).exclude(
+                        competitor__sports_type__title__in=[
+                            "Жим лёжа (без экип.)"]).exists() or cur_flow_competitors_st.filter(
+                        competitor__sports_type__title="Жим лёжа (без экип.)",
+                        third_attempt_bpress_off__isnull=True).exclude(
+                        competitor__sports_type__title__in=["Жим лёжа (экип.)"]).exists():
+                    competitors_t = cur_flow_competitors_st.filter(
+                        competitor__sports_type__title="Жим лёжа (без экип.)").annotate(
+                        sorted_value=F('third_attempt_bpress_res')).exclude(
+                        competitor__sports_type__title__in=["Троеборье классическое", "Троеборье (экип.)",
+                                                            "Жим лёжа (экип.)"]).values('sorted_value',
+                                                                                        'competitor__surname_comp',
+                                                                                        'competitor__name_comp',
+                                                                                        'competitor__sports_type__title',
+                                                                                        'first_attempt_squat_res',
+                                                                                        'first_attempt_squat_off',
+                                                                                        'second_attempt_squat_res',
+                                                                                        'second_attempt_squat_off',
+                                                                                        'third_attempt_squat_res',
+                                                                                        'third_attempt_squat_off',
+                                                                                        'competitor_weight',
+                                                                                        'first_attempt_bpress_res',
+                                                                                        'first_attempt_bpress_off',
+                                                                                        'second_attempt_bpress_res',
+                                                                                        'second_attempt_bpress_off',
+                                                                                        'third_attempt_bpress_res',
+                                                                                        'third_attempt_bpress_off',
+                                                                                        'best_bpress_res',
+                                                                                        'best_sum_res',
+                                                                                        'competitor_translation',
+                                                                                        'best_squat_res',
+                                                                                        'best_dlift_res',
+                                                                                        'first_attempt_dlift_res',
+                                                                                        'first_attempt_dlift_off',
+                                                                                        'second_attempt_dlift_res',
+                                                                                        'second_attempt_dlift_off',
+                                                                                        'third_attempt_dlift_res',
+                                                                                        'third_attempt_dlift_off')
+                    competitors_fr = cur_flow_competitors_st.filter(
+                        competitor__sports_type__title="Жим лёжа (экип.)").annotate(
+                        sorted_value=F('third_attempt_bpress_res_ek')).exclude(
+                        competitor__sports_type__title__in=["Троеборье классическое", "Троеборье (экип.)",
+                                                            "Жим лёжа (без экип.)"]).values('sorted_value',
+                                                                                            'competitor__surname_comp',
+                                                                                            'competitor__name_comp',
+                                                                                            'competitor__sports_type__title',
+                                                                                            'competitor_weight',
+                                                                                            'first_attempt_bpress_res_ek',
+                                                                                            'first_attempt_bpress_off_ek',
+                                                                                            'second_attempt_bpress_res_ek',
+                                                                                            'second_attempt_bpress_off_ek',
+                                                                                            'third_attempt_bpress_res_ek',
+                                                                                            'third_attempt_bpress_off_ek',
+                                                                                            'best_bpress_res_ek',
+                                                                                            'best_sum_res_ek',
+                                                                                            'competitor_translation',
+                                                                                            'best_squat_res_ek',
+                                                                                            'best_dlift_res_ek',
+                                                                                            'first_attempt_squat_res_ek',
+                                                                                            'first_attempt_squat_off_ek',
+                                                                                            'second_attempt_squat_res_ek',
+                                                                                            'second_attempt_squat_off_ek',
+                                                                                            'third_attempt_squat_res_ek',
+                                                                                            'third_attempt_squat_off_ek',
+                                                                                            'first_attempt_dlift_res_ek',
+                                                                                            'first_attempt_dlift_off_ek',
+                                                                                            'second_attempt_dlift_res_ek',
+                                                                                            'second_attempt_dlift_off_ek',
+                                                                                            'third_attempt_dlift_res_ek',
+                                                                                            'third_attempt_dlift_off_ek', )
+                    competitors_f_s = list(competitors_t) + list(competitors_fr)
+                    competitors = sorted(
+                        sorted(competitors_f_s, key=lambda x: (x['sorted_value'] is not None, x['sorted_value'])),
+                        key=lambda x: bool(x['sorted_value']), reverse=True)
+                else:
+                    competitors_t = cur_flow_competitors_st.filter(
+                        competitor__sports_type__title="Жим лёжа (без экип.)").annotate(
+                        sorted_value=F('best_sum_res')).exclude(
+                        competitor__sports_type__title__in=["Троеборье классическое", "Троеборье (экип.)",
+                                                            "Жим лёжа (экип.)"]).values('sorted_value',
+                                                                                        'competitor__surname_comp',
+                                                                                        'competitor__name_comp',
+                                                                                        'competitor__sports_type__title',
+                                                                                        'first_attempt_squat_res',
+                                                                                        'first_attempt_squat_off',
+                                                                                        'second_attempt_squat_res',
+                                                                                        'second_attempt_squat_off',
+                                                                                        'third_attempt_squat_res',
+                                                                                        'third_attempt_squat_off',
+                                                                                        'competitor_weight',
+                                                                                        'first_attempt_bpress_res',
+                                                                                        'first_attempt_bpress_off',
+                                                                                        'second_attempt_bpress_res',
+                                                                                        'second_attempt_bpress_off',
+                                                                                        'third_attempt_bpress_res',
+                                                                                        'third_attempt_bpress_off',
+                                                                                        'best_bpress_res',
+                                                                                        'best_sum_res',
+                                                                                        'competitor_translation',
+                                                                                        'best_squat_res',
+                                                                                        'best_dlift_res',
+                                                                                        'first_attempt_dlift_res',
+                                                                                        'first_attempt_dlift_off',
+                                                                                        'second_attempt_dlift_res',
+                                                                                        'second_attempt_dlift_off',
+                                                                                        'third_attempt_dlift_res',
+                                                                                        'third_attempt_dlift_off')
+                    competitors_fr = cur_flow_competitors_st.filter(
+                        competitor__sports_type__title="Жим лёжа (экип.)").annotate(
+                        sorted_value=F('best_sum_res_ek')).exclude(
+                        competitor__sports_type__title__in=["Троеборье классическое", "Троеборье (экип.)",
+                                                            "Жим лёжа (без экип.)"]).values('sorted_value',
+                                                                                            'competitor__surname_comp',
+                                                                                            'competitor__name_comp',
+                                                                                            'competitor__sports_type__title',
+                                                                                            'competitor_weight',
+                                                                                            'first_attempt_bpress_res_ek',
+                                                                                            'first_attempt_bpress_off_ek',
+                                                                                            'second_attempt_bpress_res_ek',
+                                                                                            'second_attempt_bpress_off_ek',
+                                                                                            'third_attempt_bpress_res_ek',
+                                                                                            'third_attempt_bpress_off_ek',
+                                                                                            'best_bpress_res_ek',
+                                                                                            'best_sum_res_ek',
+                                                                                            'competitor_translation',
+                                                                                            'best_squat_res_ek',
+                                                                                            'best_dlift_res_ek',
+                                                                                            'first_attempt_squat_res_ek',
+                                                                                            'first_attempt_squat_off_ek',
+                                                                                            'second_attempt_squat_res_ek',
+                                                                                            'second_attempt_squat_off_ek',
+                                                                                            'third_attempt_squat_res_ek',
+                                                                                            'third_attempt_squat_off_ek',
+                                                                                            'first_attempt_dlift_res_ek',
+                                                                                            'first_attempt_dlift_off_ek',
+                                                                                            'second_attempt_dlift_res_ek',
+                                                                                            'second_attempt_dlift_off_ek',
+                                                                                            'third_attempt_dlift_res_ek',
+                                                                                            'third_attempt_dlift_off_ek', )
+                    competitors_f_s = list(competitors_t) + list(competitors_fr)
+                    competitors = sorted(
+                        sorted(competitors_f_s, key=lambda x: (x['sorted_value'] is not None, x['sorted_value']),
+                               reverse=True), key=lambda x: bool(x['sorted_value']), reverse=True)
             elif "Жим лёжа (без экип.)" in competitors_stypes:
-                cur_flow_competitors = cur_flow_competitors_st.order_by(F("first_attempt_bpress_res").asc(nulls_last=True))
+                if cur_flow_competitors_st.filter(competitor__sports_type__title="Жим лёжа (без экип.)",
+                                                  first_attempt_bpress_off__isnull=True).exists():
+                    competitors_t = cur_flow_competitors_st.filter(
+                        competitor__sports_type__title="Жим лёжа (без экип.)").annotate(
+                        sorted_value=F('first_attempt_bpress_res')).exclude(
+                        competitor__sports_type__title__in=["Троеборье классическое", "Троеборье (экип.)",
+                                                            "Жим лёжа (экип.)"]).values('sorted_value',
+                                                                                        'competitor__surname_comp',
+                                                                                        'competitor__name_comp',
+                                                                                        'competitor__sports_type__title',
+                                                                                        'first_attempt_squat_res',
+                                                                                        'first_attempt_squat_off',
+                                                                                        'second_attempt_squat_res',
+                                                                                        'second_attempt_squat_off',
+                                                                                        'third_attempt_squat_res',
+                                                                                        'third_attempt_squat_off',
+                                                                                        'competitor_weight',
+                                                                                        'first_attempt_bpress_res',
+                                                                                        'first_attempt_bpress_off',
+                                                                                        'second_attempt_bpress_res',
+                                                                                        'second_attempt_bpress_off',
+                                                                                        'third_attempt_bpress_res',
+                                                                                        'third_attempt_bpress_off',
+                                                                                        'best_bpress_res',
+                                                                                        'best_sum_res',
+                                                                                        'competitor_translation',
+                                                                                        'best_squat_res',
+                                                                                        'best_dlift_res',
+                                                                                        'first_attempt_dlift_res',
+                                                                                        'first_attempt_dlift_off',
+                                                                                        'second_attempt_dlift_res',
+                                                                                        'second_attempt_dlift_off',
+                                                                                        'third_attempt_dlift_res',
+                                                                                        'third_attempt_dlift_off')
+                    competitors_f_s = list(competitors_t)
+                    competitors = sorted(
+                        sorted(competitors_f_s, key=lambda x: (x['sorted_value'] is not None, x['sorted_value'])),
+                        key=lambda x: bool(x['sorted_value']), reverse=True)
+                elif cur_flow_competitors_st.filter(competitor__sports_type__title="Жим лёжа (без экип.)",
+                                                    second_attempt_bpress_off__isnull=True).exists():
+                    competitors_t = cur_flow_competitors_st.filter(
+                        competitor__sports_type__title="Жим лёжа (без экип.)").annotate(
+                        sorted_value=F('second_attempt_bpress_res')).exclude(
+                        competitor__sports_type__title__in=["Троеборье классическое", "Троеборье (экип.)",
+                                                            "Жим лёжа (экип.)"]).values('sorted_value',
+                                                                                        'competitor__surname_comp',
+                                                                                        'competitor__name_comp',
+                                                                                        'competitor__sports_type__title',
+                                                                                        'first_attempt_squat_res',
+                                                                                        'first_attempt_squat_off',
+                                                                                        'second_attempt_squat_res',
+                                                                                        'second_attempt_squat_off',
+                                                                                        'third_attempt_squat_res',
+                                                                                        'third_attempt_squat_off',
+                                                                                        'competitor_weight',
+                                                                                        'first_attempt_bpress_res',
+                                                                                        'first_attempt_bpress_off',
+                                                                                        'second_attempt_bpress_res',
+                                                                                        'second_attempt_bpress_off',
+                                                                                        'third_attempt_bpress_res',
+                                                                                        'third_attempt_bpress_off',
+                                                                                        'best_bpress_res',
+                                                                                        'best_sum_res',
+                                                                                        'competitor_translation',
+                                                                                        'best_squat_res',
+                                                                                        'best_dlift_res',
+                                                                                        'first_attempt_dlift_res',
+                                                                                        'first_attempt_dlift_off',
+                                                                                        'second_attempt_dlift_res',
+                                                                                        'second_attempt_dlift_off',
+                                                                                        'third_attempt_dlift_res',
+                                                                                        'third_attempt_dlift_off')
+                    competitors_f_s = list(competitors_t)
+                    competitors = sorted(
+                        sorted(competitors_f_s, key=lambda x: (x['sorted_value'] is not None, x['sorted_value'])),
+                        key=lambda x: bool(x['sorted_value']), reverse=True)
+                elif cur_flow_competitors_st.filter(competitor__sports_type__title="Жим лёжа (без экип.)",
+                                                    third_attempt_bpress_off__isnull=True).exists():
+                    competitors_t = cur_flow_competitors_st.filter(
+                        competitor__sports_type__title="Жим лёжа (без экип.)").annotate(
+                        sorted_value=F('third_attempt_bpress_res')).exclude(
+                        competitor__sports_type__title__in=["Троеборье классическое", "Троеборье (экип.)",
+                                                            "Жим лёжа (экип.)"]).values('sorted_value',
+                                                                                        'competitor__surname_comp',
+                                                                                        'competitor__name_comp',
+                                                                                        'competitor__sports_type__title',
+                                                                                        'first_attempt_squat_res',
+                                                                                        'first_attempt_squat_off',
+                                                                                        'second_attempt_squat_res',
+                                                                                        'second_attempt_squat_off',
+                                                                                        'third_attempt_squat_res',
+                                                                                        'third_attempt_squat_off',
+                                                                                        'competitor_weight',
+                                                                                        'first_attempt_bpress_res',
+                                                                                        'first_attempt_bpress_off',
+                                                                                        'second_attempt_bpress_res',
+                                                                                        'second_attempt_bpress_off',
+                                                                                        'third_attempt_bpress_res',
+                                                                                        'third_attempt_bpress_off',
+                                                                                        'best_bpress_res',
+                                                                                        'best_sum_res',
+                                                                                        'competitor_translation',
+                                                                                        'best_squat_res',
+                                                                                        'best_dlift_res',
+                                                                                        'first_attempt_dlift_res',
+                                                                                        'first_attempt_dlift_off',
+                                                                                        'second_attempt_dlift_res',
+                                                                                        'second_attempt_dlift_off',
+                                                                                        'third_attempt_dlift_res',
+                                                                                        'third_attempt_dlift_off')
+                    competitors_f_s = list(competitors_t)
+                    competitors = sorted(
+                        sorted(competitors_f_s, key=lambda x: (x['sorted_value'] is not None, x['sorted_value'])),
+                        key=lambda x: bool(x['sorted_value']), reverse=True)
+                else:
+                    competitors_t = cur_flow_competitors_st.filter(
+                        competitor__sports_type__title="Жим лёжа (без экип.)").annotate(
+                        sorted_value=F('best_sum_res')).exclude(
+                        competitor__sports_type__title__in=["Троеборье классическое", "Троеборье (экип.)",
+                                                            "Жим лёжа (экип.)"]).values('sorted_value',
+                                                                                        'competitor__surname_comp',
+                                                                                        'competitor__name_comp',
+                                                                                        'competitor__sports_type__title',
+                                                                                        'first_attempt_squat_res',
+                                                                                        'first_attempt_squat_off',
+                                                                                        'second_attempt_squat_res',
+                                                                                        'second_attempt_squat_off',
+                                                                                        'third_attempt_squat_res',
+                                                                                        'third_attempt_squat_off',
+                                                                                        'competitor_weight',
+                                                                                        'first_attempt_bpress_res',
+                                                                                        'first_attempt_bpress_off',
+                                                                                        'second_attempt_bpress_res',
+                                                                                        'second_attempt_bpress_off',
+                                                                                        'third_attempt_bpress_res',
+                                                                                        'third_attempt_bpress_off',
+                                                                                        'best_bpress_res',
+                                                                                        'best_sum_res',
+                                                                                        'competitor_translation',
+                                                                                        'best_squat_res',
+                                                                                        'best_dlift_res',
+                                                                                        'first_attempt_dlift_res',
+                                                                                        'first_attempt_dlift_off',
+                                                                                        'second_attempt_dlift_res',
+                                                                                        'second_attempt_dlift_off',
+                                                                                        'third_attempt_dlift_res',
+                                                                                        'third_attempt_dlift_off')
+                    competitors_f_s = list(competitors_t)
+                    competitors = sorted(
+                        sorted(competitors_f_s, key=lambda x: (x['sorted_value'] is not None, x['sorted_value']),
+                               reverse=True), key=lambda x: bool(x['sorted_value']), reverse=True)
             else:
-                cur_flow_competitors = cur_flow_competitors_st.order_by(F("first_attempt_bpress_res_ek").asc(nulls_last=True))
-            cur_flow_competitors_json = serializers.serialize("json", cur_flow_competitors, use_natural_foreign_keys=True)
-            return JsonResponse({"cur_flow_competitors_json": cur_flow_competitors_json, }, status=200)
-            # competitor_sports_types = [i.title for i in competitor_transl.competitor.sports_type.all()]
-            # if "Троеборье классическое" in competitor_sports_types:
-            #     if cur_transl_val == "Присед 1":
-            #         competitor_ordered_weight = competitor_transl.first_attempt_squat_res
-            #     if cur_transl_val == "Присед 2":
-            #         competitor_ordered_weight = competitor_transl.second_attempt_squat_res
-            #     if cur_transl_val == "Присед 3":
-            #         competitor_ordered_weight = competitor_transl.third_attempt_squat_res
-            #     if cur_transl_val == "Жим 1":
-            #         competitor_ordered_weight = competitor_transl.first_attempt_bpress_res
-            #     if cur_transl_val == "Жим 2":
-            #         competitor_ordered_weight = competitor_transl.second_attempt_bpress_res
-            #     if cur_transl_val == "Жим 3":
-            #         competitor_ordered_weight = competitor_transl.third_attempt_bpress_res
-            #     if cur_transl_val == "Тяга 1":
-            #         competitor_ordered_weight = competitor_transl.first_attempt_dlift_res
-            #     if cur_transl_val == "Тяга 2":
-            #         competitor_ordered_weight = competitor_transl.second_attempt_dlift_res
-            #     if cur_transl_val == "Тяга 3":
-            #         competitor_ordered_weight = competitor_transl.third_attempt_dlift_res
-            # if "Троеборье (экип.)" in competitor_sports_types:
-            #     if cur_transl_val == "Присед 1":
-            #         competitor_ordered_weight = competitor_transl.first_attempt_squat_res
-            #     if cur_transl_val == "Присед 2":
-            #         competitor_ordered_weight = competitor_transl.second_attempt_squat_res
-            #     if cur_transl_val == "Присед 3":
-            #         competitor_ordered_weight = competitor_transl.third_attempt_squat_res
-            #     if cur_transl_val == "Жим 1":
-            #         competitor_ordered_weight = competitor_transl.first_attempt_bpress_res
-            #     if cur_transl_val == "Жим 2":
-            #         competitor_ordered_weight = competitor_transl.second_attempt_bpress_res
-            #     if cur_transl_val == "Жим 3":
-            #         competitor_ordered_weight = competitor_transl.third_attempt_bpress_res
-            #     if cur_transl_val == "Тяга 1":
-            #         competitor_ordered_weight = competitor_transl.first_attempt_dlift_res
-            #     if cur_transl_val == "Тяга 2":
-            #         competitor_ordered_weight = competitor_transl.second_attempt_dlift_res
-            #     if cur_transl_val == "Тяга 3":
-            #         competitor_ordered_weight = competitor_transl.third_attempt_dlift_res
-            # print(cur_transl_val)
-            # print(cur_transl_val.split(' ')[0].lower())
-            # print(cur_transl_val.split(' ')[1])
-            # print(cur_transl_pk)
-            # competitor_transl = CompetitionProtocols.objects.get(pk=cur_transl_pk)
-            # print(f"{competitor_transl.competitor.surname_comp.capitalize()} {competitor_transl.competitor.name_comp.capitalize()}")
-            # print(competitor_transl.competitor.weight_cat)
-            # print(competitor_transl.competitor.sports_type.all())
-            # print([i.title for i in competitor_transl.competitor.sports_type.all()])
-        # print(cur_transl_val)
-        # print(cur_transl_pk)
-        # print(request.POST)
-        # return JsonResponse({"cur_transl_val": cur_transl_val, "cur_transl_pk": cur_transl_pk}, status=200)
-        # return JsonResponse({"competitor_exercise": competitor_exercise, "competitor_exercise_attempt": competitor_exercise_attempt, "competitor_fi": competitor_fi,
-        #                      "competitor_weight_cat": competitor_weight_cat, "competitor_ordered_weight": competitor_ordered_weight, "competitor_ordered_weight_offset": competitor_ordered_weight_offset, "cur_transl_pk": cur_transl_pk}, status=200)
+                if cur_flow_competitors_st.filter(competitor__sports_type__title="Жим лёжа (экип.)",
+                                                  first_attempt_bpress_off_ek__isnull=True).exists():
+                    competitors_fr = cur_flow_competitors_st.filter(
+                        competitor__sports_type__title="Жим лёжа (экип.)").annotate(
+                        sorted_value=F('first_attempt_bpress_res_ek')).exclude(
+                        competitor__sports_type__title__in=["Троеборье классическое", "Троеборье (экип.)",
+                                                            "Жим лёжа (без экип.)"]).values('sorted_value',
+                                                                                            'competitor__surname_comp',
+                                                                                            'competitor__name_comp',
+                                                                                            'competitor__sports_type__title',
+                                                                                            'competitor_weight',
+                                                                                            'first_attempt_bpress_res_ek',
+                                                                                            'first_attempt_bpress_off_ek',
+                                                                                            'second_attempt_bpress_res_ek',
+                                                                                            'second_attempt_bpress_off_ek',
+                                                                                            'third_attempt_bpress_res_ek',
+                                                                                            'third_attempt_bpress_off_ek',
+                                                                                            'best_bpress_res_ek',
+                                                                                            'best_sum_res_ek',
+                                                                                            'competitor_translation',
+                                                                                            'best_squat_res_ek',
+                                                                                            'best_dlift_res_ek',
+                                                                                            'first_attempt_squat_res_ek',
+                                                                                            'first_attempt_squat_off_ek',
+                                                                                            'second_attempt_squat_res_ek',
+                                                                                            'second_attempt_squat_off_ek',
+                                                                                            'third_attempt_squat_res_ek',
+                                                                                            'third_attempt_squat_off_ek',
+                                                                                            'first_attempt_dlift_res_ek',
+                                                                                            'first_attempt_dlift_off_ek',
+                                                                                            'second_attempt_dlift_res_ek',
+                                                                                            'second_attempt_dlift_off_ek',
+                                                                                            'third_attempt_dlift_res_ek',
+                                                                                            'third_attempt_dlift_off_ek', )
+                    competitors_f_s = list(competitors_fr)
+                    competitors = sorted(
+                        sorted(competitors_f_s, key=lambda x: (x['sorted_value'] is not None, x['sorted_value'])),
+                        key=lambda x: bool(x['sorted_value']), reverse=True)
+                elif cur_flow_competitors_st.filter(competitor__sports_type__title="Жим лёжа (экип.)",
+                                                    second_attempt_bpress_off_ek__isnull=True).exists():
+                    competitors_fr = cur_flow_competitors_st.filter(
+                        competitor__sports_type__title="Жим лёжа (экип.)").annotate(
+                        sorted_value=F('second_attempt_bpress_res_ek')).exclude(
+                        competitor__sports_type__title__in=["Троеборье классическое", "Троеборье (экип.)",
+                                                            "Жим лёжа (без экип.)"]).values('sorted_value',
+                                                                                            'competitor__surname_comp',
+                                                                                            'competitor__name_comp',
+                                                                                            'competitor__sports_type__title',
+                                                                                            'competitor_weight',
+                                                                                            'first_attempt_bpress_res_ek',
+                                                                                            'first_attempt_bpress_off_ek',
+                                                                                            'second_attempt_bpress_res_ek',
+                                                                                            'second_attempt_bpress_off_ek',
+                                                                                            'third_attempt_bpress_res_ek',
+                                                                                            'third_attempt_bpress_off_ek',
+                                                                                            'best_bpress_res_ek',
+                                                                                            'best_sum_res_ek',
+                                                                                            'competitor_translation',
+                                                                                            'best_squat_res_ek',
+                                                                                            'best_dlift_res_ek',
+                                                                                            'first_attempt_squat_res_ek',
+                                                                                            'first_attempt_squat_off_ek',
+                                                                                            'second_attempt_squat_res_ek',
+                                                                                            'second_attempt_squat_off_ek',
+                                                                                            'third_attempt_squat_res_ek',
+                                                                                            'third_attempt_squat_off_ek',
+                                                                                            'first_attempt_dlift_res_ek',
+                                                                                            'first_attempt_dlift_off_ek',
+                                                                                            'second_attempt_dlift_res_ek',
+                                                                                            'second_attempt_dlift_off_ek',
+                                                                                            'third_attempt_dlift_res_ek',
+                                                                                            'third_attempt_dlift_off_ek', )
+                    competitors_f_s = list(competitors_fr)
+                    competitors = sorted(
+                        sorted(competitors_f_s, key=lambda x: (x['sorted_value'] is not None, x['sorted_value'])),
+                        key=lambda x: bool(x['sorted_value']), reverse=True)
+                elif cur_flow_competitors_st.filter(competitor__sports_type__title="Жим лёжа (экип.)",
+                                                    third_attempt_bpress_off_ek__isnull=True).exists():
+                    competitors_fr = cur_flow_competitors_st.filter(
+                        competitor__sports_type__title="Жим лёжа (экип.)").annotate(
+                        sorted_value=F('third_attempt_bpress_res_ek')).exclude(
+                        competitor__sports_type__title__in=["Троеборье классическое", "Троеборье (экип.)",
+                                                            "Жим лёжа (без экип.)"]).values('sorted_value',
+                                                                                            'competitor__surname_comp',
+                                                                                            'competitor__name_comp',
+                                                                                            'competitor__sports_type__title',
+                                                                                            'competitor_weight',
+                                                                                            'first_attempt_bpress_res_ek',
+                                                                                            'first_attempt_bpress_off_ek',
+                                                                                            'second_attempt_bpress_res_ek',
+                                                                                            'second_attempt_bpress_off_ek',
+                                                                                            'third_attempt_bpress_res_ek',
+                                                                                            'third_attempt_bpress_off_ek',
+                                                                                            'best_bpress_res_ek',
+                                                                                            'best_sum_res_ek',
+                                                                                            'competitor_translation',
+                                                                                            'best_squat_res_ek',
+                                                                                            'best_dlift_res_ek',
+                                                                                            'first_attempt_squat_res_ek',
+                                                                                            'first_attempt_squat_off_ek',
+                                                                                            'second_attempt_squat_res_ek',
+                                                                                            'second_attempt_squat_off_ek',
+                                                                                            'third_attempt_squat_res_ek',
+                                                                                            'third_attempt_squat_off_ek',
+                                                                                            'first_attempt_dlift_res_ek',
+                                                                                            'first_attempt_dlift_off_ek',
+                                                                                            'second_attempt_dlift_res_ek',
+                                                                                            'second_attempt_dlift_off_ek',
+                                                                                            'third_attempt_dlift_res_ek',
+                                                                                            'third_attempt_dlift_off_ek', )
+                    competitors_f_s = list(competitors_fr)
+                    competitors = sorted(
+                        sorted(competitors_f_s, key=lambda x: (x['sorted_value'] is not None, x['sorted_value'])),
+                        key=lambda x: bool(x['sorted_value']), reverse=True)
+                else:
+                    competitors_fr = cur_flow_competitors_st.filter(
+                        competitor__sports_type__title="Жим лёжа (экип.)").annotate(
+                        sorted_value=F('best_sum_res_ek')).exclude(
+                        competitor__sports_type__title__in=["Троеборье классическое", "Троеборье (экип.)",
+                                                            "Жим лёжа (без экип.)"]).values('sorted_value',
+                                                                                            'competitor__surname_comp',
+                                                                                            'competitor__name_comp',
+                                                                                            'competitor__sports_type__title',
+                                                                                            'competitor_weight',
+                                                                                            'first_attempt_bpress_res_ek',
+                                                                                            'first_attempt_bpress_off_ek',
+                                                                                            'second_attempt_bpress_res_ek',
+                                                                                            'second_attempt_bpress_off_ek',
+                                                                                            'third_attempt_bpress_res_ek',
+                                                                                            'third_attempt_bpress_off_ek',
+                                                                                            'best_bpress_res_ek',
+                                                                                            'best_sum_res_ek',
+                                                                                            'competitor_translation',
+                                                                                            'best_squat_res_ek',
+                                                                                            'best_dlift_res_ek',
+                                                                                            'first_attempt_squat_res_ek',
+                                                                                            'first_attempt_squat_off_ek',
+                                                                                            'second_attempt_squat_res_ek',
+                                                                                            'second_attempt_squat_off_ek',
+                                                                                            'third_attempt_squat_res_ek',
+                                                                                            'third_attempt_squat_off_ek',
+                                                                                            'first_attempt_dlift_res_ek',
+                                                                                            'first_attempt_dlift_off_ek',
+                                                                                            'second_attempt_dlift_res_ek',
+                                                                                            'second_attempt_dlift_off_ek',
+                                                                                            'third_attempt_dlift_res_ek',
+                                                                                            'third_attempt_dlift_off_ek', )
+                    competitors_f_s = list(competitors_fr)
+                    competitors = sorted(
+                        sorted(competitors_f_s, key=lambda x: (x['sorted_value'] is not None, x['sorted_value']),
+                               reverse=True), key=lambda x: bool(x['sorted_value']), reverse=True)
+
+            # cur_flow = CompetitorsFlow.objects.first().comp_flow
+            # cur_flow_competitors_st = CompetitionProtocols.objects.filter(competitor_stream=cur_flow, competitor__comp_title__competition_slug=competition_slug)
+            # competitors_stypes_st = cur_flow_competitors_st.values_list('competitor__sports_type__title', flat=True)
+            # competitors_stypes = []
+            # for csts in competitors_stypes_st:
+            #     if csts not in competitors_stypes:
+            #         competitors_stypes.append(csts)
+            # if "Троеборье классическое" in competitors_stypes:
+            #     cur_flow_competitors = cur_flow_competitors_st.order_by(F("first_attempt_squat_res").asc(nulls_last=True))
+            #     if None not in cur_flow_competitors.filter(competitor__sports_type__title="Троеборье классическое").values_list('third_attempt_squat_off', flat=True):
+            #         cur_flow_competitors = cur_flow_competitors_st.order_by(F("first_attempt_bpress_res").asc(nulls_last=True))
+            #         if None not in cur_flow_competitors.filter(competitor__sports_type__title="Троеборье классическое").values_list('third_attempt_bpress_off', flat=True):
+            #             cur_flow_competitors = cur_flow_competitors_st.order_by(F("first_attempt_dlift_res").asc(nulls_last=True))
+            # elif "Троеборье (экип.)" in competitors_stypes:
+            #     cur_flow_competitors = cur_flow_competitors_st.order_by(F("first_attempt_squat_res_ek").asc(nulls_last=True))
+            #     if None not in cur_flow_competitors.filter(competitor__sports_type__title="Троеборье (экип.)").values_list('third_attempt_squat_off_ek', flat=True):
+            #         cur_flow_competitors = cur_flow_competitors_st.order_by(F("first_attempt_bpress_res_ek").asc(nulls_last=True))
+            #         if None not in cur_flow_competitors.filter(competitor__sports_type__title="Троеборье (экип.)").values_list('third_attempt_bpress_off_ek', flat=True):
+            #             cur_flow_competitors = cur_flow_competitors_st.order_by(F("first_attempt_dlift_res_ek").asc(nulls_last=True))
+            # elif "Жим лёжа (без экип.)" in competitors_stypes:
+            #     cur_flow_competitors = cur_flow_competitors_st.order_by(F("first_attempt_bpress_res").asc(nulls_last=True))
+            # else:
+            #     cur_flow_competitors = cur_flow_competitors_st.order_by(F("first_attempt_bpress_res_ek").asc(nulls_last=True))
+            # cur_flow_competitors_json = serializers.serialize("json", cur_flow_competitors, use_natural_foreign_keys=True)
+            # return JsonResponse({"cur_flow_competitors_json": cur_flow_competitors_json, }, status=200)
+            return JsonResponse({"cur_flow_competitors_json": competitors}, status=200)
     return render(request, 'pwrlftmain/scoreboard_page.html', response_data)
 
 
@@ -2548,29 +5141,1021 @@ def scoreboard_comp_page(request, competition_slug):
         cur_flow_competitors_st = CompetitionProtocols.objects.filter(competitor__comp_title__competition_slug=competition_slug, competitor_stream=cur_flow)
         competitors_stypes_st = cur_flow_competitors_st.values_list('competitor__sports_type__title', flat=True)
         competitors_stypes = []
+        competitors = ""
         for csts in competitors_stypes_st:
             if csts not in competitors_stypes:
                 competitors_stypes.append(csts)
-        if "Троеборье классическое" in competitors_stypes:
-            cur_flow_competitors = cur_flow_competitors_st.order_by(F("first_attempt_squat_res").asc(nulls_last=True))
-            # if None not in cur_flow_competitors.filter(Q(competitor__sports_type__title="Троеборье классическое") & Q(competitor__sports_type__title="Троеборье (экип.)")).values_list('third_attempt_squat_off', flat=True):
-            if None not in cur_flow_competitors.filter(competitor__sports_type__title="Троеборье классическое").values_list('third_attempt_squat_off', flat=True):
-                cur_flow_competitors = cur_flow_competitors_st.order_by(F("first_attempt_bpress_res").asc(nulls_last=True))
-                # if None not in cur_flow_competitors.filter(Q(competitor__sports_type__title="Троеборье классическое") & Q(competitor__sports_type__title="Троеборье (экип.)")).values_list('third_attempt_bpress_off', flat=True):
-                if None not in cur_flow_competitors.filter(competitor__sports_type__title="Троеборье классическое").values_list('third_attempt_bpress_off', flat=True):
-                    cur_flow_competitors = cur_flow_competitors_st.order_by(F("first_attempt_dlift_res").asc(nulls_last=True))
+
+        if ("Троеборье классическое" in competitors_stypes) and ("Троеборье (экип.)" in competitors_stypes):
+            if cur_flow_competitors_st.filter(competitor__sports_type__title="Троеборье классическое", first_attempt_squat_off__isnull=True).exists() or cur_flow_competitors_st.filter(competitor__sports_type__title="Троеборье (экип.)", first_attempt_squat_off_ek__isnull=True).exists():
+                competitors_f = cur_flow_competitors_st.filter(competitor__sports_type__title="Троеборье классическое").annotate(
+                    sorted_value=F('first_attempt_squat_res')).values('sorted_value', 'competitor__surname_comp', 'competitor__name_comp', 'competitor_weight', 'competitor__sports_type__title', 'first_attempt_squat_res',
+                                                                     'first_attempt_squat_off', 'second_attempt_squat_res', 'second_attempt_squat_off', 'third_attempt_squat_res', 'third_attempt_squat_off',
+                                                                     'first_attempt_bpress_res', 'first_attempt_bpress_off', 'second_attempt_bpress_res', 'second_attempt_bpress_off', 'third_attempt_bpress_res',
+                                                                     'third_attempt_bpress_off', 'first_attempt_dlift_res', 'first_attempt_dlift_off', 'second_attempt_dlift_res', 'second_attempt_dlift_off',
+                                                                     'third_attempt_dlift_res', 'third_attempt_dlift_off', 'best_squat_res', 'best_bpress_res', 'best_dlift_res', 'best_sum_res', 'competitor_translation')
+                competitors_s = cur_flow_competitors_st.filter(competitor__sports_type__title="Троеборье (экип.)").annotate(
+                    sorted_value=F('first_attempt_squat_res_ek')).values('sorted_value', 'competitor__surname_comp', 'competitor__sports_type__title', 'competitor__name_comp', 'competitor_weight', 'first_attempt_squat_res_ek',
+                                                                        'first_attempt_squat_off_ek', 'second_attempt_squat_res_ek', 'second_attempt_squat_off_ek', 'third_attempt_squat_res_ek', 'third_attempt_squat_off_ek',
+                                                                        'first_attempt_bpress_res_ek', 'first_attempt_bpress_off_ek', 'second_attempt_bpress_res_ek', 'second_attempt_bpress_off_ek', 'third_attempt_bpress_res_ek',
+                                                                        'third_attempt_bpress_off_ek', 'first_attempt_dlift_res_ek', 'first_attempt_dlift_off_ek', 'second_attempt_dlift_res_ek', 'second_attempt_dlift_off_ek',
+                                                                        'third_attempt_dlift_res_ek', 'third_attempt_dlift_off_ek', 'best_squat_res_ek', 'best_bpress_res_ek', 'best_dlift_res_ek', 'best_sum_res_ek', 'competitor_translation')
+                competitors_f_s = list(competitors_f) + list(competitors_s)
+                if "Жим лёжа (без экип.)" in competitors_stypes:
+                    competitors_t = cur_flow_competitors_st.filter(competitor__sports_type__title="Жим лёжа (без экип.)").annotate(
+                    sorted_value=F('first_attempt_squat_res')).exclude(competitor__sports_type__title__in=["Троеборье классическое", "Троеборье (экип.)", "Жим лёжа (экип.)"]).values('sorted_value', 'competitor__surname_comp',
+                                                                        'competitor__name_comp', 'competitor__sports_type__title', 'first_attempt_squat_res', 'first_attempt_squat_off', 'second_attempt_squat_res',
+                                                                        'second_attempt_squat_off', 'third_attempt_squat_res', 'third_attempt_squat_off', 'competitor_weight', 'first_attempt_bpress_res',
+                                                                        'first_attempt_bpress_off', 'second_attempt_bpress_res', 'second_attempt_bpress_off', 'third_attempt_bpress_res', 'third_attempt_bpress_off', 'best_bpress_res', 'best_sum_res', 'competitor_translation', 'best_squat_res', 'best_dlift_res',
+                                                                        'first_attempt_dlift_res', 'first_attempt_dlift_off', 'second_attempt_dlift_res', 'second_attempt_dlift_off', 'third_attempt_dlift_res', 'third_attempt_dlift_off')
+                    competitors_f_s += list(competitors_t)
+                if "Жим лёжа (экип.)" in competitors_stypes:
+                    competitors_fr = cur_flow_competitors_st.filter(competitor__sports_type__title="Жим лёжа (экип.)").annotate(
+                    sorted_value=F('first_attempt_squat_res_ek')).exclude(competitor__sports_type__title__in=["Троеборье классическое", "Троеборье (экип.)", "Жим лёжа (без экип.)"]).values('sorted_value', 'competitor__surname_comp',
+                                                                           'competitor__name_comp', 'competitor__sports_type__title', 'competitor_weight', 'first_attempt_bpress_res_ek', 'first_attempt_bpress_off_ek',
+                                                                           'second_attempt_bpress_res_ek', 'second_attempt_bpress_off_ek', 'third_attempt_bpress_res_ek', 'third_attempt_bpress_off_ek', 'best_bpress_res_ek', 'best_sum_res_ek', 'competitor_translation', 'best_squat_res_ek', 'best_dlift_res_ek',
+                                                                           'first_attempt_squat_res_ek', 'first_attempt_squat_off_ek', 'second_attempt_squat_res_ek', 'second_attempt_squat_off_ek', 'third_attempt_squat_res_ek',
+                                                                            'third_attempt_squat_off_ek', 'first_attempt_dlift_res_ek', 'first_attempt_dlift_off_ek', 'second_attempt_dlift_res_ek', 'second_attempt_dlift_off_ek',
+                                                                            'third_attempt_dlift_res_ek', 'third_attempt_dlift_off_ek',)
+                    competitors_f_s += list(competitors_fr)
+                competitors = sorted(sorted(competitors_f_s, key=lambda x: (x['sorted_value'] is not None, x['sorted_value'])), key=lambda x: bool(x['sorted_value']), reverse=True)
+            elif cur_flow_competitors_st.filter(competitor__sports_type__title="Троеборье классическое", second_attempt_squat_off__isnull=True).exists() or cur_flow_competitors_st.filter(competitor__sports_type__title="Троеборье (экип.)", second_attempt_squat_off_ek__isnull=True).exists():
+                competitors_f = cur_flow_competitors_st.filter(competitor__sports_type__title="Троеборье классическое").annotate(
+                    sorted_value=F('second_attempt_squat_res')).values('sorted_value', 'competitor__surname_comp', 'competitor__name_comp', 'competitor_weight', 'competitor__sports_type__title', 'first_attempt_squat_res',
+                                                                     'first_attempt_squat_off', 'second_attempt_squat_res', 'second_attempt_squat_off', 'third_attempt_squat_res', 'third_attempt_squat_off',
+                                                                     'first_attempt_bpress_res', 'first_attempt_bpress_off', 'second_attempt_bpress_res', 'second_attempt_bpress_off', 'third_attempt_bpress_res',
+                                                                     'third_attempt_bpress_off', 'first_attempt_dlift_res', 'first_attempt_dlift_off', 'second_attempt_dlift_res', 'second_attempt_dlift_off',
+                                                                     'third_attempt_dlift_res', 'third_attempt_dlift_off', 'best_squat_res', 'best_bpress_res', 'best_dlift_res', 'best_sum_res', 'competitor_translation')
+                competitors_s = cur_flow_competitors_st.filter(competitor__sports_type__title="Троеборье (экип.)").annotate(
+                    sorted_value=F('second_attempt_squat_res_ek')).values('sorted_value', 'competitor__surname_comp', 'competitor__sports_type__title', 'competitor__name_comp', 'competitor_weight', 'first_attempt_squat_res_ek',
+                                                                        'first_attempt_squat_off_ek', 'second_attempt_squat_res_ek', 'second_attempt_squat_off_ek', 'third_attempt_squat_res_ek', 'third_attempt_squat_off_ek',
+                                                                        'first_attempt_bpress_res_ek', 'first_attempt_bpress_off_ek', 'second_attempt_bpress_res_ek', 'second_attempt_bpress_off_ek', 'third_attempt_bpress_res_ek',
+                                                                        'third_attempt_bpress_off_ek', 'first_attempt_dlift_res_ek', 'first_attempt_dlift_off_ek', 'second_attempt_dlift_res_ek', 'second_attempt_dlift_off_ek',
+                                                                        'third_attempt_dlift_res_ek', 'third_attempt_dlift_off_ek', 'best_squat_res_ek', 'best_bpress_res_ek', 'best_dlift_res_ek', 'best_sum_res_ek', 'competitor_translation')
+                competitors_f_s = list(competitors_f) + list(competitors_s)
+                if "Жим лёжа (без экип.)" in competitors_stypes:
+                    competitors_t = cur_flow_competitors_st.filter(competitor__sports_type__title="Жим лёжа (без экип.)").annotate(
+                    sorted_value=F('second_attempt_squat_res')).exclude(competitor__sports_type__title__in=["Троеборье классическое", "Троеборье (экип.)", "Жим лёжа (экип.)"]).values('sorted_value', 'competitor__surname_comp',
+                                                                        'competitor__name_comp', 'competitor__sports_type__title', 'first_attempt_squat_res', 'first_attempt_squat_off', 'second_attempt_squat_res',
+                                                                        'second_attempt_squat_off', 'third_attempt_squat_res', 'third_attempt_squat_off', 'competitor_weight', 'first_attempt_bpress_res',
+                                                                        'first_attempt_bpress_off', 'second_attempt_bpress_res', 'second_attempt_bpress_off', 'third_attempt_bpress_res', 'third_attempt_bpress_off', 'best_bpress_res', 'best_sum_res', 'competitor_translation', 'best_squat_res', 'best_dlift_res',
+                                                                        'first_attempt_dlift_res', 'first_attempt_dlift_off', 'second_attempt_dlift_res', 'second_attempt_dlift_off', 'third_attempt_dlift_res', 'third_attempt_dlift_off')
+                    competitors_f_s += list(competitors_t)
+                if "Жим лёжа (экип.)" in competitors_stypes:
+                    competitors_fr = cur_flow_competitors_st.filter(competitor__sports_type__title="Жим лёжа (экип.)").annotate(
+                    sorted_value=F('second_attempt_squat_res_ek')).exclude(competitor__sports_type__title__in=["Троеборье классическое", "Троеборье (экип.)", "Жим лёжа (без экип.)"]).values('sorted_value', 'competitor__surname_comp',
+                                                                           'competitor__name_comp', 'competitor__sports_type__title', 'competitor_weight', 'first_attempt_bpress_res_ek', 'first_attempt_bpress_off_ek',
+                                                                           'second_attempt_bpress_res_ek', 'second_attempt_bpress_off_ek', 'third_attempt_bpress_res_ek', 'third_attempt_bpress_off_ek', 'best_bpress_res_ek', 'best_sum_res_ek', 'competitor_translation', 'best_squat_res_ek', 'best_dlift_res_ek',
+                                                                           'first_attempt_squat_res_ek', 'first_attempt_squat_off_ek', 'second_attempt_squat_res_ek', 'second_attempt_squat_off_ek', 'third_attempt_squat_res_ek',
+                                                                            'third_attempt_squat_off_ek', 'first_attempt_dlift_res_ek', 'first_attempt_dlift_off_ek', 'second_attempt_dlift_res_ek', 'second_attempt_dlift_off_ek',
+                                                                            'third_attempt_dlift_res_ek', 'third_attempt_dlift_off_ek',)
+                    competitors_f_s += list(competitors_fr)
+                competitors = sorted(sorted(competitors_f_s, key=lambda x: (x['sorted_value'] is not None, x['sorted_value'])), key=lambda x: bool(x['sorted_value']), reverse=True)
+            elif cur_flow_competitors_st.filter(competitor__sports_type__title="Троеборье классическое", third_attempt_squat_off__isnull=True).exists() or cur_flow_competitors_st.filter(competitor__sports_type__title="Троеборье (экип.)", third_attempt_squat_off_ek__isnull=True).exists():
+                competitors_f = cur_flow_competitors_st.filter(competitor__sports_type__title="Троеборье классическое").annotate(
+                    sorted_value=F('third_attempt_squat_res')).values('sorted_value', 'competitor__surname_comp', 'competitor__name_comp', 'competitor_weight', 'competitor__sports_type__title', 'first_attempt_squat_res',
+                                                                     'first_attempt_squat_off', 'second_attempt_squat_res', 'second_attempt_squat_off', 'third_attempt_squat_res', 'third_attempt_squat_off',
+                                                                     'first_attempt_bpress_res', 'first_attempt_bpress_off', 'second_attempt_bpress_res', 'second_attempt_bpress_off', 'third_attempt_bpress_res',
+                                                                     'third_attempt_bpress_off', 'first_attempt_dlift_res', 'first_attempt_dlift_off', 'second_attempt_dlift_res', 'second_attempt_dlift_off',
+                                                                     'third_attempt_dlift_res', 'third_attempt_dlift_off', 'best_squat_res', 'best_bpress_res', 'best_dlift_res', 'best_sum_res', 'competitor_translation')
+                competitors_s = cur_flow_competitors_st.filter(competitor__sports_type__title="Троеборье (экип.)").annotate(
+                    sorted_value=F('third_attempt_squat_res_ek')).values('sorted_value', 'competitor__surname_comp', 'competitor__sports_type__title', 'competitor__name_comp', 'competitor_weight', 'first_attempt_squat_res_ek',
+                                                                        'first_attempt_squat_off_ek', 'second_attempt_squat_res_ek', 'second_attempt_squat_off_ek', 'third_attempt_squat_res_ek', 'third_attempt_squat_off_ek',
+                                                                        'first_attempt_bpress_res_ek', 'first_attempt_bpress_off_ek', 'second_attempt_bpress_res_ek', 'second_attempt_bpress_off_ek', 'third_attempt_bpress_res_ek',
+                                                                        'third_attempt_bpress_off_ek', 'first_attempt_dlift_res_ek', 'first_attempt_dlift_off_ek', 'second_attempt_dlift_res_ek', 'second_attempt_dlift_off_ek',
+                                                                        'third_attempt_dlift_res_ek', 'third_attempt_dlift_off_ek', 'best_squat_res_ek', 'best_bpress_res_ek', 'best_dlift_res_ek', 'best_sum_res_ek', 'competitor_translation')
+                competitors_f_s = list(competitors_f) + list(competitors_s)
+                if "Жим лёжа (без экип.)" in competitors_stypes:
+                    competitors_t = cur_flow_competitors_st.filter(competitor__sports_type__title="Жим лёжа (без экип.)").annotate(
+                    sorted_value=F('third_attempt_squat_res')).exclude(competitor__sports_type__title__in=["Троеборье классическое", "Троеборье (экип.)", "Жим лёжа (экип.)"]).values('sorted_value', 'competitor__surname_comp',
+                                                                        'competitor__name_comp', 'competitor__sports_type__title', 'first_attempt_squat_res', 'first_attempt_squat_off', 'second_attempt_squat_res',
+                                                                        'second_attempt_squat_off', 'third_attempt_squat_res', 'third_attempt_squat_off', 'competitor_weight', 'first_attempt_bpress_res',
+                                                                        'first_attempt_bpress_off', 'second_attempt_bpress_res', 'second_attempt_bpress_off', 'third_attempt_bpress_res', 'third_attempt_bpress_off', 'best_bpress_res', 'best_sum_res', 'competitor_translation', 'best_squat_res', 'best_dlift_res',
+                                                                        'first_attempt_dlift_res', 'first_attempt_dlift_off', 'second_attempt_dlift_res', 'second_attempt_dlift_off', 'third_attempt_dlift_res', 'third_attempt_dlift_off')
+                    competitors_f_s += list(competitors_t)
+                if "Жим лёжа (экип.)" in competitors_stypes:
+                    competitors_fr = cur_flow_competitors_st.filter(competitor__sports_type__title="Жим лёжа (экип.)").annotate(
+                    sorted_value=F('third_attempt_squat_res_ek')).exclude(competitor__sports_type__title__in=["Троеборье классическое", "Троеборье (экип.)", "Жим лёжа (без экип.)"]).values('sorted_value', 'competitor__surname_comp',
+                                                                           'competitor__name_comp', 'competitor__sports_type__title', 'competitor_weight', 'first_attempt_bpress_res_ek', 'first_attempt_bpress_off_ek',
+                                                                           'second_attempt_bpress_res_ek', 'second_attempt_bpress_off_ek', 'third_attempt_bpress_res_ek', 'third_attempt_bpress_off_ek', 'best_bpress_res_ek', 'best_sum_res_ek', 'competitor_translation', 'best_squat_res_ek', 'best_dlift_res_ek',
+                                                                           'first_attempt_squat_res_ek', 'first_attempt_squat_off_ek', 'second_attempt_squat_res_ek', 'second_attempt_squat_off_ek', 'third_attempt_squat_res_ek',
+                                                                            'third_attempt_squat_off_ek', 'first_attempt_dlift_res_ek', 'first_attempt_dlift_off_ek', 'second_attempt_dlift_res_ek', 'second_attempt_dlift_off_ek',
+                                                                            'third_attempt_dlift_res_ek', 'third_attempt_dlift_off_ek',)
+                    competitors_f_s += list(competitors_fr)
+                competitors = sorted(sorted(competitors_f_s, key=lambda x: (x['sorted_value'] is not None, x['sorted_value'])), key=lambda x: bool(x['sorted_value']), reverse=True)
+            elif cur_flow_competitors_st.filter(competitor__sports_type__title="Троеборье классическое", first_attempt_bpress_off__isnull=True).exists() or cur_flow_competitors_st.filter(competitor__sports_type__title="Троеборье (экип.)", first_attempt_bpress_off_ek__isnull=True).exists() or cur_flow_competitors_st.filter(competitor__sports_type__title="Жим лёжа (экип.)", first_attempt_bpress_off_ek__isnull=True).exclude(competitor__sports_type__title__in=["Троеборье классическое", "Троеборье (экип.)", "Жим лёжа (без экип.)"]).exists() or cur_flow_competitors_st.filter(competitor__sports_type__title="Жим лёжа (без экип.)", first_attempt_bpress_off__isnull=True).exclude(competitor__sports_type__title__in=["Троеборье классическое", "Троеборье (экип.)", "Жим лёжа (экип.)"]).exists():
+                competitors_f = cur_flow_competitors_st.filter(competitor__sports_type__title="Троеборье классическое").annotate(
+                    sorted_value=F('first_attempt_bpress_res')).values('sorted_value', 'competitor__surname_comp', 'competitor__name_comp', 'competitor_weight', 'competitor__sports_type__title', 'first_attempt_squat_res',
+                                                                     'first_attempt_squat_off', 'second_attempt_squat_res', 'second_attempt_squat_off', 'third_attempt_squat_res', 'third_attempt_squat_off',
+                                                                     'first_attempt_bpress_res', 'first_attempt_bpress_off', 'second_attempt_bpress_res', 'second_attempt_bpress_off', 'third_attempt_bpress_res',
+                                                                     'third_attempt_bpress_off', 'first_attempt_dlift_res', 'first_attempt_dlift_off', 'second_attempt_dlift_res', 'second_attempt_dlift_off',
+                                                                     'third_attempt_dlift_res', 'third_attempt_dlift_off', 'best_squat_res', 'best_bpress_res', 'best_dlift_res', 'best_sum_res', 'competitor_translation')
+                competitors_s = cur_flow_competitors_st.filter(competitor__sports_type__title="Троеборье (экип.)").annotate(
+                    sorted_value=F('first_attempt_bpress_res_ek')).values('sorted_value', 'competitor__surname_comp', 'competitor__sports_type__title', 'competitor__name_comp', 'competitor_weight', 'first_attempt_squat_res_ek',
+                                                                        'first_attempt_squat_off_ek', 'second_attempt_squat_res_ek', 'second_attempt_squat_off_ek', 'third_attempt_squat_res_ek', 'third_attempt_squat_off_ek',
+                                                                        'first_attempt_bpress_res_ek', 'first_attempt_bpress_off_ek', 'second_attempt_bpress_res_ek', 'second_attempt_bpress_off_ek', 'third_attempt_bpress_res_ek',
+                                                                        'third_attempt_bpress_off_ek', 'first_attempt_dlift_res_ek', 'first_attempt_dlift_off_ek', 'second_attempt_dlift_res_ek', 'second_attempt_dlift_off_ek',
+                                                                        'third_attempt_dlift_res_ek', 'third_attempt_dlift_off_ek', 'best_squat_res_ek', 'best_bpress_res_ek', 'best_dlift_res_ek', 'best_sum_res_ek', 'competitor_translation')
+                competitors_f_s = list(competitors_f) + list(competitors_s)
+                if "Жим лёжа (без экип.)" in competitors_stypes:
+                    competitors_t = cur_flow_competitors_st.filter(competitor__sports_type__title="Жим лёжа (без экип.)").annotate(
+                    sorted_value=F('first_attempt_bpress_res')).exclude(competitor__sports_type__title__in=["Троеборье классическое", "Троеборье (экип.)", "Жим лёжа (экип.)"]).values('sorted_value', 'competitor__surname_comp',
+                                                                        'competitor__name_comp', 'competitor__sports_type__title', 'first_attempt_squat_res', 'first_attempt_squat_off', 'second_attempt_squat_res',
+                                                                        'second_attempt_squat_off', 'third_attempt_squat_res', 'third_attempt_squat_off', 'competitor_weight', 'first_attempt_bpress_res',
+                                                                        'first_attempt_bpress_off', 'second_attempt_bpress_res', 'second_attempt_bpress_off', 'third_attempt_bpress_res', 'third_attempt_bpress_off', 'best_bpress_res', 'best_sum_res', 'competitor_translation', 'best_squat_res', 'best_dlift_res',
+                                                                        'first_attempt_dlift_res', 'first_attempt_dlift_off', 'second_attempt_dlift_res', 'second_attempt_dlift_off', 'third_attempt_dlift_res', 'third_attempt_dlift_off')
+                    competitors_f_s += list(competitors_t)
+                if "Жим лёжа (экип.)" in competitors_stypes:
+                    competitors_fr = cur_flow_competitors_st.filter(competitor__sports_type__title="Жим лёжа (экип.)").annotate(
+                    sorted_value=F('first_attempt_bpress_res_ek')).exclude(competitor__sports_type__title__in=["Троеборье классическое", "Троеборье (экип.)", "Жим лёжа (без экип.)"]).values('sorted_value', 'competitor__surname_comp',
+                                                                           'competitor__name_comp', 'competitor__sports_type__title', 'competitor_weight', 'first_attempt_bpress_res_ek', 'first_attempt_bpress_off_ek',
+                                                                           'second_attempt_bpress_res_ek', 'second_attempt_bpress_off_ek', 'third_attempt_bpress_res_ek', 'third_attempt_bpress_off_ek', 'best_bpress_res_ek', 'best_sum_res_ek', 'competitor_translation', 'best_squat_res_ek', 'best_dlift_res_ek',
+                                                                           'first_attempt_squat_res_ek', 'first_attempt_squat_off_ek', 'second_attempt_squat_res_ek', 'second_attempt_squat_off_ek', 'third_attempt_squat_res_ek',
+                                                                            'third_attempt_squat_off_ek', 'first_attempt_dlift_res_ek', 'first_attempt_dlift_off_ek', 'second_attempt_dlift_res_ek', 'second_attempt_dlift_off_ek',
+                                                                            'third_attempt_dlift_res_ek', 'third_attempt_dlift_off_ek',)
+                    competitors_f_s += list(competitors_fr)
+                competitors = sorted(sorted(competitors_f_s, key=lambda x: (x['sorted_value'] is not None, x['sorted_value'])), key=lambda x: bool(x['sorted_value']), reverse=True)
+            elif cur_flow_competitors_st.filter(competitor__sports_type__title="Троеборье классическое", second_attempt_bpress_off__isnull=True).exists() or cur_flow_competitors_st.filter(competitor__sports_type__title="Троеборье (экип.)", second_attempt_bpress_off_ek__isnull=True).exists() or cur_flow_competitors_st.filter(competitor__sports_type__title="Жим лёжа (экип.)", second_attempt_bpress_off_ek__isnull=True).exclude(competitor__sports_type__title__in=["Троеборье классическое", "Троеборье (экип.)", "Жим лёжа (без экип.)"]).exists() or cur_flow_competitors_st.filter(competitor__sports_type__title="Жим лёжа (без экип.)", second_attempt_bpress_off__isnull=True).exclude(competitor__sports_type__title__in=["Троеборье классическое", "Троеборье (экип.)", "Жим лёжа (экип.)"]).exists():
+                competitors_f = cur_flow_competitors_st.filter(competitor__sports_type__title="Троеборье классическое").annotate(
+                    sorted_value=F('second_attempt_bpress_res')).values('sorted_value', 'competitor__surname_comp', 'competitor__name_comp', 'competitor_weight', 'competitor__sports_type__title', 'first_attempt_squat_res',
+                                                                     'first_attempt_squat_off', 'second_attempt_squat_res', 'second_attempt_squat_off', 'third_attempt_squat_res', 'third_attempt_squat_off',
+                                                                     'first_attempt_bpress_res', 'first_attempt_bpress_off', 'second_attempt_bpress_res', 'second_attempt_bpress_off', 'third_attempt_bpress_res',
+                                                                     'third_attempt_bpress_off', 'first_attempt_dlift_res', 'first_attempt_dlift_off', 'second_attempt_dlift_res', 'second_attempt_dlift_off',
+                                                                     'third_attempt_dlift_res', 'third_attempt_dlift_off', 'best_squat_res', 'best_bpress_res', 'best_dlift_res', 'best_sum_res', 'competitor_translation')
+                competitors_s = cur_flow_competitors_st.filter(competitor__sports_type__title="Троеборье (экип.)").annotate(
+                    sorted_value=F('second_attempt_bpress_res_ek')).values('sorted_value', 'competitor__surname_comp', 'competitor__sports_type__title', 'competitor__name_comp', 'competitor_weight', 'first_attempt_squat_res_ek',
+                                                                        'first_attempt_squat_off_ek', 'second_attempt_squat_res_ek', 'second_attempt_squat_off_ek', 'third_attempt_squat_res_ek', 'third_attempt_squat_off_ek',
+                                                                        'first_attempt_bpress_res_ek', 'first_attempt_bpress_off_ek', 'second_attempt_bpress_res_ek', 'second_attempt_bpress_off_ek', 'third_attempt_bpress_res_ek',
+                                                                        'third_attempt_bpress_off_ek', 'first_attempt_dlift_res_ek', 'first_attempt_dlift_off_ek', 'second_attempt_dlift_res_ek', 'second_attempt_dlift_off_ek',
+                                                                        'third_attempt_dlift_res_ek', 'third_attempt_dlift_off_ek', 'best_squat_res_ek', 'best_bpress_res_ek', 'best_dlift_res_ek', 'best_sum_res_ek', 'competitor_translation')
+                competitors_f_s = list(competitors_f) + list(competitors_s)
+                if "Жим лёжа (без экип.)" in competitors_stypes:
+                    competitors_t = cur_flow_competitors_st.filter(competitor__sports_type__title="Жим лёжа (без экип.)").annotate(
+                    sorted_value=F('second_attempt_bpress_res')).exclude(competitor__sports_type__title__in=["Троеборье классическое", "Троеборье (экип.)", "Жим лёжа (экип.)"]).values('sorted_value', 'competitor__surname_comp',
+                                                                        'competitor__name_comp', 'competitor__sports_type__title', 'first_attempt_squat_res', 'first_attempt_squat_off', 'second_attempt_squat_res',
+                                                                        'second_attempt_squat_off', 'third_attempt_squat_res', 'third_attempt_squat_off', 'competitor_weight', 'first_attempt_bpress_res',
+                                                                        'first_attempt_bpress_off', 'second_attempt_bpress_res', 'second_attempt_bpress_off', 'third_attempt_bpress_res', 'third_attempt_bpress_off', 'best_bpress_res', 'best_sum_res', 'competitor_translation', 'best_squat_res', 'best_dlift_res',
+                                                                        'first_attempt_dlift_res', 'first_attempt_dlift_off', 'second_attempt_dlift_res', 'second_attempt_dlift_off', 'third_attempt_dlift_res', 'third_attempt_dlift_off')
+                    competitors_f_s += list(competitors_t)
+                if "Жим лёжа (экип.)" in competitors_stypes:
+                    competitors_fr = cur_flow_competitors_st.filter(competitor__sports_type__title="Жим лёжа (экип.)").annotate(
+                    sorted_value=F('second_attempt_bpress_res_ek')).exclude(competitor__sports_type__title__in=["Троеборье классическое", "Троеборье (экип.)", "Жим лёжа (без экип.)"]).values('sorted_value', 'competitor__surname_comp',
+                                                                           'competitor__name_comp', 'competitor__sports_type__title', 'competitor_weight', 'first_attempt_bpress_res_ek', 'first_attempt_bpress_off_ek',
+                                                                           'second_attempt_bpress_res_ek', 'second_attempt_bpress_off_ek', 'third_attempt_bpress_res_ek', 'third_attempt_bpress_off_ek', 'best_bpress_res_ek', 'best_sum_res_ek', 'competitor_translation', 'best_squat_res_ek', 'best_dlift_res_ek',
+                                                                           'first_attempt_squat_res_ek', 'first_attempt_squat_off_ek', 'second_attempt_squat_res_ek', 'second_attempt_squat_off_ek', 'third_attempt_squat_res_ek',
+                                                                            'third_attempt_squat_off_ek', 'first_attempt_dlift_res_ek', 'first_attempt_dlift_off_ek', 'second_attempt_dlift_res_ek', 'second_attempt_dlift_off_ek',
+                                                                            'third_attempt_dlift_res_ek', 'third_attempt_dlift_off_ek',)
+                    competitors_f_s += list(competitors_fr)
+                competitors = sorted(sorted(competitors_f_s, key=lambda x: (x['sorted_value'] is not None, x['sorted_value'])), key=lambda x: bool(x['sorted_value']), reverse=True)
+            elif cur_flow_competitors_st.filter(competitor__sports_type__title="Троеборье классическое", third_attempt_bpress_off__isnull=True).exists() or cur_flow_competitors_st.filter(competitor__sports_type__title="Троеборье (экип.)", third_attempt_bpress_off_ek__isnull=True).exists() or cur_flow_competitors_st.filter(competitor__sports_type__title="Жим лёжа (экип.)", third_attempt_bpress_off_ek__isnull=True).exclude(competitor__sports_type__title__in=["Троеборье классическое", "Троеборье (экип.)", "Жим лёжа (без экип.)"]).exists() or cur_flow_competitors_st.filter(competitor__sports_type__title="Жим лёжа (без экип.)", third_attempt_bpress_off__isnull=True).exclude(competitor__sports_type__title__in=["Троеборье классическое", "Троеборье (экип.)", "Жим лёжа (экип.)"]).exists():
+                competitors_f = cur_flow_competitors_st.filter(competitor__sports_type__title="Троеборье классическое").annotate(
+                    sorted_value=F('third_attempt_bpress_res')).values('sorted_value', 'competitor__surname_comp', 'competitor__name_comp', 'competitor_weight', 'competitor__sports_type__title', 'first_attempt_squat_res',
+                                                                     'first_attempt_squat_off', 'second_attempt_squat_res', 'second_attempt_squat_off', 'third_attempt_squat_res', 'third_attempt_squat_off',
+                                                                     'first_attempt_bpress_res', 'first_attempt_bpress_off', 'second_attempt_bpress_res', 'second_attempt_bpress_off', 'third_attempt_bpress_res',
+                                                                     'third_attempt_bpress_off', 'first_attempt_dlift_res', 'first_attempt_dlift_off', 'second_attempt_dlift_res', 'second_attempt_dlift_off',
+                                                                     'third_attempt_dlift_res', 'third_attempt_dlift_off', 'best_squat_res', 'best_bpress_res', 'best_dlift_res', 'best_sum_res', 'competitor_translation')
+                competitors_s = cur_flow_competitors_st.filter(competitor__sports_type__title="Троеборье (экип.)").annotate(
+                    sorted_value=F('third_attempt_bpress_res_ek')).values('sorted_value', 'competitor__surname_comp', 'competitor__sports_type__title', 'competitor__name_comp', 'competitor_weight', 'first_attempt_squat_res_ek',
+                                                                        'first_attempt_squat_off_ek', 'second_attempt_squat_res_ek', 'second_attempt_squat_off_ek', 'third_attempt_squat_res_ek', 'third_attempt_squat_off_ek',
+                                                                        'first_attempt_bpress_res_ek', 'first_attempt_bpress_off_ek', 'second_attempt_bpress_res_ek', 'second_attempt_bpress_off_ek', 'third_attempt_bpress_res_ek',
+                                                                        'third_attempt_bpress_off_ek', 'first_attempt_dlift_res_ek', 'first_attempt_dlift_off_ek', 'second_attempt_dlift_res_ek', 'second_attempt_dlift_off_ek',
+                                                                        'third_attempt_dlift_res_ek', 'third_attempt_dlift_off_ek', 'best_squat_res_ek', 'best_bpress_res_ek', 'best_dlift_res_ek', 'best_sum_res_ek', 'competitor_translation')
+                competitors_f_s = list(competitors_f) + list(competitors_s)
+                if "Жим лёжа (без экип.)" in competitors_stypes:
+                    competitors_t = cur_flow_competitors_st.filter(competitor__sports_type__title="Жим лёжа (без экип.)").annotate(
+                    sorted_value=F('third_attempt_bpress_res')).exclude(competitor__sports_type__title__in=["Троеборье классическое", "Троеборье (экип.)", "Жим лёжа (экип.)"]).values('sorted_value', 'competitor__surname_comp',
+                                                                        'competitor__name_comp', 'competitor__sports_type__title', 'first_attempt_squat_res', 'first_attempt_squat_off', 'second_attempt_squat_res',
+                                                                        'second_attempt_squat_off', 'third_attempt_squat_res', 'third_attempt_squat_off', 'competitor_weight', 'first_attempt_bpress_res',
+                                                                        'first_attempt_bpress_off', 'second_attempt_bpress_res', 'second_attempt_bpress_off', 'third_attempt_bpress_res', 'third_attempt_bpress_off', 'best_bpress_res', 'best_sum_res', 'competitor_translation', 'best_squat_res', 'best_dlift_res',
+                                                                        'first_attempt_dlift_res', 'first_attempt_dlift_off', 'second_attempt_dlift_res', 'second_attempt_dlift_off', 'third_attempt_dlift_res', 'third_attempt_dlift_off')
+                    competitors_f_s += list(competitors_t)
+                if "Жим лёжа (экип.)" in competitors_stypes:
+                    competitors_fr = cur_flow_competitors_st.filter(competitor__sports_type__title="Жим лёжа (экип.)").annotate(
+                    sorted_value=F('third_attempt_bpress_res_ek')).exclude(competitor__sports_type__title__in=["Троеборье классическое", "Троеборье (экип.)", "Жим лёжа (без экип.)"]).values('sorted_value', 'competitor__surname_comp',
+                                                                           'competitor__name_comp', 'competitor__sports_type__title', 'competitor_weight', 'first_attempt_bpress_res_ek', 'first_attempt_bpress_off_ek',
+                                                                           'second_attempt_bpress_res_ek', 'second_attempt_bpress_off_ek', 'third_attempt_bpress_res_ek', 'third_attempt_bpress_off_ek', 'best_bpress_res_ek', 'best_sum_res_ek', 'competitor_translation', 'best_squat_res_ek', 'best_dlift_res_ek',
+                                                                           'first_attempt_squat_res_ek', 'first_attempt_squat_off_ek', 'second_attempt_squat_res_ek', 'second_attempt_squat_off_ek', 'third_attempt_squat_res_ek',
+                                                                            'third_attempt_squat_off_ek', 'first_attempt_dlift_res_ek', 'first_attempt_dlift_off_ek', 'second_attempt_dlift_res_ek', 'second_attempt_dlift_off_ek',
+                                                                            'third_attempt_dlift_res_ek', 'third_attempt_dlift_off_ek',)
+                    competitors_f_s += list(competitors_fr)
+                competitors = sorted(sorted(competitors_f_s, key=lambda x: (x['sorted_value'] is not None, x['sorted_value'])), key=lambda x: bool(x['sorted_value']), reverse=True)
+            elif cur_flow_competitors_st.filter(competitor__sports_type__title="Троеборье классическое", first_attempt_dlift_off__isnull=True).exists() or cur_flow_competitors_st.filter(competitor__sports_type__title="Троеборье (экип.)", first_attempt_dlift_off_ek__isnull=True).exists():
+                competitors_f = cur_flow_competitors_st.filter(competitor__sports_type__title="Троеборье классическое").annotate(
+                    sorted_value=F('first_attempt_dlift_res')).values('sorted_value', 'competitor__surname_comp', 'competitor__name_comp', 'competitor_weight', 'competitor__sports_type__title', 'first_attempt_squat_res',
+                                                                     'first_attempt_squat_off', 'second_attempt_squat_res', 'second_attempt_squat_off', 'third_attempt_squat_res', 'third_attempt_squat_off',
+                                                                     'first_attempt_bpress_res', 'first_attempt_bpress_off', 'second_attempt_bpress_res', 'second_attempt_bpress_off', 'third_attempt_bpress_res',
+                                                                     'third_attempt_bpress_off', 'first_attempt_dlift_res', 'first_attempt_dlift_off', 'second_attempt_dlift_res', 'second_attempt_dlift_off',
+                                                                     'third_attempt_dlift_res', 'third_attempt_dlift_off', 'best_squat_res', 'best_bpress_res', 'best_dlift_res', 'best_sum_res', 'competitor_translation')
+                competitors_s = cur_flow_competitors_st.filter(competitor__sports_type__title="Троеборье (экип.)").annotate(
+                    sorted_value=F('first_attempt_dlift_res_ek')).values('sorted_value', 'competitor__surname_comp', 'competitor__sports_type__title', 'competitor__name_comp', 'competitor_weight', 'first_attempt_squat_res_ek',
+                                                                        'first_attempt_squat_off_ek', 'second_attempt_squat_res_ek', 'second_attempt_squat_off_ek', 'third_attempt_squat_res_ek', 'third_attempt_squat_off_ek',
+                                                                        'first_attempt_bpress_res_ek', 'first_attempt_bpress_off_ek', 'second_attempt_bpress_res_ek', 'second_attempt_bpress_off_ek', 'third_attempt_bpress_res_ek',
+                                                                        'third_attempt_bpress_off_ek', 'first_attempt_dlift_res_ek', 'first_attempt_dlift_off_ek', 'second_attempt_dlift_res_ek', 'second_attempt_dlift_off_ek',
+                                                                        'third_attempt_dlift_res_ek', 'third_attempt_dlift_off_ek', 'best_squat_res_ek', 'best_bpress_res_ek', 'best_dlift_res_ek', 'best_sum_res_ek', 'competitor_translation')
+                competitors_f_s = list(competitors_f) + list(competitors_s)
+                if "Жим лёжа (без экип.)" in competitors_stypes:
+                    competitors_t = cur_flow_competitors_st.filter(competitor__sports_type__title="Жим лёжа (без экип.)").annotate(
+                    sorted_value=F('first_attempt_dlift_res')).exclude(competitor__sports_type__title__in=["Троеборье классическое", "Троеборье (экип.)", "Жим лёжа (экип.)"]).values('sorted_value', 'competitor__surname_comp',
+                                                                        'competitor__name_comp', 'competitor__sports_type__title', 'first_attempt_squat_res', 'first_attempt_squat_off', 'second_attempt_squat_res',
+                                                                        'second_attempt_squat_off', 'third_attempt_squat_res', 'third_attempt_squat_off', 'competitor_weight', 'first_attempt_bpress_res',
+                                                                        'first_attempt_bpress_off', 'second_attempt_bpress_res', 'second_attempt_bpress_off', 'third_attempt_bpress_res', 'third_attempt_bpress_off', 'best_bpress_res', 'best_sum_res', 'competitor_translation', 'best_squat_res', 'best_dlift_res',
+                                                                        'first_attempt_dlift_res', 'first_attempt_dlift_off', 'second_attempt_dlift_res', 'second_attempt_dlift_off', 'third_attempt_dlift_res', 'third_attempt_dlift_off')
+                    competitors_f_s += list(competitors_t)
+                if "Жим лёжа (экип.)" in competitors_stypes:
+                    competitors_fr = cur_flow_competitors_st.filter(competitor__sports_type__title="Жим лёжа (экип.)").annotate(
+                    sorted_value=F('first_attempt_dlift_res_ek')).exclude(competitor__sports_type__title__in=["Троеборье классическое", "Троеборье (экип.)", "Жим лёжа (без экип.)"]).values('sorted_value', 'competitor__surname_comp',
+                                                                           'competitor__name_comp', 'competitor__sports_type__title', 'competitor_weight', 'first_attempt_bpress_res_ek', 'first_attempt_bpress_off_ek',
+                                                                           'second_attempt_bpress_res_ek', 'second_attempt_bpress_off_ek', 'third_attempt_bpress_res_ek', 'third_attempt_bpress_off_ek', 'best_bpress_res_ek', 'best_sum_res_ek', 'competitor_translation', 'best_squat_res_ek', 'best_dlift_res_ek',
+                                                                           'first_attempt_squat_res_ek', 'first_attempt_squat_off_ek', 'second_attempt_squat_res_ek', 'second_attempt_squat_off_ek', 'third_attempt_squat_res_ek',
+                                                                            'third_attempt_squat_off_ek', 'first_attempt_dlift_res_ek', 'first_attempt_dlift_off_ek', 'second_attempt_dlift_res_ek', 'second_attempt_dlift_off_ek',
+                                                                            'third_attempt_dlift_res_ek', 'third_attempt_dlift_off_ek',)
+                    competitors_f_s += list(competitors_fr)
+                competitors = sorted(sorted(competitors_f_s, key=lambda x: (x['sorted_value'] is not None, x['sorted_value'])), key=lambda x: bool(x['sorted_value']), reverse=True)
+            elif cur_flow_competitors_st.filter(competitor__sports_type__title="Троеборье классическое", second_attempt_dlift_off__isnull=True).exists() or cur_flow_competitors_st.filter(competitor__sports_type__title="Троеборье (экип.)", second_attempt_dlift_off_ek__isnull=True).exists():
+                competitors_f = cur_flow_competitors_st.filter(competitor__sports_type__title="Троеборье классическое").annotate(
+                    sorted_value=F('second_attempt_dlift_res')).values('sorted_value', 'competitor__surname_comp', 'competitor__name_comp', 'competitor_weight', 'competitor__sports_type__title', 'first_attempt_squat_res',
+                                                                     'first_attempt_squat_off', 'second_attempt_squat_res', 'second_attempt_squat_off', 'third_attempt_squat_res', 'third_attempt_squat_off',
+                                                                     'first_attempt_bpress_res', 'first_attempt_bpress_off', 'second_attempt_bpress_res', 'second_attempt_bpress_off', 'third_attempt_bpress_res',
+                                                                     'third_attempt_bpress_off', 'first_attempt_dlift_res', 'first_attempt_dlift_off', 'second_attempt_dlift_res', 'second_attempt_dlift_off',
+                                                                     'third_attempt_dlift_res', 'third_attempt_dlift_off', 'best_squat_res', 'best_bpress_res', 'best_dlift_res', 'best_sum_res', 'competitor_translation')
+                competitors_s = cur_flow_competitors_st.filter(competitor__sports_type__title="Троеборье (экип.)").annotate(
+                    sorted_value=F('second_attempt_dlift_res_ek')).values('sorted_value', 'competitor__surname_comp', 'competitor__sports_type__title', 'competitor__name_comp', 'competitor_weight', 'first_attempt_squat_res_ek',
+                                                                        'first_attempt_squat_off_ek', 'second_attempt_squat_res_ek', 'second_attempt_squat_off_ek', 'third_attempt_squat_res_ek', 'third_attempt_squat_off_ek',
+                                                                        'first_attempt_bpress_res_ek', 'first_attempt_bpress_off_ek', 'second_attempt_bpress_res_ek', 'second_attempt_bpress_off_ek', 'third_attempt_bpress_res_ek',
+                                                                        'third_attempt_bpress_off_ek', 'first_attempt_dlift_res_ek', 'first_attempt_dlift_off_ek', 'second_attempt_dlift_res_ek', 'second_attempt_dlift_off_ek',
+                                                                        'third_attempt_dlift_res_ek', 'third_attempt_dlift_off_ek', 'best_squat_res_ek', 'best_bpress_res_ek', 'best_dlift_res_ek', 'best_sum_res_ek', 'competitor_translation')
+                competitors_f_s = list(competitors_f) + list(competitors_s)
+                if "Жим лёжа (без экип.)" in competitors_stypes:
+                    competitors_t = cur_flow_competitors_st.filter(competitor__sports_type__title="Жим лёжа (без экип.)").annotate(
+                    sorted_value=F('second_attempt_dlift_res')).exclude(competitor__sports_type__title__in=["Троеборье классическое", "Троеборье (экип.)", "Жим лёжа (экип.)"]).values('sorted_value', 'competitor__surname_comp',
+                                                                        'competitor__name_comp', 'competitor__sports_type__title', 'first_attempt_squat_res', 'first_attempt_squat_off', 'second_attempt_squat_res',
+                                                                        'second_attempt_squat_off', 'third_attempt_squat_res', 'third_attempt_squat_off', 'competitor_weight', 'first_attempt_bpress_res',
+                                                                        'first_attempt_bpress_off', 'second_attempt_bpress_res', 'second_attempt_bpress_off', 'third_attempt_bpress_res', 'third_attempt_bpress_off', 'best_bpress_res', 'best_sum_res', 'competitor_translation', 'best_squat_res', 'best_dlift_res',
+                                                                        'first_attempt_dlift_res', 'first_attempt_dlift_off', 'second_attempt_dlift_res', 'second_attempt_dlift_off', 'third_attempt_dlift_res', 'third_attempt_dlift_off')
+                    competitors_f_s += list(competitors_t)
+                if "Жим лёжа (экип.)" in competitors_stypes:
+                    competitors_fr = cur_flow_competitors_st.filter(competitor__sports_type__title="Жим лёжа (экип.)").annotate(
+                    sorted_value=F('second_attempt_dlift_res_ek')).exclude(competitor__sports_type__title__in=["Троеборье классическое", "Троеборье (экип.)", "Жим лёжа (без экип.)"]).values('sorted_value', 'competitor__surname_comp',
+                                                                           'competitor__name_comp', 'competitor__sports_type__title', 'competitor_weight', 'first_attempt_bpress_res_ek', 'first_attempt_bpress_off_ek',
+                                                                           'second_attempt_bpress_res_ek', 'second_attempt_bpress_off_ek', 'third_attempt_bpress_res_ek', 'third_attempt_bpress_off_ek', 'best_bpress_res_ek', 'best_sum_res_ek', 'competitor_translation', 'best_squat_res_ek', 'best_dlift_res_ek',
+                                                                           'first_attempt_squat_res_ek', 'first_attempt_squat_off_ek', 'second_attempt_squat_res_ek', 'second_attempt_squat_off_ek', 'third_attempt_squat_res_ek',
+                                                                            'third_attempt_squat_off_ek', 'first_attempt_dlift_res_ek', 'first_attempt_dlift_off_ek', 'second_attempt_dlift_res_ek', 'second_attempt_dlift_off_ek',
+                                                                            'third_attempt_dlift_res_ek', 'third_attempt_dlift_off_ek',)
+                    competitors_f_s += list(competitors_fr)
+                competitors = sorted(sorted(competitors_f_s, key=lambda x: (x['sorted_value'] is not None, x['sorted_value'])), key=lambda x: bool(x['sorted_value']), reverse=True)
+            elif cur_flow_competitors_st.filter(competitor__sports_type__title="Троеборье классическое", third_attempt_dlift_off__isnull=True).exists() or cur_flow_competitors_st.filter(competitor__sports_type__title="Троеборье (экип.)", third_attempt_dlift_off_ek__isnull=True).exists():
+                competitors_f = cur_flow_competitors_st.filter(competitor__sports_type__title="Троеборье классическое").annotate(
+                    sorted_value=F('third_attempt_dlift_res')).values('sorted_value', 'competitor__surname_comp', 'competitor__name_comp', 'competitor_weight', 'competitor__sports_type__title', 'first_attempt_squat_res',
+                                                                     'first_attempt_squat_off', 'second_attempt_squat_res', 'second_attempt_squat_off', 'third_attempt_squat_res', 'third_attempt_squat_off',
+                                                                     'first_attempt_bpress_res', 'first_attempt_bpress_off', 'second_attempt_bpress_res', 'second_attempt_bpress_off', 'third_attempt_bpress_res',
+                                                                     'third_attempt_bpress_off', 'first_attempt_dlift_res', 'first_attempt_dlift_off', 'second_attempt_dlift_res', 'second_attempt_dlift_off',
+                                                                     'third_attempt_dlift_res', 'third_attempt_dlift_off', 'best_squat_res', 'best_bpress_res', 'best_dlift_res', 'best_sum_res', 'competitor_translation')
+                competitors_s = cur_flow_competitors_st.filter(competitor__sports_type__title="Троеборье (экип.)").annotate(
+                    sorted_value=F('third_attempt_dlift_res_ek')).values('sorted_value', 'competitor__surname_comp', 'competitor__sports_type__title', 'competitor__name_comp', 'competitor_weight', 'first_attempt_squat_res_ek',
+                                                                        'first_attempt_squat_off_ek', 'second_attempt_squat_res_ek', 'second_attempt_squat_off_ek', 'third_attempt_squat_res_ek', 'third_attempt_squat_off_ek',
+                                                                        'first_attempt_bpress_res_ek', 'first_attempt_bpress_off_ek', 'second_attempt_bpress_res_ek', 'second_attempt_bpress_off_ek', 'third_attempt_bpress_res_ek',
+                                                                        'third_attempt_bpress_off_ek', 'first_attempt_dlift_res_ek', 'first_attempt_dlift_off_ek', 'second_attempt_dlift_res_ek', 'second_attempt_dlift_off_ek',
+                                                                        'third_attempt_dlift_res_ek', 'third_attempt_dlift_off_ek', 'best_squat_res_ek', 'best_bpress_res_ek', 'best_dlift_res_ek', 'best_sum_res_ek', 'competitor_translation')
+                competitors_f_s = list(competitors_f) + list(competitors_s)
+                if "Жим лёжа (без экип.)" in competitors_stypes:
+                    competitors_t = cur_flow_competitors_st.filter(competitor__sports_type__title="Жим лёжа (без экип.)").annotate(
+                    sorted_value=F('third_attempt_dlift_res')).exclude(competitor__sports_type__title__in=["Троеборье классическое", "Троеборье (экип.)", "Жим лёжа (экип.)"]).values('sorted_value', 'competitor__surname_comp',
+                                                                        'competitor__name_comp', 'competitor__sports_type__title', 'first_attempt_squat_res', 'first_attempt_squat_off', 'second_attempt_squat_res',
+                                                                        'second_attempt_squat_off', 'third_attempt_squat_res', 'third_attempt_squat_off', 'competitor_weight', 'first_attempt_bpress_res',
+                                                                        'first_attempt_bpress_off', 'second_attempt_bpress_res', 'second_attempt_bpress_off', 'third_attempt_bpress_res', 'third_attempt_bpress_off', 'best_bpress_res', 'best_sum_res', 'competitor_translation', 'best_squat_res', 'best_dlift_res',
+                                                                        'first_attempt_dlift_res', 'first_attempt_dlift_off', 'second_attempt_dlift_res', 'second_attempt_dlift_off', 'third_attempt_dlift_res', 'third_attempt_dlift_off')
+                    competitors_f_s += list(competitors_t)
+                if "Жим лёжа (экип.)" in competitors_stypes:
+                    competitors_fr = cur_flow_competitors_st.filter(competitor__sports_type__title="Жим лёжа (экип.)").annotate(
+                    sorted_value=F('third_attempt_dlift_res_ek')).exclude(competitor__sports_type__title__in=["Троеборье классическое", "Троеборье (экип.)", "Жим лёжа (без экип.)"]).values('sorted_value', 'competitor__surname_comp',
+                                                                           'competitor__name_comp', 'competitor__sports_type__title', 'competitor_weight', 'first_attempt_bpress_res_ek', 'first_attempt_bpress_off_ek',
+                                                                           'second_attempt_bpress_res_ek', 'second_attempt_bpress_off_ek', 'third_attempt_bpress_res_ek', 'third_attempt_bpress_off_ek', 'best_bpress_res_ek', 'best_sum_res_ek', 'competitor_translation', 'best_squat_res_ek', 'best_dlift_res_ek',
+                                                                           'first_attempt_squat_res_ek', 'first_attempt_squat_off_ek', 'second_attempt_squat_res_ek', 'second_attempt_squat_off_ek', 'third_attempt_squat_res_ek',
+                                                                            'third_attempt_squat_off_ek', 'first_attempt_dlift_res_ek', 'first_attempt_dlift_off_ek', 'second_attempt_dlift_res_ek', 'second_attempt_dlift_off_ek',
+                                                                            'third_attempt_dlift_res_ek', 'third_attempt_dlift_off_ek',)
+                    competitors_f_s += list(competitors_fr)
+                competitors = sorted(sorted(competitors_f_s, key=lambda x: (x['sorted_value'] is not None, x['sorted_value'])), key=lambda x: bool(x['sorted_value']), reverse=True)
+            else:
+                competitors_f = cur_flow_competitors_st.filter(competitor__sports_type__title="Троеборье классическое").annotate(
+                    sorted_value=F('best_sum_res')).values('sorted_value', 'competitor__surname_comp', 'competitor__name_comp', 'competitor_weight', 'competitor__sports_type__title', 'first_attempt_squat_res',
+                                                                     'first_attempt_squat_off', 'second_attempt_squat_res', 'second_attempt_squat_off', 'third_attempt_squat_res', 'third_attempt_squat_off',
+                                                                     'first_attempt_bpress_res', 'first_attempt_bpress_off', 'second_attempt_bpress_res', 'second_attempt_bpress_off', 'third_attempt_bpress_res',
+                                                                     'third_attempt_bpress_off', 'first_attempt_dlift_res', 'first_attempt_dlift_off', 'second_attempt_dlift_res', 'second_attempt_dlift_off',
+                                                                     'third_attempt_dlift_res', 'third_attempt_dlift_off', 'best_squat_res', 'best_bpress_res', 'best_dlift_res', 'best_sum_res', 'competitor_translation')
+                competitors_s = cur_flow_competitors_st.filter(competitor__sports_type__title="Троеборье (экип.)").annotate(
+                    sorted_value=F('best_sum_res_ek')).values('sorted_value', 'competitor__surname_comp', 'competitor__sports_type__title', 'competitor__name_comp', 'competitor_weight', 'first_attempt_squat_res_ek',
+                                                                        'first_attempt_squat_off_ek', 'second_attempt_squat_res_ek', 'second_attempt_squat_off_ek', 'third_attempt_squat_res_ek', 'third_attempt_squat_off_ek',
+                                                                        'first_attempt_bpress_res_ek', 'first_attempt_bpress_off_ek', 'second_attempt_bpress_res_ek', 'second_attempt_bpress_off_ek', 'third_attempt_bpress_res_ek',
+                                                                        'third_attempt_bpress_off_ek', 'first_attempt_dlift_res_ek', 'first_attempt_dlift_off_ek', 'second_attempt_dlift_res_ek', 'second_attempt_dlift_off_ek',
+                                                                        'third_attempt_dlift_res_ek', 'third_attempt_dlift_off_ek', 'best_squat_res_ek', 'best_bpress_res_ek', 'best_dlift_res_ek', 'best_sum_res_ek', 'competitor_translation')
+                competitors_f_s = list(competitors_f) + list(competitors_s)
+                if "Жим лёжа (без экип.)" in competitors_stypes:
+                    competitors_t = cur_flow_competitors_st.filter(competitor__sports_type__title="Жим лёжа (без экип.)").annotate(
+                    sorted_value=F('best_sum_res')).exclude(competitor__sports_type__title__in=["Троеборье классическое", "Троеборье (экип.)", "Жим лёжа (экип.)"]).values('sorted_value', 'competitor__surname_comp',
+                                                                        'competitor__name_comp', 'competitor__sports_type__title', 'first_attempt_squat_res', 'first_attempt_squat_off', 'second_attempt_squat_res',
+                                                                        'second_attempt_squat_off', 'third_attempt_squat_res', 'third_attempt_squat_off', 'competitor_weight', 'first_attempt_bpress_res',
+                                                                        'first_attempt_bpress_off', 'second_attempt_bpress_res', 'second_attempt_bpress_off', 'third_attempt_bpress_res', 'third_attempt_bpress_off', 'best_bpress_res', 'best_sum_res', 'competitor_translation', 'best_squat_res', 'best_dlift_res',
+                                                                        'first_attempt_dlift_res', 'first_attempt_dlift_off', 'second_attempt_dlift_res', 'second_attempt_dlift_off', 'third_attempt_dlift_res', 'third_attempt_dlift_off')
+                    competitors_f_s += list(competitors_t)
+                if "Жим лёжа (экип.)" in competitors_stypes:
+                    competitors_fr = cur_flow_competitors_st.filter(competitor__sports_type__title="Жим лёжа (экип.)").annotate(
+                    sorted_value=F('best_sum_res_ek')).exclude(competitor__sports_type__title__in=["Троеборье классическое", "Троеборье (экип.)", "Жим лёжа (без экип.)"]).values('sorted_value', 'competitor__surname_comp',
+                                                                           'competitor__name_comp', 'competitor__sports_type__title', 'competitor_weight', 'first_attempt_bpress_res_ek', 'first_attempt_bpress_off_ek',
+                                                                           'second_attempt_bpress_res_ek', 'second_attempt_bpress_off_ek', 'third_attempt_bpress_res_ek', 'third_attempt_bpress_off_ek', 'best_bpress_res_ek', 'best_sum_res_ek', 'competitor_translation', 'best_squat_res_ek', 'best_dlift_res_ek',
+                                                                           'first_attempt_squat_res_ek', 'first_attempt_squat_off_ek', 'second_attempt_squat_res_ek', 'second_attempt_squat_off_ek', 'third_attempt_squat_res_ek',
+                                                                            'third_attempt_squat_off_ek', 'first_attempt_dlift_res_ek', 'first_attempt_dlift_off_ek', 'second_attempt_dlift_res_ek', 'second_attempt_dlift_off_ek',
+                                                                            'third_attempt_dlift_res_ek', 'third_attempt_dlift_off_ek',)
+                    competitors_f_s += list(competitors_fr)
+                competitors = sorted(sorted(competitors_f_s, key=lambda x: (x['sorted_value'] is not None, x['sorted_value']), reverse=True), key=lambda x: bool(x['sorted_value']), reverse=True)
+        elif "Троеборье классическое" in competitors_stypes:
+            if cur_flow_competitors_st.filter(competitor__sports_type__title="Троеборье классическое", first_attempt_squat_off__isnull=True).exists():
+                competitors_f = cur_flow_competitors_st.filter(competitor__sports_type__title="Троеборье классическое").annotate(
+                    sorted_value=F('first_attempt_squat_res')).values('sorted_value', 'competitor__surname_comp', 'competitor__name_comp', 'competitor_weight', 'competitor__sports_type__title', 'first_attempt_squat_res',
+                                                                     'first_attempt_squat_off', 'second_attempt_squat_res', 'second_attempt_squat_off', 'third_attempt_squat_res', 'third_attempt_squat_off',
+                                                                     'first_attempt_bpress_res', 'first_attempt_bpress_off', 'second_attempt_bpress_res', 'second_attempt_bpress_off', 'third_attempt_bpress_res',
+                                                                     'third_attempt_bpress_off', 'first_attempt_dlift_res', 'first_attempt_dlift_off', 'second_attempt_dlift_res', 'second_attempt_dlift_off',
+                                                                     'third_attempt_dlift_res', 'third_attempt_dlift_off', 'best_squat_res', 'best_bpress_res', 'best_dlift_res', 'best_sum_res', 'competitor_translation')
+                competitors_f_s = list(competitors_f)
+                if "Жим лёжа (без экип.)" in competitors_stypes:
+                    competitors_t = cur_flow_competitors_st.filter(competitor__sports_type__title="Жим лёжа (без экип.)").annotate(
+                    sorted_value=F('first_attempt_squat_res')).exclude(competitor__sports_type__title__in=["Троеборье классическое", "Троеборье (экип.)", "Жим лёжа (экип.)"]).values('sorted_value', 'competitor__surname_comp',
+                                                                        'competitor__name_comp', 'competitor__sports_type__title', 'first_attempt_squat_res', 'first_attempt_squat_off', 'second_attempt_squat_res',
+                                                                        'second_attempt_squat_off', 'third_attempt_squat_res', 'third_attempt_squat_off', 'competitor_weight', 'first_attempt_bpress_res',
+                                                                        'first_attempt_bpress_off', 'second_attempt_bpress_res', 'second_attempt_bpress_off', 'third_attempt_bpress_res', 'third_attempt_bpress_off', 'best_bpress_res', 'best_sum_res', 'competitor_translation', 'best_squat_res', 'best_dlift_res',
+                                                                        'first_attempt_dlift_res', 'first_attempt_dlift_off', 'second_attempt_dlift_res', 'second_attempt_dlift_off', 'third_attempt_dlift_res', 'third_attempt_dlift_off')
+                    competitors_f_s += list(competitors_t)
+                if "Жим лёжа (экип.)" in competitors_stypes:
+                    competitors_fr = cur_flow_competitors_st.filter(competitor__sports_type__title="Жим лёжа (экип.)").annotate(
+                    sorted_value=F('first_attempt_squat_res_ek')).exclude(competitor__sports_type__title__in=["Троеборье классическое", "Троеборье (экип.)", "Жим лёжа (без экип.)"]).values('sorted_value', 'competitor__surname_comp',
+                                                                           'competitor__name_comp', 'competitor__sports_type__title', 'competitor_weight', 'first_attempt_bpress_res_ek', 'first_attempt_bpress_off_ek',
+                                                                           'second_attempt_bpress_res_ek', 'second_attempt_bpress_off_ek', 'third_attempt_bpress_res_ek', 'third_attempt_bpress_off_ek', 'best_bpress_res_ek', 'best_sum_res_ek', 'competitor_translation', 'best_squat_res_ek', 'best_dlift_res_ek',
+                                                                           'first_attempt_squat_res_ek', 'first_attempt_squat_off_ek', 'second_attempt_squat_res_ek', 'second_attempt_squat_off_ek', 'third_attempt_squat_res_ek',
+                                                                            'third_attempt_squat_off_ek', 'first_attempt_dlift_res_ek', 'first_attempt_dlift_off_ek', 'second_attempt_dlift_res_ek', 'second_attempt_dlift_off_ek',
+                                                                            'third_attempt_dlift_res_ek', 'third_attempt_dlift_off_ek',)
+                    competitors_f_s += list(competitors_fr)
+                competitors = sorted(sorted(competitors_f_s, key=lambda x: (x['sorted_value'] is not None, x['sorted_value'])), key=lambda x: bool(x['sorted_value']), reverse=True)
+            elif cur_flow_competitors_st.filter(competitor__sports_type__title="Троеборье классическое", second_attempt_squat_off__isnull=True).exists():
+                competitors_f = cur_flow_competitors_st.filter(competitor__sports_type__title="Троеборье классическое").annotate(
+                    sorted_value=F('second_attempt_squat_res')).values('sorted_value', 'competitor__surname_comp', 'competitor__name_comp', 'competitor_weight', 'competitor__sports_type__title', 'first_attempt_squat_res',
+                                                                     'first_attempt_squat_off', 'second_attempt_squat_res', 'second_attempt_squat_off', 'third_attempt_squat_res', 'third_attempt_squat_off',
+                                                                     'first_attempt_bpress_res', 'first_attempt_bpress_off', 'second_attempt_bpress_res', 'second_attempt_bpress_off', 'third_attempt_bpress_res',
+                                                                     'third_attempt_bpress_off', 'first_attempt_dlift_res', 'first_attempt_dlift_off', 'second_attempt_dlift_res', 'second_attempt_dlift_off',
+                                                                     'third_attempt_dlift_res', 'third_attempt_dlift_off', 'best_squat_res', 'best_bpress_res', 'best_dlift_res', 'best_sum_res', 'competitor_translation')
+                competitors_f_s = list(competitors_f)
+                if "Жим лёжа (без экип.)" in competitors_stypes:
+                    competitors_t = cur_flow_competitors_st.filter(competitor__sports_type__title="Жим лёжа (без экип.)").annotate(
+                    sorted_value=F('second_attempt_squat_res')).exclude(competitor__sports_type__title__in=["Троеборье классическое", "Троеборье (экип.)", "Жим лёжа (экип.)"]).values('sorted_value', 'competitor__surname_comp',
+                                                                        'competitor__name_comp', 'competitor__sports_type__title', 'first_attempt_squat_res', 'first_attempt_squat_off', 'second_attempt_squat_res',
+                                                                        'second_attempt_squat_off', 'third_attempt_squat_res', 'third_attempt_squat_off', 'competitor_weight', 'first_attempt_bpress_res',
+                                                                        'first_attempt_bpress_off', 'second_attempt_bpress_res', 'second_attempt_bpress_off', 'third_attempt_bpress_res', 'third_attempt_bpress_off', 'best_bpress_res', 'best_sum_res', 'competitor_translation', 'best_squat_res', 'best_dlift_res',
+                                                                        'first_attempt_dlift_res', 'first_attempt_dlift_off', 'second_attempt_dlift_res', 'second_attempt_dlift_off', 'third_attempt_dlift_res', 'third_attempt_dlift_off')
+                    competitors_f_s += list(competitors_t)
+                if "Жим лёжа (экип.)" in competitors_stypes:
+                    competitors_fr = cur_flow_competitors_st.filter(competitor__sports_type__title="Жим лёжа (экип.)").annotate(
+                    sorted_value=F('second_attempt_squat_res_ek')).exclude(competitor__sports_type__title__in=["Троеборье классическое", "Троеборье (экип.)", "Жим лёжа (без экип.)"]).values('sorted_value', 'competitor__surname_comp',
+                                                                           'competitor__name_comp', 'competitor__sports_type__title', 'competitor_weight', 'first_attempt_bpress_res_ek', 'first_attempt_bpress_off_ek',
+                                                                           'second_attempt_bpress_res_ek', 'second_attempt_bpress_off_ek', 'third_attempt_bpress_res_ek', 'third_attempt_bpress_off_ek', 'best_bpress_res_ek', 'best_sum_res_ek', 'competitor_translation', 'best_squat_res_ek', 'best_dlift_res_ek',
+                                                                           'first_attempt_squat_res_ek', 'first_attempt_squat_off_ek', 'second_attempt_squat_res_ek', 'second_attempt_squat_off_ek', 'third_attempt_squat_res_ek',
+                                                                            'third_attempt_squat_off_ek', 'first_attempt_dlift_res_ek', 'first_attempt_dlift_off_ek', 'second_attempt_dlift_res_ek', 'second_attempt_dlift_off_ek',
+                                                                            'third_attempt_dlift_res_ek', 'third_attempt_dlift_off_ek',)
+                    competitors_f_s += list(competitors_fr)
+                competitors = sorted(sorted(competitors_f_s, key=lambda x: (x['sorted_value'] is not None, x['sorted_value'])), key=lambda x: bool(x['sorted_value']), reverse=True)
+            elif cur_flow_competitors_st.filter(competitor__sports_type__title="Троеборье классическое", third_attempt_squat_off__isnull=True).exists():
+                competitors_f = cur_flow_competitors_st.filter(competitor__sports_type__title="Троеборье классическое").annotate(
+                    sorted_value=F('third_attempt_squat_res')).values('sorted_value', 'competitor__surname_comp', 'competitor__name_comp', 'competitor_weight', 'competitor__sports_type__title', 'first_attempt_squat_res',
+                                                                     'first_attempt_squat_off', 'second_attempt_squat_res', 'second_attempt_squat_off', 'third_attempt_squat_res', 'third_attempt_squat_off',
+                                                                     'first_attempt_bpress_res', 'first_attempt_bpress_off', 'second_attempt_bpress_res', 'second_attempt_bpress_off', 'third_attempt_bpress_res',
+                                                                     'third_attempt_bpress_off', 'first_attempt_dlift_res', 'first_attempt_dlift_off', 'second_attempt_dlift_res', 'second_attempt_dlift_off',
+                                                                     'third_attempt_dlift_res', 'third_attempt_dlift_off', 'best_squat_res', 'best_bpress_res', 'best_dlift_res', 'best_sum_res', 'competitor_translation')
+                competitors_f_s = list(competitors_f)
+                if "Жим лёжа (без экип.)" in competitors_stypes:
+                    competitors_t = cur_flow_competitors_st.filter(competitor__sports_type__title="Жим лёжа (без экип.)").annotate(
+                    sorted_value=F('third_attempt_squat_res')).exclude(competitor__sports_type__title__in=["Троеборье классическое", "Троеборье (экип.)", "Жим лёжа (экип.)"]).values('sorted_value', 'competitor__surname_comp',
+                                                                        'competitor__name_comp', 'competitor__sports_type__title', 'first_attempt_squat_res', 'first_attempt_squat_off', 'second_attempt_squat_res',
+                                                                        'second_attempt_squat_off', 'third_attempt_squat_res', 'third_attempt_squat_off', 'competitor_weight', 'first_attempt_bpress_res',
+                                                                        'first_attempt_bpress_off', 'second_attempt_bpress_res', 'second_attempt_bpress_off', 'third_attempt_bpress_res', 'third_attempt_bpress_off', 'best_bpress_res', 'best_sum_res', 'competitor_translation', 'best_squat_res', 'best_dlift_res',
+                                                                        'first_attempt_dlift_res', 'first_attempt_dlift_off', 'second_attempt_dlift_res', 'second_attempt_dlift_off', 'third_attempt_dlift_res', 'third_attempt_dlift_off')
+                    competitors_f_s += list(competitors_t)
+                if "Жим лёжа (экип.)" in competitors_stypes:
+                    competitors_fr = cur_flow_competitors_st.filter(competitor__sports_type__title="Жим лёжа (экип.)").annotate(
+                    sorted_value=F('third_attempt_squat_res_ek')).exclude(competitor__sports_type__title__in=["Троеборье классическое", "Троеборье (экип.)", "Жим лёжа (без экип.)"]).values('sorted_value', 'competitor__surname_comp',
+                                                                           'competitor__name_comp', 'competitor__sports_type__title', 'competitor_weight', 'first_attempt_bpress_res_ek', 'first_attempt_bpress_off_ek',
+                                                                           'second_attempt_bpress_res_ek', 'second_attempt_bpress_off_ek', 'third_attempt_bpress_res_ek', 'third_attempt_bpress_off_ek', 'best_bpress_res_ek', 'best_sum_res_ek', 'competitor_translation', 'best_squat_res_ek', 'best_dlift_res_ek',
+                                                                           'first_attempt_squat_res_ek', 'first_attempt_squat_off_ek', 'second_attempt_squat_res_ek', 'second_attempt_squat_off_ek', 'third_attempt_squat_res_ek',
+                                                                            'third_attempt_squat_off_ek', 'first_attempt_dlift_res_ek', 'first_attempt_dlift_off_ek', 'second_attempt_dlift_res_ek', 'second_attempt_dlift_off_ek',
+                                                                            'third_attempt_dlift_res_ek', 'third_attempt_dlift_off_ek',)
+                    competitors_f_s += list(competitors_fr)
+                competitors = sorted(sorted(competitors_f_s, key=lambda x: (x['sorted_value'] is not None, x['sorted_value'])), key=lambda x: bool(x['sorted_value']), reverse=True)
+            elif cur_flow_competitors_st.filter(competitor__sports_type__title="Троеборье классическое", first_attempt_bpress_off__isnull=True).exists() or cur_flow_competitors_st.filter(competitor__sports_type__title="Жим лёжа (экип.)", first_attempt_bpress_off_ek__isnull=True).exclude(competitor__sports_type__title__in=["Троеборье классическое", "Троеборье (экип.)", "Жим лёжа (без экип.)"]).exists() or cur_flow_competitors_st.filter(competitor__sports_type__title="Жим лёжа (без экип.)", first_attempt_bpress_off__isnull=True).exclude(competitor__sports_type__title__in=["Троеборье классическое", "Троеборье (экип.)", "Жим лёжа (экип.)"]).exists():
+                competitors_f = cur_flow_competitors_st.filter(competitor__sports_type__title="Троеборье классическое").annotate(
+                    sorted_value=F('first_attempt_bpress_res')).values('sorted_value', 'competitor__surname_comp', 'competitor__name_comp', 'competitor_weight', 'competitor__sports_type__title', 'first_attempt_squat_res',
+                                                                     'first_attempt_squat_off', 'second_attempt_squat_res', 'second_attempt_squat_off', 'third_attempt_squat_res', 'third_attempt_squat_off',
+                                                                     'first_attempt_bpress_res', 'first_attempt_bpress_off', 'second_attempt_bpress_res', 'second_attempt_bpress_off', 'third_attempt_bpress_res',
+                                                                     'third_attempt_bpress_off', 'first_attempt_dlift_res', 'first_attempt_dlift_off', 'second_attempt_dlift_res', 'second_attempt_dlift_off',
+                                                                     'third_attempt_dlift_res', 'third_attempt_dlift_off', 'best_squat_res', 'best_bpress_res', 'best_dlift_res', 'best_sum_res', 'competitor_translation')
+                competitors_f_s = list(competitors_f)
+                if "Жим лёжа (без экип.)" in competitors_stypes:
+                    competitors_t = cur_flow_competitors_st.filter(competitor__sports_type__title="Жим лёжа (без экип.)").annotate(
+                    sorted_value=F('first_attempt_bpress_res')).exclude(competitor__sports_type__title__in=["Троеборье классическое", "Троеборье (экип.)", "Жим лёжа (экип.)"]).values('sorted_value', 'competitor__surname_comp',
+                                                                        'competitor__name_comp', 'competitor__sports_type__title', 'first_attempt_squat_res', 'first_attempt_squat_off', 'second_attempt_squat_res',
+                                                                        'second_attempt_squat_off', 'third_attempt_squat_res', 'third_attempt_squat_off', 'competitor_weight', 'first_attempt_bpress_res',
+                                                                        'first_attempt_bpress_off', 'second_attempt_bpress_res', 'second_attempt_bpress_off', 'third_attempt_bpress_res', 'third_attempt_bpress_off', 'best_bpress_res', 'best_sum_res', 'competitor_translation', 'best_squat_res', 'best_dlift_res',
+                                                                        'first_attempt_dlift_res', 'first_attempt_dlift_off', 'second_attempt_dlift_res', 'second_attempt_dlift_off', 'third_attempt_dlift_res', 'third_attempt_dlift_off')
+                    competitors_f_s += list(competitors_t)
+                if "Жим лёжа (экип.)" in competitors_stypes:
+                    competitors_fr = cur_flow_competitors_st.filter(competitor__sports_type__title="Жим лёжа (экип.)").annotate(
+                    sorted_value=F('first_attempt_bpress_res_ek')).exclude(competitor__sports_type__title__in=["Троеборье классическое", "Троеборье (экип.)", "Жим лёжа (без экип.)"]).values('sorted_value', 'competitor__surname_comp',
+                                                                           'competitor__name_comp', 'competitor__sports_type__title', 'competitor_weight', 'first_attempt_bpress_res_ek', 'first_attempt_bpress_off_ek',
+                                                                           'second_attempt_bpress_res_ek', 'second_attempt_bpress_off_ek', 'third_attempt_bpress_res_ek', 'third_attempt_bpress_off_ek', 'best_bpress_res_ek', 'best_sum_res_ek', 'competitor_translation', 'best_squat_res_ek', 'best_dlift_res_ek',
+                                                                           'first_attempt_squat_res_ek', 'first_attempt_squat_off_ek', 'second_attempt_squat_res_ek', 'second_attempt_squat_off_ek', 'third_attempt_squat_res_ek',
+                                                                            'third_attempt_squat_off_ek', 'first_attempt_dlift_res_ek', 'first_attempt_dlift_off_ek', 'second_attempt_dlift_res_ek', 'second_attempt_dlift_off_ek',
+                                                                            'third_attempt_dlift_res_ek', 'third_attempt_dlift_off_ek',)
+                    competitors_f_s += list(competitors_fr)
+                competitors = sorted(sorted(competitors_f_s, key=lambda x: (x['sorted_value'] is not None, x['sorted_value'])), key=lambda x: bool(x['sorted_value']), reverse=True)
+            elif cur_flow_competitors_st.filter(competitor__sports_type__title="Троеборье классическое", second_attempt_bpress_off__isnull=True).exists() or cur_flow_competitors_st.filter(competitor__sports_type__title="Жим лёжа (экип.)", second_attempt_bpress_off_ek__isnull=True).exclude(competitor__sports_type__title__in=["Троеборье классическое", "Троеборье (экип.)", "Жим лёжа (без экип.)"]).exists() or cur_flow_competitors_st.filter(competitor__sports_type__title="Жим лёжа (без экип.)", second_attempt_bpress_off__isnull=True).exclude(competitor__sports_type__title__in=["Троеборье классическое", "Троеборье (экип.)", "Жим лёжа (экип.)"]).exists():
+                competitors_f = cur_flow_competitors_st.filter(competitor__sports_type__title="Троеборье классическое").annotate(
+                    sorted_value=F('second_attempt_bpress_res')).values('sorted_value', 'competitor__surname_comp', 'competitor__name_comp', 'competitor_weight', 'competitor__sports_type__title', 'first_attempt_squat_res',
+                                                                     'first_attempt_squat_off', 'second_attempt_squat_res', 'second_attempt_squat_off', 'third_attempt_squat_res', 'third_attempt_squat_off',
+                                                                     'first_attempt_bpress_res', 'first_attempt_bpress_off', 'second_attempt_bpress_res', 'second_attempt_bpress_off', 'third_attempt_bpress_res',
+                                                                     'third_attempt_bpress_off', 'first_attempt_dlift_res', 'first_attempt_dlift_off', 'second_attempt_dlift_res', 'second_attempt_dlift_off',
+                                                                     'third_attempt_dlift_res', 'third_attempt_dlift_off', 'best_squat_res', 'best_bpress_res', 'best_dlift_res', 'best_sum_res', 'competitor_translation')
+                competitors_f_s = list(competitors_f)
+                if "Жим лёжа (без экип.)" in competitors_stypes:
+                    competitors_t = cur_flow_competitors_st.filter(competitor__sports_type__title="Жим лёжа (без экип.)").annotate(
+                    sorted_value=F('second_attempt_bpress_res')).exclude(competitor__sports_type__title__in=["Троеборье классическое", "Троеборье (экип.)", "Жим лёжа (экип.)"]).values('sorted_value', 'competitor__surname_comp',
+                                                                        'competitor__name_comp', 'competitor__sports_type__title', 'first_attempt_squat_res', 'first_attempt_squat_off', 'second_attempt_squat_res',
+                                                                        'second_attempt_squat_off', 'third_attempt_squat_res', 'third_attempt_squat_off', 'competitor_weight', 'first_attempt_bpress_res',
+                                                                        'first_attempt_bpress_off', 'second_attempt_bpress_res', 'second_attempt_bpress_off', 'third_attempt_bpress_res', 'third_attempt_bpress_off', 'best_bpress_res', 'best_sum_res', 'competitor_translation', 'best_squat_res', 'best_dlift_res',
+                                                                        'first_attempt_dlift_res', 'first_attempt_dlift_off', 'second_attempt_dlift_res', 'second_attempt_dlift_off', 'third_attempt_dlift_res', 'third_attempt_dlift_off')
+                    competitors_f_s += list(competitors_t)
+                if "Жим лёжа (экип.)" in competitors_stypes:
+                    competitors_fr = cur_flow_competitors_st.filter(competitor__sports_type__title="Жим лёжа (экип.)").annotate(
+                    sorted_value=F('second_attempt_bpress_res_ek')).exclude(competitor__sports_type__title__in=["Троеборье классическое", "Троеборье (экип.)", "Жим лёжа (без экип.)"]).values('sorted_value', 'competitor__surname_comp',
+                                                                           'competitor__name_comp', 'competitor__sports_type__title', 'competitor_weight', 'first_attempt_bpress_res_ek', 'first_attempt_bpress_off_ek',
+                                                                           'second_attempt_bpress_res_ek', 'second_attempt_bpress_off_ek', 'third_attempt_bpress_res_ek', 'third_attempt_bpress_off_ek', 'best_bpress_res_ek', 'best_sum_res_ek', 'competitor_translation', 'best_squat_res_ek', 'best_dlift_res_ek',
+                                                                           'first_attempt_squat_res_ek', 'first_attempt_squat_off_ek', 'second_attempt_squat_res_ek', 'second_attempt_squat_off_ek', 'third_attempt_squat_res_ek',
+                                                                            'third_attempt_squat_off_ek', 'first_attempt_dlift_res_ek', 'first_attempt_dlift_off_ek', 'second_attempt_dlift_res_ek', 'second_attempt_dlift_off_ek',
+                                                                            'third_attempt_dlift_res_ek', 'third_attempt_dlift_off_ek',)
+                    competitors_f_s += list(competitors_fr)
+                competitors = sorted(sorted(competitors_f_s, key=lambda x: (x['sorted_value'] is not None, x['sorted_value'])), key=lambda x: bool(x['sorted_value']), reverse=True)
+            elif cur_flow_competitors_st.filter(competitor__sports_type__title="Троеборье классическое", third_attempt_bpress_off__isnull=True).exists() or cur_flow_competitors_st.filter(competitor__sports_type__title="Жим лёжа (экип.)", third_attempt_bpress_off_ek__isnull=True).exclude(competitor__sports_type__title__in=["Троеборье классическое", "Троеборье (экип.)", "Жим лёжа (без экип.)"]).exists() or cur_flow_competitors_st.filter(competitor__sports_type__title="Жим лёжа (без экип.)", third_attempt_bpress_off__isnull=True).exclude(competitor__sports_type__title__in=["Троеборье классическое", "Троеборье (экип.)", "Жим лёжа (экип.)"]).exists():
+                competitors_f = cur_flow_competitors_st.filter(competitor__sports_type__title="Троеборье классическое").annotate(
+                    sorted_value=F('third_attempt_bpress_res')).values('sorted_value', 'competitor__surname_comp', 'competitor__name_comp', 'competitor_weight', 'competitor__sports_type__title', 'first_attempt_squat_res',
+                                                                     'first_attempt_squat_off', 'second_attempt_squat_res', 'second_attempt_squat_off', 'third_attempt_squat_res', 'third_attempt_squat_off',
+                                                                     'first_attempt_bpress_res', 'first_attempt_bpress_off', 'second_attempt_bpress_res', 'second_attempt_bpress_off', 'third_attempt_bpress_res',
+                                                                     'third_attempt_bpress_off', 'first_attempt_dlift_res', 'first_attempt_dlift_off', 'second_attempt_dlift_res', 'second_attempt_dlift_off',
+                                                                     'third_attempt_dlift_res', 'third_attempt_dlift_off', 'best_squat_res', 'best_bpress_res', 'best_dlift_res', 'best_sum_res', 'competitor_translation')
+                competitors_f_s = list(competitors_f)
+                if "Жим лёжа (без экип.)" in competitors_stypes:
+                    competitors_t = cur_flow_competitors_st.filter(competitor__sports_type__title="Жим лёжа (без экип.)").annotate(
+                    sorted_value=F('third_attempt_bpress_res')).exclude(competitor__sports_type__title__in=["Троеборье классическое", "Троеборье (экип.)", "Жим лёжа (экип.)"]).values('sorted_value', 'competitor__surname_comp',
+                                                                        'competitor__name_comp', 'competitor__sports_type__title', 'first_attempt_squat_res', 'first_attempt_squat_off', 'second_attempt_squat_res',
+                                                                        'second_attempt_squat_off', 'third_attempt_squat_res', 'third_attempt_squat_off', 'competitor_weight', 'first_attempt_bpress_res',
+                                                                        'first_attempt_bpress_off', 'second_attempt_bpress_res', 'second_attempt_bpress_off', 'third_attempt_bpress_res', 'third_attempt_bpress_off', 'best_bpress_res', 'best_sum_res', 'competitor_translation', 'best_squat_res', 'best_dlift_res',
+                                                                        'first_attempt_dlift_res', 'first_attempt_dlift_off', 'second_attempt_dlift_res', 'second_attempt_dlift_off', 'third_attempt_dlift_res', 'third_attempt_dlift_off')
+                    competitors_f_s += list(competitors_t)
+                if "Жим лёжа (экип.)" in competitors_stypes:
+                    competitors_fr = cur_flow_competitors_st.filter(competitor__sports_type__title="Жим лёжа (экип.)").annotate(
+                    sorted_value=F('third_attempt_bpress_res_ek')).exclude(competitor__sports_type__title__in=["Троеборье классическое", "Троеборье (экип.)", "Жим лёжа (без экип.)"]).values('sorted_value', 'competitor__surname_comp',
+                                                                           'competitor__name_comp', 'competitor__sports_type__title', 'competitor_weight', 'first_attempt_bpress_res_ek', 'first_attempt_bpress_off_ek',
+                                                                           'second_attempt_bpress_res_ek', 'second_attempt_bpress_off_ek', 'third_attempt_bpress_res_ek', 'third_attempt_bpress_off_ek', 'best_bpress_res_ek', 'best_sum_res_ek', 'competitor_translation', 'best_squat_res_ek', 'best_dlift_res_ek',
+                                                                           'first_attempt_squat_res_ek', 'first_attempt_squat_off_ek', 'second_attempt_squat_res_ek', 'second_attempt_squat_off_ek', 'third_attempt_squat_res_ek',
+                                                                            'third_attempt_squat_off_ek', 'first_attempt_dlift_res_ek', 'first_attempt_dlift_off_ek', 'second_attempt_dlift_res_ek', 'second_attempt_dlift_off_ek',
+                                                                            'third_attempt_dlift_res_ek', 'third_attempt_dlift_off_ek',)
+                    competitors_f_s += list(competitors_fr)
+                competitors = sorted(sorted(competitors_f_s, key=lambda x: (x['sorted_value'] is not None, x['sorted_value'])), key=lambda x: bool(x['sorted_value']), reverse=True)
+            elif cur_flow_competitors_st.filter(competitor__sports_type__title="Троеборье классическое", first_attempt_dlift_off__isnull=True).exists():
+                competitors_f = cur_flow_competitors_st.filter(competitor__sports_type__title="Троеборье классическое").annotate(
+                    sorted_value=F('first_attempt_dlift_res')).values('sorted_value', 'competitor__surname_comp', 'competitor__name_comp', 'competitor_weight', 'competitor__sports_type__title', 'first_attempt_squat_res',
+                                                                     'first_attempt_squat_off', 'second_attempt_squat_res', 'second_attempt_squat_off', 'third_attempt_squat_res', 'third_attempt_squat_off',
+                                                                     'first_attempt_bpress_res', 'first_attempt_bpress_off', 'second_attempt_bpress_res', 'second_attempt_bpress_off', 'third_attempt_bpress_res',
+                                                                     'third_attempt_bpress_off', 'first_attempt_dlift_res', 'first_attempt_dlift_off', 'second_attempt_dlift_res', 'second_attempt_dlift_off',
+                                                                     'third_attempt_dlift_res', 'third_attempt_dlift_off', 'best_squat_res', 'best_bpress_res', 'best_dlift_res', 'best_sum_res', 'competitor_translation')
+                competitors_f_s = list(competitors_f)
+                if "Жим лёжа (без экип.)" in competitors_stypes:
+                    competitors_t = cur_flow_competitors_st.filter(competitor__sports_type__title="Жим лёжа (без экип.)").annotate(
+                    sorted_value=F('first_attempt_dlift_res')).exclude(competitor__sports_type__title__in=["Троеборье классическое", "Троеборье (экип.)", "Жим лёжа (экип.)"]).values('sorted_value', 'competitor__surname_comp',
+                                                                        'competitor__name_comp', 'competitor__sports_type__title', 'first_attempt_squat_res', 'first_attempt_squat_off', 'second_attempt_squat_res',
+                                                                        'second_attempt_squat_off', 'third_attempt_squat_res', 'third_attempt_squat_off', 'competitor_weight', 'first_attempt_bpress_res',
+                                                                        'first_attempt_bpress_off', 'second_attempt_bpress_res', 'second_attempt_bpress_off', 'third_attempt_bpress_res', 'third_attempt_bpress_off', 'best_bpress_res', 'best_sum_res', 'competitor_translation', 'best_squat_res', 'best_dlift_res',
+                                                                        'first_attempt_dlift_res', 'first_attempt_dlift_off', 'second_attempt_dlift_res', 'second_attempt_dlift_off', 'third_attempt_dlift_res', 'third_attempt_dlift_off')
+                    competitors_f_s += list(competitors_t)
+                if "Жим лёжа (экип.)" in competitors_stypes:
+                    competitors_fr = cur_flow_competitors_st.filter(competitor__sports_type__title="Жим лёжа (экип.)").annotate(
+                    sorted_value=F('first_attempt_dlift_res_ek')).exclude(competitor__sports_type__title__in=["Троеборье классическое", "Троеборье (экип.)", "Жим лёжа (без экип.)"]).values('sorted_value', 'competitor__surname_comp',
+                                                                           'competitor__name_comp', 'competitor__sports_type__title', 'competitor_weight', 'first_attempt_bpress_res_ek', 'first_attempt_bpress_off_ek',
+                                                                           'second_attempt_bpress_res_ek', 'second_attempt_bpress_off_ek', 'third_attempt_bpress_res_ek', 'third_attempt_bpress_off_ek', 'best_bpress_res_ek', 'best_sum_res_ek', 'competitor_translation', 'best_squat_res_ek', 'best_dlift_res_ek',
+                                                                           'first_attempt_squat_res_ek', 'first_attempt_squat_off_ek', 'second_attempt_squat_res_ek', 'second_attempt_squat_off_ek', 'third_attempt_squat_res_ek',
+                                                                            'third_attempt_squat_off_ek', 'first_attempt_dlift_res_ek', 'first_attempt_dlift_off_ek', 'second_attempt_dlift_res_ek', 'second_attempt_dlift_off_ek',
+                                                                            'third_attempt_dlift_res_ek', 'third_attempt_dlift_off_ek',)
+                    competitors_f_s += list(competitors_fr)
+                competitors = sorted(sorted(competitors_f_s, key=lambda x: (x['sorted_value'] is not None, x['sorted_value'])), key=lambda x: bool(x['sorted_value']), reverse=True)
+            elif cur_flow_competitors_st.filter(competitor__sports_type__title="Троеборье классическое", second_attempt_dlift_off__isnull=True).exists():
+                competitors_f = cur_flow_competitors_st.filter(competitor__sports_type__title="Троеборье классическое").annotate(
+                    sorted_value=F('second_attempt_dlift_res')).values('sorted_value', 'competitor__surname_comp', 'competitor__name_comp', 'competitor_weight', 'competitor__sports_type__title', 'first_attempt_squat_res',
+                                                                     'first_attempt_squat_off', 'second_attempt_squat_res', 'second_attempt_squat_off', 'third_attempt_squat_res', 'third_attempt_squat_off',
+                                                                     'first_attempt_bpress_res', 'first_attempt_bpress_off', 'second_attempt_bpress_res', 'second_attempt_bpress_off', 'third_attempt_bpress_res',
+                                                                     'third_attempt_bpress_off', 'first_attempt_dlift_res', 'first_attempt_dlift_off', 'second_attempt_dlift_res', 'second_attempt_dlift_off',
+                                                                     'third_attempt_dlift_res', 'third_attempt_dlift_off', 'best_squat_res', 'best_bpress_res', 'best_dlift_res', 'best_sum_res', 'competitor_translation')
+                competitors_f_s = list(competitors_f)
+                if "Жим лёжа (без экип.)" in competitors_stypes:
+                    competitors_t = cur_flow_competitors_st.filter(competitor__sports_type__title="Жим лёжа (без экип.)").annotate(
+                    sorted_value=F('second_attempt_dlift_res')).exclude(competitor__sports_type__title__in=["Троеборье классическое", "Троеборье (экип.)", "Жим лёжа (экип.)"]).values('sorted_value', 'competitor__surname_comp',
+                                                                        'competitor__name_comp', 'competitor__sports_type__title', 'first_attempt_squat_res', 'first_attempt_squat_off', 'second_attempt_squat_res',
+                                                                        'second_attempt_squat_off', 'third_attempt_squat_res', 'third_attempt_squat_off', 'competitor_weight', 'first_attempt_bpress_res',
+                                                                        'first_attempt_bpress_off', 'second_attempt_bpress_res', 'second_attempt_bpress_off', 'third_attempt_bpress_res', 'third_attempt_bpress_off', 'best_bpress_res', 'best_sum_res', 'competitor_translation', 'best_squat_res', 'best_dlift_res',
+                                                                        'first_attempt_dlift_res', 'first_attempt_dlift_off', 'second_attempt_dlift_res', 'second_attempt_dlift_off', 'third_attempt_dlift_res', 'third_attempt_dlift_off')
+                    competitors_f_s += list(competitors_t)
+                if "Жим лёжа (экип.)" in competitors_stypes:
+                    competitors_fr = cur_flow_competitors_st.filter(competitor__sports_type__title="Жим лёжа (экип.)").annotate(
+                    sorted_value=F('second_attempt_dlift_res_ek')).exclude(competitor__sports_type__title__in=["Троеборье классическое", "Троеборье (экип.)", "Жим лёжа (без экип.)"]).values('sorted_value', 'competitor__surname_comp',
+                                                                           'competitor__name_comp', 'competitor__sports_type__title', 'competitor_weight', 'first_attempt_bpress_res_ek', 'first_attempt_bpress_off_ek',
+                                                                           'second_attempt_bpress_res_ek', 'second_attempt_bpress_off_ek', 'third_attempt_bpress_res_ek', 'third_attempt_bpress_off_ek', 'best_bpress_res_ek', 'best_sum_res_ek', 'competitor_translation', 'best_squat_res_ek', 'best_dlift_res_ek',
+                                                                           'first_attempt_squat_res_ek', 'first_attempt_squat_off_ek', 'second_attempt_squat_res_ek', 'second_attempt_squat_off_ek', 'third_attempt_squat_res_ek',
+                                                                            'third_attempt_squat_off_ek', 'first_attempt_dlift_res_ek', 'first_attempt_dlift_off_ek', 'second_attempt_dlift_res_ek', 'second_attempt_dlift_off_ek',
+                                                                            'third_attempt_dlift_res_ek', 'third_attempt_dlift_off_ek',)
+                    competitors_f_s += list(competitors_fr)
+                competitors = sorted(sorted(competitors_f_s, key=lambda x: (x['sorted_value'] is not None, x['sorted_value'])), key=lambda x: bool(x['sorted_value']), reverse=True)
+            elif cur_flow_competitors_st.filter(competitor__sports_type__title="Троеборье классическое", third_attempt_dlift_off__isnull=True).exists():
+                competitors_f = cur_flow_competitors_st.filter(competitor__sports_type__title="Троеборье классическое").annotate(
+                    sorted_value=F('third_attempt_dlift_res')).values('sorted_value', 'competitor__surname_comp', 'competitor__name_comp', 'competitor_weight', 'competitor__sports_type__title', 'first_attempt_squat_res',
+                                                                     'first_attempt_squat_off', 'second_attempt_squat_res', 'second_attempt_squat_off', 'third_attempt_squat_res', 'third_attempt_squat_off',
+                                                                     'first_attempt_bpress_res', 'first_attempt_bpress_off', 'second_attempt_bpress_res', 'second_attempt_bpress_off', 'third_attempt_bpress_res',
+                                                                     'third_attempt_bpress_off', 'first_attempt_dlift_res', 'first_attempt_dlift_off', 'second_attempt_dlift_res', 'second_attempt_dlift_off',
+                                                                     'third_attempt_dlift_res', 'third_attempt_dlift_off', 'best_squat_res', 'best_bpress_res', 'best_dlift_res', 'best_sum_res', 'competitor_translation')
+                competitors_f_s = list(competitors_f)
+                if "Жим лёжа (без экип.)" in competitors_stypes:
+                    competitors_t = cur_flow_competitors_st.filter(competitor__sports_type__title="Жим лёжа (без экип.)").annotate(
+                    sorted_value=F('third_attempt_dlift_res')).exclude(competitor__sports_type__title__in=["Троеборье классическое", "Троеборье (экип.)", "Жим лёжа (экип.)"]).values('sorted_value', 'competitor__surname_comp',
+                                                                        'competitor__name_comp', 'competitor__sports_type__title', 'first_attempt_squat_res', 'first_attempt_squat_off', 'second_attempt_squat_res',
+                                                                        'second_attempt_squat_off', 'third_attempt_squat_res', 'third_attempt_squat_off', 'competitor_weight', 'first_attempt_bpress_res',
+                                                                        'first_attempt_bpress_off', 'second_attempt_bpress_res', 'second_attempt_bpress_off', 'third_attempt_bpress_res', 'third_attempt_bpress_off', 'best_bpress_res', 'best_sum_res', 'competitor_translation', 'best_squat_res', 'best_dlift_res',
+                                                                        'first_attempt_dlift_res', 'first_attempt_dlift_off', 'second_attempt_dlift_res', 'second_attempt_dlift_off', 'third_attempt_dlift_res', 'third_attempt_dlift_off')
+                    competitors_f_s += list(competitors_t)
+                if "Жим лёжа (экип.)" in competitors_stypes:
+                    competitors_fr = cur_flow_competitors_st.filter(competitor__sports_type__title="Жим лёжа (экип.)").annotate(
+                    sorted_value=F('third_attempt_dlift_res_ek')).exclude(competitor__sports_type__title__in=["Троеборье классическое", "Троеборье (экип.)", "Жим лёжа (без экип.)"]).values('sorted_value', 'competitor__surname_comp',
+                                                                           'competitor__name_comp', 'competitor__sports_type__title', 'competitor_weight', 'first_attempt_bpress_res_ek', 'first_attempt_bpress_off_ek',
+                                                                           'second_attempt_bpress_res_ek', 'second_attempt_bpress_off_ek', 'third_attempt_bpress_res_ek', 'third_attempt_bpress_off_ek', 'best_bpress_res_ek', 'best_sum_res_ek', 'competitor_translation', 'best_squat_res_ek', 'best_dlift_res_ek',
+                                                                           'first_attempt_squat_res_ek', 'first_attempt_squat_off_ek', 'second_attempt_squat_res_ek', 'second_attempt_squat_off_ek', 'third_attempt_squat_res_ek',
+                                                                            'third_attempt_squat_off_ek', 'first_attempt_dlift_res_ek', 'first_attempt_dlift_off_ek', 'second_attempt_dlift_res_ek', 'second_attempt_dlift_off_ek',
+                                                                            'third_attempt_dlift_res_ek', 'third_attempt_dlift_off_ek',)
+                    competitors_f_s += list(competitors_fr)
+                competitors = sorted(sorted(competitors_f_s, key=lambda x: (x['sorted_value'] is not None, x['sorted_value'])), key=lambda x: bool(x['sorted_value']), reverse=True)
+            else:
+                competitors_f = cur_flow_competitors_st.filter(competitor__sports_type__title="Троеборье классическое").annotate(
+                    sorted_value=F('best_sum_res')).values('sorted_value', 'competitor__surname_comp', 'competitor__name_comp', 'competitor_weight', 'competitor__sports_type__title', 'first_attempt_squat_res',
+                                                                     'first_attempt_squat_off', 'second_attempt_squat_res', 'second_attempt_squat_off', 'third_attempt_squat_res', 'third_attempt_squat_off',
+                                                                     'first_attempt_bpress_res', 'first_attempt_bpress_off', 'second_attempt_bpress_res', 'second_attempt_bpress_off', 'third_attempt_bpress_res',
+                                                                     'third_attempt_bpress_off', 'first_attempt_dlift_res', 'first_attempt_dlift_off', 'second_attempt_dlift_res', 'second_attempt_dlift_off',
+                                                                     'third_attempt_dlift_res', 'third_attempt_dlift_off', 'best_squat_res', 'best_bpress_res', 'best_dlift_res', 'best_sum_res', 'competitor_translation')
+                competitors_f_s = list(competitors_f)
+                if "Жим лёжа (без экип.)" in competitors_stypes:
+                    competitors_t = cur_flow_competitors_st.filter(competitor__sports_type__title="Жим лёжа (без экип.)").annotate(
+                    sorted_value=F('best_sum_res')).exclude(competitor__sports_type__title__in=["Троеборье классическое", "Троеборье (экип.)", "Жим лёжа (экип.)"]).values('sorted_value', 'competitor__surname_comp',
+                                                                        'competitor__name_comp', 'competitor__sports_type__title', 'first_attempt_squat_res', 'first_attempt_squat_off', 'second_attempt_squat_res',
+                                                                        'second_attempt_squat_off', 'third_attempt_squat_res', 'third_attempt_squat_off', 'competitor_weight', 'first_attempt_bpress_res',
+                                                                        'first_attempt_bpress_off', 'second_attempt_bpress_res', 'second_attempt_bpress_off', 'third_attempt_bpress_res', 'third_attempt_bpress_off', 'best_bpress_res', 'best_sum_res', 'competitor_translation', 'best_squat_res', 'best_dlift_res',
+                                                                        'first_attempt_dlift_res', 'first_attempt_dlift_off', 'second_attempt_dlift_res', 'second_attempt_dlift_off', 'third_attempt_dlift_res', 'third_attempt_dlift_off')
+                    competitors_f_s += list(competitors_t)
+                if "Жим лёжа (экип.)" in competitors_stypes:
+                    competitors_fr = cur_flow_competitors_st.filter(competitor__sports_type__title="Жим лёжа (экип.)").annotate(
+                    sorted_value=F('best_sum_res_ek')).exclude(competitor__sports_type__title__in=["Троеборье классическое", "Троеборье (экип.)", "Жим лёжа (без экип.)"]).values('sorted_value', 'competitor__surname_comp',
+                                                                           'competitor__name_comp', 'competitor__sports_type__title', 'competitor_weight', 'first_attempt_bpress_res_ek', 'first_attempt_bpress_off_ek',
+                                                                           'second_attempt_bpress_res_ek', 'second_attempt_bpress_off_ek', 'third_attempt_bpress_res_ek', 'third_attempt_bpress_off_ek', 'best_bpress_res_ek', 'best_sum_res_ek', 'competitor_translation', 'best_squat_res_ek', 'best_dlift_res_ek',
+                                                                           'first_attempt_squat_res_ek', 'first_attempt_squat_off_ek', 'second_attempt_squat_res_ek', 'second_attempt_squat_off_ek', 'third_attempt_squat_res_ek',
+                                                                            'third_attempt_squat_off_ek', 'first_attempt_dlift_res_ek', 'first_attempt_dlift_off_ek', 'second_attempt_dlift_res_ek', 'second_attempt_dlift_off_ek',
+                                                                            'third_attempt_dlift_res_ek', 'third_attempt_dlift_off_ek',)
+                    competitors_f_s += list(competitors_fr)
+                competitors = sorted(sorted(competitors_f_s, key=lambda x: (x['sorted_value'] is not None, x['sorted_value']), reverse=True), key=lambda x: bool(x['sorted_value']), reverse=True)
         elif "Троеборье (экип.)" in competitors_stypes:
-            cur_flow_competitors = cur_flow_competitors_st.order_by(F("first_attempt_squat_res_ek").asc(nulls_last=True))
-            if None not in cur_flow_competitors.filter(competitor__sports_type__title="Троеборье (экип.)").values_list('third_attempt_squat_off_ek', flat=True):
-                cur_flow_competitors = cur_flow_competitors_st.order_by(F("first_attempt_bpress_res_ek").asc(nulls_last=True))
-                if None not in cur_flow_competitors.filter(competitor__sports_type__title="Троеборье (экип.)").values_list('third_attempt_bpress_off_ek', flat=True):
-                    cur_flow_competitors = cur_flow_competitors_st.order_by(F("first_attempt_dlift_res_ek").asc(nulls_last=True))
+            if cur_flow_competitors_st.filter(competitor__sports_type__title="Троеборье (экип.)", first_attempt_squat_off_ek__isnull=True).exists():
+                competitors_s = cur_flow_competitors_st.filter(competitor__sports_type__title="Троеборье (экип.)").annotate(
+                    sorted_value=F('first_attempt_squat_res_ek')).values('sorted_value', 'competitor__surname_comp', 'competitor__sports_type__title', 'competitor__name_comp', 'competitor_weight', 'first_attempt_squat_res_ek',
+                                                                        'first_attempt_squat_off_ek', 'second_attempt_squat_res_ek', 'second_attempt_squat_off_ek', 'third_attempt_squat_res_ek', 'third_attempt_squat_off_ek',
+                                                                        'first_attempt_bpress_res_ek', 'first_attempt_bpress_off_ek', 'second_attempt_bpress_res_ek', 'second_attempt_bpress_off_ek', 'third_attempt_bpress_res_ek',
+                                                                        'third_attempt_bpress_off_ek', 'first_attempt_dlift_res_ek', 'first_attempt_dlift_off_ek', 'second_attempt_dlift_res_ek', 'second_attempt_dlift_off_ek',
+                                                                        'third_attempt_dlift_res_ek', 'third_attempt_dlift_off_ek', 'best_squat_res_ek', 'best_bpress_res_ek', 'best_dlift_res_ek', 'best_sum_res_ek', 'competitor_translation')
+                competitors_f_s = list(competitors_s)
+                if "Жим лёжа (без экип.)" in competitors_stypes:
+                    competitors_t = cur_flow_competitors_st.filter(competitor__sports_type__title="Жим лёжа (без экип.)").annotate(
+                    sorted_value=F('first_attempt_squat_res')).exclude(competitor__sports_type__title__in=["Троеборье классическое", "Троеборье (экип.)", "Жим лёжа (экип.)"]).values('sorted_value', 'competitor__surname_comp',
+                                                                        'competitor__name_comp', 'competitor__sports_type__title', 'first_attempt_squat_res', 'first_attempt_squat_off', 'second_attempt_squat_res',
+                                                                        'second_attempt_squat_off', 'third_attempt_squat_res', 'third_attempt_squat_off', 'competitor_weight', 'first_attempt_bpress_res',
+                                                                        'first_attempt_bpress_off', 'second_attempt_bpress_res', 'second_attempt_bpress_off', 'third_attempt_bpress_res', 'third_attempt_bpress_off', 'best_bpress_res', 'best_sum_res', 'competitor_translation', 'best_squat_res', 'best_dlift_res',
+                                                                        'first_attempt_dlift_res', 'first_attempt_dlift_off', 'second_attempt_dlift_res', 'second_attempt_dlift_off', 'third_attempt_dlift_res', 'third_attempt_dlift_off')
+                    competitors_f_s += list(competitors_t)
+                if "Жим лёжа (экип.)" in competitors_stypes:
+                    competitors_fr = cur_flow_competitors_st.filter(competitor__sports_type__title="Жим лёжа (экип.)").annotate(
+                    sorted_value=F('first_attempt_squat_res_ek')).exclude(competitor__sports_type__title__in=["Троеборье классическое", "Троеборье (экип.)", "Жим лёжа (без экип.)"]).values('sorted_value', 'competitor__surname_comp',
+                                                                           'competitor__name_comp', 'competitor__sports_type__title', 'competitor_weight', 'first_attempt_bpress_res_ek', 'first_attempt_bpress_off_ek',
+                                                                           'second_attempt_bpress_res_ek', 'second_attempt_bpress_off_ek', 'third_attempt_bpress_res_ek', 'third_attempt_bpress_off_ek', 'best_bpress_res_ek', 'best_sum_res_ek', 'competitor_translation', 'best_squat_res_ek', 'best_dlift_res_ek',
+                                                                           'first_attempt_squat_res_ek', 'first_attempt_squat_off_ek', 'second_attempt_squat_res_ek', 'second_attempt_squat_off_ek', 'third_attempt_squat_res_ek',
+                                                                            'third_attempt_squat_off_ek', 'first_attempt_dlift_res_ek', 'first_attempt_dlift_off_ek', 'second_attempt_dlift_res_ek', 'second_attempt_dlift_off_ek',
+                                                                            'third_attempt_dlift_res_ek', 'third_attempt_dlift_off_ek',)
+                    competitors_f_s += list(competitors_fr)
+                competitors = sorted(sorted(competitors_f_s, key=lambda x: (x['sorted_value'] is not None, x['sorted_value'])), key=lambda x: bool(x['sorted_value']), reverse=True)
+            elif cur_flow_competitors_st.filter(competitor__sports_type__title="Троеборье (экип.)", second_attempt_squat_off_ek__isnull=True).exists():
+                competitors_s = cur_flow_competitors_st.filter(competitor__sports_type__title="Троеборье (экип.)").annotate(
+                    sorted_value=F('second_attempt_squat_res_ek')).values('sorted_value', 'competitor__surname_comp', 'competitor__sports_type__title', 'competitor__name_comp', 'competitor_weight', 'first_attempt_squat_res_ek',
+                                                                        'first_attempt_squat_off_ek', 'second_attempt_squat_res_ek', 'second_attempt_squat_off_ek', 'third_attempt_squat_res_ek', 'third_attempt_squat_off_ek',
+                                                                        'first_attempt_bpress_res_ek', 'first_attempt_bpress_off_ek', 'second_attempt_bpress_res_ek', 'second_attempt_bpress_off_ek', 'third_attempt_bpress_res_ek',
+                                                                        'third_attempt_bpress_off_ek', 'first_attempt_dlift_res_ek', 'first_attempt_dlift_off_ek', 'second_attempt_dlift_res_ek', 'second_attempt_dlift_off_ek',
+                                                                        'third_attempt_dlift_res_ek', 'third_attempt_dlift_off_ek', 'best_squat_res_ek', 'best_bpress_res_ek', 'best_dlift_res_ek', 'best_sum_res_ek', 'competitor_translation')
+                competitors_f_s = list(competitors_s)
+                if "Жим лёжа (без экип.)" in competitors_stypes:
+                    competitors_t = cur_flow_competitors_st.filter(competitor__sports_type__title="Жим лёжа (без экип.)").annotate(
+                    sorted_value=F('second_attempt_squat_res')).exclude(competitor__sports_type__title__in=["Троеборье классическое", "Троеборье (экип.)", "Жим лёжа (экип.)"]).values('sorted_value', 'competitor__surname_comp',
+                                                                        'competitor__name_comp', 'competitor__sports_type__title', 'first_attempt_squat_res', 'first_attempt_squat_off', 'second_attempt_squat_res',
+                                                                        'second_attempt_squat_off', 'third_attempt_squat_res', 'third_attempt_squat_off', 'competitor_weight', 'first_attempt_bpress_res',
+                                                                        'first_attempt_bpress_off', 'second_attempt_bpress_res', 'second_attempt_bpress_off', 'third_attempt_bpress_res', 'third_attempt_bpress_off', 'best_bpress_res', 'best_sum_res', 'competitor_translation', 'best_squat_res', 'best_dlift_res',
+                                                                        'first_attempt_dlift_res', 'first_attempt_dlift_off', 'second_attempt_dlift_res', 'second_attempt_dlift_off', 'third_attempt_dlift_res', 'third_attempt_dlift_off')
+                    competitors_f_s += list(competitors_t)
+                if "Жим лёжа (экип.)" in competitors_stypes:
+                    competitors_fr = cur_flow_competitors_st.filter(competitor__sports_type__title="Жим лёжа (экип.)").annotate(
+                    sorted_value=F('second_attempt_squat_res_ek')).exclude(competitor__sports_type__title__in=["Троеборье классическое", "Троеборье (экип.)", "Жим лёжа (без экип.)"]).values('sorted_value', 'competitor__surname_comp',
+                                                                           'competitor__name_comp', 'competitor__sports_type__title', 'competitor_weight', 'first_attempt_bpress_res_ek', 'first_attempt_bpress_off_ek',
+                                                                           'second_attempt_bpress_res_ek', 'second_attempt_bpress_off_ek', 'third_attempt_bpress_res_ek', 'third_attempt_bpress_off_ek', 'best_bpress_res_ek', 'best_sum_res_ek', 'competitor_translation', 'best_squat_res_ek', 'best_dlift_res_ek',
+                                                                           'first_attempt_squat_res_ek', 'first_attempt_squat_off_ek', 'second_attempt_squat_res_ek', 'second_attempt_squat_off_ek', 'third_attempt_squat_res_ek',
+                                                                            'third_attempt_squat_off_ek', 'first_attempt_dlift_res_ek', 'first_attempt_dlift_off_ek', 'second_attempt_dlift_res_ek', 'second_attempt_dlift_off_ek',
+                                                                            'third_attempt_dlift_res_ek', 'third_attempt_dlift_off_ek',)
+                    competitors_f_s += list(competitors_fr)
+                competitors = sorted(sorted(competitors_f_s, key=lambda x: (x['sorted_value'] is not None, x['sorted_value'])), key=lambda x: bool(x['sorted_value']), reverse=True)
+            elif cur_flow_competitors_st.filter(competitor__sports_type__title="Троеборье (экип.)", third_attempt_squat_off_ek__isnull=True).exists():
+                competitors_s = cur_flow_competitors_st.filter(competitor__sports_type__title="Троеборье (экип.)").annotate(
+                    sorted_value=F('third_attempt_squat_res_ek')).values('sorted_value', 'competitor__surname_comp', 'competitor__sports_type__title', 'competitor__name_comp', 'competitor_weight', 'first_attempt_squat_res_ek',
+                                                                        'first_attempt_squat_off_ek', 'second_attempt_squat_res_ek', 'second_attempt_squat_off_ek', 'third_attempt_squat_res_ek', 'third_attempt_squat_off_ek',
+                                                                        'first_attempt_bpress_res_ek', 'first_attempt_bpress_off_ek', 'second_attempt_bpress_res_ek', 'second_attempt_bpress_off_ek', 'third_attempt_bpress_res_ek',
+                                                                        'third_attempt_bpress_off_ek', 'first_attempt_dlift_res_ek', 'first_attempt_dlift_off_ek', 'second_attempt_dlift_res_ek', 'second_attempt_dlift_off_ek',
+                                                                        'third_attempt_dlift_res_ek', 'third_attempt_dlift_off_ek', 'best_squat_res_ek', 'best_bpress_res_ek', 'best_dlift_res_ek', 'best_sum_res_ek', 'competitor_translation')
+                competitors_f_s = list(competitors_s)
+                if "Жим лёжа (без экип.)" in competitors_stypes:
+                    competitors_t = cur_flow_competitors_st.filter(competitor__sports_type__title="Жим лёжа (без экип.)").annotate(
+                    sorted_value=F('third_attempt_squat_res')).exclude(competitor__sports_type__title__in=["Троеборье классическое", "Троеборье (экип.)", "Жим лёжа (экип.)"]).values('sorted_value', 'competitor__surname_comp',
+                                                                        'competitor__name_comp', 'competitor__sports_type__title', 'first_attempt_squat_res', 'first_attempt_squat_off', 'second_attempt_squat_res',
+                                                                        'second_attempt_squat_off', 'third_attempt_squat_res', 'third_attempt_squat_off', 'competitor_weight', 'first_attempt_bpress_res',
+                                                                        'first_attempt_bpress_off', 'second_attempt_bpress_res', 'second_attempt_bpress_off', 'third_attempt_bpress_res', 'third_attempt_bpress_off', 'best_bpress_res', 'best_sum_res', 'competitor_translation', 'best_squat_res', 'best_dlift_res',
+                                                                        'first_attempt_dlift_res', 'first_attempt_dlift_off', 'second_attempt_dlift_res', 'second_attempt_dlift_off', 'third_attempt_dlift_res', 'third_attempt_dlift_off')
+                    competitors_f_s += list(competitors_t)
+                if "Жим лёжа (экип.)" in competitors_stypes:
+                    competitors_fr = cur_flow_competitors_st.filter(competitor__sports_type__title="Жим лёжа (экип.)").annotate(
+                    sorted_value=F('third_attempt_squat_res_ek')).exclude(competitor__sports_type__title__in=["Троеборье классическое", "Троеборье (экип.)", "Жим лёжа (без экип.)"]).values('sorted_value', 'competitor__surname_comp',
+                                                                           'competitor__name_comp', 'competitor__sports_type__title', 'competitor_weight', 'first_attempt_bpress_res_ek', 'first_attempt_bpress_off_ek',
+                                                                           'second_attempt_bpress_res_ek', 'second_attempt_bpress_off_ek', 'third_attempt_bpress_res_ek', 'third_attempt_bpress_off_ek', 'best_bpress_res_ek', 'best_sum_res_ek', 'competitor_translation', 'best_squat_res_ek', 'best_dlift_res_ek',
+                                                                           'first_attempt_squat_res_ek', 'first_attempt_squat_off_ek', 'second_attempt_squat_res_ek', 'second_attempt_squat_off_ek', 'third_attempt_squat_res_ek',
+                                                                            'third_attempt_squat_off_ek', 'first_attempt_dlift_res_ek', 'first_attempt_dlift_off_ek', 'second_attempt_dlift_res_ek', 'second_attempt_dlift_off_ek',
+                                                                            'third_attempt_dlift_res_ek', 'third_attempt_dlift_off_ek',)
+                    competitors_f_s += list(competitors_fr)
+                competitors = sorted(sorted(competitors_f_s, key=lambda x: (x['sorted_value'] is not None, x['sorted_value'])), key=lambda x: bool(x['sorted_value']), reverse=True)
+            elif cur_flow_competitors_st.filter(competitor__sports_type__title="Троеборье (экип.)", first_attempt_bpress_off_ek__isnull=True).exists() or cur_flow_competitors_st.filter(competitor__sports_type__title="Жим лёжа (экип.)", first_attempt_bpress_off_ek__isnull=True).exclude(competitor__sports_type__title__in=["Троеборье классическое", "Троеборье (экип.)", "Жим лёжа (без экип.)"]).exists() or cur_flow_competitors_st.filter(competitor__sports_type__title="Жим лёжа (без экип.)", first_attempt_bpress_off__isnull=True).exclude(competitor__sports_type__title__in=["Троеборье классическое", "Троеборье (экип.)", "Жим лёжа (экип.)"]).exists():
+                competitors_s = cur_flow_competitors_st.filter(competitor__sports_type__title="Троеборье (экип.)").annotate(
+                    sorted_value=F('first_attempt_bpress_res_ek')).values('sorted_value', 'competitor__surname_comp', 'competitor__sports_type__title', 'competitor__name_comp', 'competitor_weight', 'first_attempt_squat_res_ek',
+                                                                        'first_attempt_squat_off_ek', 'second_attempt_squat_res_ek', 'second_attempt_squat_off_ek', 'third_attempt_squat_res_ek', 'third_attempt_squat_off_ek',
+                                                                        'first_attempt_bpress_res_ek', 'first_attempt_bpress_off_ek', 'second_attempt_bpress_res_ek', 'second_attempt_bpress_off_ek', 'third_attempt_bpress_res_ek',
+                                                                        'third_attempt_bpress_off_ek', 'first_attempt_dlift_res_ek', 'first_attempt_dlift_off_ek', 'second_attempt_dlift_res_ek', 'second_attempt_dlift_off_ek',
+                                                                        'third_attempt_dlift_res_ek', 'third_attempt_dlift_off_ek', 'best_squat_res_ek', 'best_bpress_res_ek', 'best_dlift_res_ek', 'best_sum_res_ek', 'competitor_translation')
+                competitors_f_s = list(competitors_s)
+                if "Жим лёжа (без экип.)" in competitors_stypes:
+                    competitors_t = cur_flow_competitors_st.filter(competitor__sports_type__title="Жим лёжа (без экип.)").annotate(
+                    sorted_value=F('first_attempt_bpress_res')).exclude(competitor__sports_type__title__in=["Троеборье классическое", "Троеборье (экип.)", "Жим лёжа (экип.)"]).values('sorted_value', 'competitor__surname_comp',
+                                                                        'competitor__name_comp', 'competitor__sports_type__title', 'first_attempt_squat_res', 'first_attempt_squat_off', 'second_attempt_squat_res',
+                                                                        'second_attempt_squat_off', 'third_attempt_squat_res', 'third_attempt_squat_off', 'competitor_weight', 'first_attempt_bpress_res',
+                                                                        'first_attempt_bpress_off', 'second_attempt_bpress_res', 'second_attempt_bpress_off', 'third_attempt_bpress_res', 'third_attempt_bpress_off', 'best_bpress_res', 'best_sum_res', 'competitor_translation', 'best_squat_res', 'best_dlift_res',
+                                                                        'first_attempt_dlift_res', 'first_attempt_dlift_off', 'second_attempt_dlift_res', 'second_attempt_dlift_off', 'third_attempt_dlift_res', 'third_attempt_dlift_off')
+                    competitors_f_s += list(competitors_t)
+                if "Жим лёжа (экип.)" in competitors_stypes:
+                    competitors_fr = cur_flow_competitors_st.filter(competitor__sports_type__title="Жим лёжа (экип.)").annotate(
+                    sorted_value=F('first_attempt_bpress_res_ek')).exclude(competitor__sports_type__title__in=["Троеборье классическое", "Троеборье (экип.)", "Жим лёжа (без экип.)"]).values('sorted_value', 'competitor__surname_comp',
+                                                                           'competitor__name_comp', 'competitor__sports_type__title', 'competitor_weight', 'first_attempt_bpress_res_ek', 'first_attempt_bpress_off_ek',
+                                                                           'second_attempt_bpress_res_ek', 'second_attempt_bpress_off_ek', 'third_attempt_bpress_res_ek', 'third_attempt_bpress_off_ek', 'best_bpress_res_ek', 'best_sum_res_ek', 'competitor_translation', 'best_squat_res_ek', 'best_dlift_res_ek',
+                                                                           'first_attempt_squat_res_ek', 'first_attempt_squat_off_ek', 'second_attempt_squat_res_ek', 'second_attempt_squat_off_ek', 'third_attempt_squat_res_ek',
+                                                                            'third_attempt_squat_off_ek', 'first_attempt_dlift_res_ek', 'first_attempt_dlift_off_ek', 'second_attempt_dlift_res_ek', 'second_attempt_dlift_off_ek',
+                                                                            'third_attempt_dlift_res_ek', 'third_attempt_dlift_off_ek',)
+                    competitors_f_s += list(competitors_fr)
+                competitors = sorted(sorted(competitors_f_s, key=lambda x: (x['sorted_value'] is not None, x['sorted_value'])), key=lambda x: bool(x['sorted_value']), reverse=True)
+            elif cur_flow_competitors_st.filter(competitor__sports_type__title="Троеборье (экип.)", second_attempt_bpress_off_ek__isnull=True).exists() or cur_flow_competitors_st.filter(competitor__sports_type__title="Жим лёжа (экип.)", second_attempt_bpress_off_ek__isnull=True).exclude(competitor__sports_type__title__in=["Троеборье классическое", "Троеборье (экип.)", "Жим лёжа (без экип.)"]).exists() or cur_flow_competitors_st.filter(competitor__sports_type__title="Жим лёжа (без экип.)", second_attempt_bpress_off__isnull=True).exclude(competitor__sports_type__title__in=["Троеборье классическое", "Троеборье (экип.)", "Жим лёжа (экип.)"]).exists():
+                competitors_s = cur_flow_competitors_st.filter(competitor__sports_type__title="Троеборье (экип.)").annotate(
+                    sorted_value=F('second_attempt_bpress_res_ek')).values('sorted_value', 'competitor__surname_comp', 'competitor__sports_type__title', 'competitor__name_comp', 'competitor_weight', 'first_attempt_squat_res_ek',
+                                                                        'first_attempt_squat_off_ek', 'second_attempt_squat_res_ek', 'second_attempt_squat_off_ek', 'third_attempt_squat_res_ek', 'third_attempt_squat_off_ek',
+                                                                        'first_attempt_bpress_res_ek', 'first_attempt_bpress_off_ek', 'second_attempt_bpress_res_ek', 'second_attempt_bpress_off_ek', 'third_attempt_bpress_res_ek',
+                                                                        'third_attempt_bpress_off_ek', 'first_attempt_dlift_res_ek', 'first_attempt_dlift_off_ek', 'second_attempt_dlift_res_ek', 'second_attempt_dlift_off_ek',
+                                                                        'third_attempt_dlift_res_ek', 'third_attempt_dlift_off_ek', 'best_squat_res_ek', 'best_bpress_res_ek', 'best_dlift_res_ek', 'best_sum_res_ek', 'competitor_translation')
+                competitors_f_s = list(competitors_s)
+                if "Жим лёжа (без экип.)" in competitors_stypes:
+                    competitors_t = cur_flow_competitors_st.filter(competitor__sports_type__title="Жим лёжа (без экип.)").annotate(
+                    sorted_value=F('second_attempt_bpress_res')).exclude(competitor__sports_type__title__in=["Троеборье классическое", "Троеборье (экип.)", "Жим лёжа (экип.)"]).values('sorted_value', 'competitor__surname_comp',
+                                                                        'competitor__name_comp', 'competitor__sports_type__title', 'first_attempt_squat_res', 'first_attempt_squat_off', 'second_attempt_squat_res',
+                                                                        'second_attempt_squat_off', 'third_attempt_squat_res', 'third_attempt_squat_off', 'competitor_weight', 'first_attempt_bpress_res',
+                                                                        'first_attempt_bpress_off', 'second_attempt_bpress_res', 'second_attempt_bpress_off', 'third_attempt_bpress_res', 'third_attempt_bpress_off', 'best_bpress_res', 'best_sum_res', 'competitor_translation', 'best_squat_res', 'best_dlift_res',
+                                                                        'first_attempt_dlift_res', 'first_attempt_dlift_off', 'second_attempt_dlift_res', 'second_attempt_dlift_off', 'third_attempt_dlift_res', 'third_attempt_dlift_off')
+                    competitors_f_s += list(competitors_t)
+                if "Жим лёжа (экип.)" in competitors_stypes:
+                    competitors_fr = cur_flow_competitors_st.filter(competitor__sports_type__title="Жим лёжа (экип.)").annotate(
+                    sorted_value=F('second_attempt_bpress_res_ek')).exclude(competitor__sports_type__title__in=["Троеборье классическое", "Троеборье (экип.)", "Жим лёжа (без экип.)"]).values('sorted_value', 'competitor__surname_comp',
+                                                                           'competitor__name_comp', 'competitor__sports_type__title', 'competitor_weight', 'first_attempt_bpress_res_ek', 'first_attempt_bpress_off_ek',
+                                                                           'second_attempt_bpress_res_ek', 'second_attempt_bpress_off_ek', 'third_attempt_bpress_res_ek', 'third_attempt_bpress_off_ek', 'best_bpress_res_ek', 'best_sum_res_ek', 'competitor_translation', 'best_squat_res_ek', 'best_dlift_res_ek',
+                                                                           'first_attempt_squat_res_ek', 'first_attempt_squat_off_ek', 'second_attempt_squat_res_ek', 'second_attempt_squat_off_ek', 'third_attempt_squat_res_ek',
+                                                                            'third_attempt_squat_off_ek', 'first_attempt_dlift_res_ek', 'first_attempt_dlift_off_ek', 'second_attempt_dlift_res_ek', 'second_attempt_dlift_off_ek',
+                                                                            'third_attempt_dlift_res_ek', 'third_attempt_dlift_off_ek',)
+                    competitors_f_s += list(competitors_fr)
+                competitors = sorted(sorted(competitors_f_s, key=lambda x: (x['sorted_value'] is not None, x['sorted_value'])), key=lambda x: bool(x['sorted_value']), reverse=True)
+            elif cur_flow_competitors_st.filter(competitor__sports_type__title="Троеборье (экип.)", third_attempt_bpress_off_ek__isnull=True).exists() or cur_flow_competitors_st.filter(competitor__sports_type__title="Жим лёжа (экип.)", third_attempt_bpress_off_ek__isnull=True).exclude(competitor__sports_type__title__in=["Троеборье классическое", "Троеборье (экип.)", "Жим лёжа (без экип.)"]).exists() or cur_flow_competitors_st.filter(competitor__sports_type__title="Жим лёжа (без экип.)", third_attempt_bpress_off__isnull=True).exclude(competitor__sports_type__title__in=["Троеборье классическое", "Троеборье (экип.)", "Жим лёжа (экип.)"]).exists():
+                competitors_s = cur_flow_competitors_st.filter(competitor__sports_type__title="Троеборье (экип.)").annotate(
+                    sorted_value=F('third_attempt_bpress_res_ek')).values('sorted_value', 'competitor__surname_comp', 'competitor__sports_type__title', 'competitor__name_comp', 'competitor_weight', 'first_attempt_squat_res_ek',
+                                                                        'first_attempt_squat_off_ek', 'second_attempt_squat_res_ek', 'second_attempt_squat_off_ek', 'third_attempt_squat_res_ek', 'third_attempt_squat_off_ek',
+                                                                        'first_attempt_bpress_res_ek', 'first_attempt_bpress_off_ek', 'second_attempt_bpress_res_ek', 'second_attempt_bpress_off_ek', 'third_attempt_bpress_res_ek',
+                                                                        'third_attempt_bpress_off_ek', 'first_attempt_dlift_res_ek', 'first_attempt_dlift_off_ek', 'second_attempt_dlift_res_ek', 'second_attempt_dlift_off_ek',
+                                                                        'third_attempt_dlift_res_ek', 'third_attempt_dlift_off_ek', 'best_squat_res_ek', 'best_bpress_res_ek', 'best_dlift_res_ek', 'best_sum_res_ek', 'competitor_translation')
+                competitors_f_s = list(competitors_s)
+                if "Жим лёжа (без экип.)" in competitors_stypes:
+                    competitors_t = cur_flow_competitors_st.filter(competitor__sports_type__title="Жим лёжа (без экип.)").annotate(
+                    sorted_value=F('third_attempt_bpress_res')).exclude(competitor__sports_type__title__in=["Троеборье классическое", "Троеборье (экип.)", "Жим лёжа (экип.)"]).values('sorted_value', 'competitor__surname_comp',
+                                                                        'competitor__name_comp', 'competitor__sports_type__title', 'first_attempt_squat_res', 'first_attempt_squat_off', 'second_attempt_squat_res',
+                                                                        'second_attempt_squat_off', 'third_attempt_squat_res', 'third_attempt_squat_off', 'competitor_weight', 'first_attempt_bpress_res',
+                                                                        'first_attempt_bpress_off', 'second_attempt_bpress_res', 'second_attempt_bpress_off', 'third_attempt_bpress_res', 'third_attempt_bpress_off', 'best_bpress_res', 'best_sum_res', 'competitor_translation', 'best_squat_res', 'best_dlift_res',
+                                                                        'first_attempt_dlift_res', 'first_attempt_dlift_off', 'second_attempt_dlift_res', 'second_attempt_dlift_off', 'third_attempt_dlift_res', 'third_attempt_dlift_off')
+                    competitors_f_s += list(competitors_t)
+                if "Жим лёжа (экип.)" in competitors_stypes:
+                    competitors_fr = cur_flow_competitors_st.filter(competitor__sports_type__title="Жим лёжа (экип.)").annotate(
+                    sorted_value=F('third_attempt_bpress_res_ek')).exclude(competitor__sports_type__title__in=["Троеборье классическое", "Троеборье (экип.)", "Жим лёжа (без экип.)"]).values('sorted_value', 'competitor__surname_comp',
+                                                                           'competitor__name_comp', 'competitor__sports_type__title', 'competitor_weight', 'first_attempt_bpress_res_ek', 'first_attempt_bpress_off_ek',
+                                                                           'second_attempt_bpress_res_ek', 'second_attempt_bpress_off_ek', 'third_attempt_bpress_res_ek', 'third_attempt_bpress_off_ek', 'best_bpress_res_ek', 'best_sum_res_ek', 'competitor_translation', 'best_squat_res_ek', 'best_dlift_res_ek',
+                                                                           'first_attempt_squat_res_ek', 'first_attempt_squat_off_ek', 'second_attempt_squat_res_ek', 'second_attempt_squat_off_ek', 'third_attempt_squat_res_ek',
+                                                                            'third_attempt_squat_off_ek', 'first_attempt_dlift_res_ek', 'first_attempt_dlift_off_ek', 'second_attempt_dlift_res_ek', 'second_attempt_dlift_off_ek',
+                                                                            'third_attempt_dlift_res_ek', 'third_attempt_dlift_off_ek',)
+                    competitors_f_s += list(competitors_fr)
+                competitors = sorted(sorted(competitors_f_s, key=lambda x: (x['sorted_value'] is not None, x['sorted_value'])), key=lambda x: bool(x['sorted_value']), reverse=True)
+            elif cur_flow_competitors_st.filter(competitor__sports_type__title="Троеборье (экип.)", first_attempt_dlift_off_ek__isnull=True).exists():
+                competitors_s = cur_flow_competitors_st.filter(competitor__sports_type__title="Троеборье (экип.)").annotate(
+                    sorted_value=F('first_attempt_dlift_res_ek')).values('sorted_value', 'competitor__surname_comp', 'competitor__sports_type__title', 'competitor__name_comp', 'competitor_weight', 'first_attempt_squat_res_ek',
+                                                                        'first_attempt_squat_off_ek', 'second_attempt_squat_res_ek', 'second_attempt_squat_off_ek', 'third_attempt_squat_res_ek', 'third_attempt_squat_off_ek',
+                                                                        'first_attempt_bpress_res_ek', 'first_attempt_bpress_off_ek', 'second_attempt_bpress_res_ek', 'second_attempt_bpress_off_ek', 'third_attempt_bpress_res_ek',
+                                                                        'third_attempt_bpress_off_ek', 'first_attempt_dlift_res_ek', 'first_attempt_dlift_off_ek', 'second_attempt_dlift_res_ek', 'second_attempt_dlift_off_ek',
+                                                                        'third_attempt_dlift_res_ek', 'third_attempt_dlift_off_ek', 'best_squat_res_ek', 'best_bpress_res_ek', 'best_dlift_res_ek', 'best_sum_res_ek', 'competitor_translation')
+                competitors_f_s = list(competitors_s)
+                if "Жим лёжа (без экип.)" in competitors_stypes:
+                    competitors_t = cur_flow_competitors_st.filter(competitor__sports_type__title="Жим лёжа (без экип.)").annotate(
+                    sorted_value=F('first_attempt_dlift_res')).exclude(competitor__sports_type__title__in=["Троеборье классическое", "Троеборье (экип.)", "Жим лёжа (экип.)"]).values('sorted_value', 'competitor__surname_comp',
+                                                                        'competitor__name_comp', 'competitor__sports_type__title', 'first_attempt_squat_res', 'first_attempt_squat_off', 'second_attempt_squat_res',
+                                                                        'second_attempt_squat_off', 'third_attempt_squat_res', 'third_attempt_squat_off', 'competitor_weight', 'first_attempt_bpress_res',
+                                                                        'first_attempt_bpress_off', 'second_attempt_bpress_res', 'second_attempt_bpress_off', 'third_attempt_bpress_res', 'third_attempt_bpress_off', 'best_bpress_res', 'best_sum_res', 'competitor_translation', 'best_squat_res', 'best_dlift_res',
+                                                                        'first_attempt_dlift_res', 'first_attempt_dlift_off', 'second_attempt_dlift_res', 'second_attempt_dlift_off', 'third_attempt_dlift_res', 'third_attempt_dlift_off')
+                    competitors_f_s += list(competitors_t)
+                if "Жим лёжа (экип.)" in competitors_stypes:
+                    competitors_fr = cur_flow_competitors_st.filter(competitor__sports_type__title="Жим лёжа (экип.)").annotate(
+                    sorted_value=F('first_attempt_dlift_res_ek')).exclude(competitor__sports_type__title__in=["Троеборье классическое", "Троеборье (экип.)", "Жим лёжа (без экип.)"]).values('sorted_value', 'competitor__surname_comp',
+                                                                           'competitor__name_comp', 'competitor__sports_type__title', 'competitor_weight', 'first_attempt_bpress_res_ek', 'first_attempt_bpress_off_ek',
+                                                                           'second_attempt_bpress_res_ek', 'second_attempt_bpress_off_ek', 'third_attempt_bpress_res_ek', 'third_attempt_bpress_off_ek', 'best_bpress_res_ek', 'best_sum_res_ek', 'competitor_translation', 'best_squat_res_ek', 'best_dlift_res_ek',
+                                                                           'first_attempt_squat_res_ek', 'first_attempt_squat_off_ek', 'second_attempt_squat_res_ek', 'second_attempt_squat_off_ek', 'third_attempt_squat_res_ek',
+                                                                            'third_attempt_squat_off_ek', 'first_attempt_dlift_res_ek', 'first_attempt_dlift_off_ek', 'second_attempt_dlift_res_ek', 'second_attempt_dlift_off_ek',
+                                                                            'third_attempt_dlift_res_ek', 'third_attempt_dlift_off_ek',)
+                    competitors_f_s += list(competitors_fr)
+                competitors = sorted(sorted(competitors_f_s, key=lambda x: (x['sorted_value'] is not None, x['sorted_value'])), key=lambda x: bool(x['sorted_value']), reverse=True)
+            elif cur_flow_competitors_st.filter(competitor__sports_type__title="Троеборье (экип.)", second_attempt_dlift_off_ek__isnull=True).exists():
+                competitors_s = cur_flow_competitors_st.filter(competitor__sports_type__title="Троеборье (экип.)").annotate(
+                    sorted_value=F('second_attempt_dlift_res_ek')).values('sorted_value', 'competitor__surname_comp', 'competitor__sports_type__title', 'competitor__name_comp', 'competitor_weight', 'first_attempt_squat_res_ek',
+                                                                        'first_attempt_squat_off_ek', 'second_attempt_squat_res_ek', 'second_attempt_squat_off_ek', 'third_attempt_squat_res_ek', 'third_attempt_squat_off_ek',
+                                                                        'first_attempt_bpress_res_ek', 'first_attempt_bpress_off_ek', 'second_attempt_bpress_res_ek', 'second_attempt_bpress_off_ek', 'third_attempt_bpress_res_ek',
+                                                                        'third_attempt_bpress_off_ek', 'first_attempt_dlift_res_ek', 'first_attempt_dlift_off_ek', 'second_attempt_dlift_res_ek', 'second_attempt_dlift_off_ek',
+                                                                        'third_attempt_dlift_res_ek', 'third_attempt_dlift_off_ek', 'best_squat_res_ek', 'best_bpress_res_ek', 'best_dlift_res_ek', 'best_sum_res_ek', 'competitor_translation')
+                competitors_f_s = list(competitors_s)
+                if "Жим лёжа (без экип.)" in competitors_stypes:
+                    competitors_t = cur_flow_competitors_st.filter(competitor__sports_type__title="Жим лёжа (без экип.)").annotate(
+                    sorted_value=F('second_attempt_dlift_res')).exclude(competitor__sports_type__title__in=["Троеборье классическое", "Троеборье (экип.)", "Жим лёжа (экип.)"]).values('sorted_value', 'competitor__surname_comp',
+                                                                        'competitor__name_comp', 'competitor__sports_type__title', 'first_attempt_squat_res', 'first_attempt_squat_off', 'second_attempt_squat_res',
+                                                                        'second_attempt_squat_off', 'third_attempt_squat_res', 'third_attempt_squat_off', 'competitor_weight', 'first_attempt_bpress_res',
+                                                                        'first_attempt_bpress_off', 'second_attempt_bpress_res', 'second_attempt_bpress_off', 'third_attempt_bpress_res', 'third_attempt_bpress_off', 'best_bpress_res', 'best_sum_res', 'competitor_translation', 'best_squat_res', 'best_dlift_res',
+                                                                        'first_attempt_dlift_res', 'first_attempt_dlift_off', 'second_attempt_dlift_res', 'second_attempt_dlift_off', 'third_attempt_dlift_res', 'third_attempt_dlift_off')
+                    competitors_f_s += list(competitors_t)
+                if "Жим лёжа (экип.)" in competitors_stypes:
+                    competitors_fr = cur_flow_competitors_st.filter(competitor__sports_type__title="Жим лёжа (экип.)").annotate(
+                    sorted_value=F('second_attempt_dlift_res_ek')).exclude(competitor__sports_type__title__in=["Троеборье классическое", "Троеборье (экип.)", "Жим лёжа (без экип.)"]).values('sorted_value', 'competitor__surname_comp',
+                                                                           'competitor__name_comp', 'competitor__sports_type__title', 'competitor_weight', 'first_attempt_bpress_res_ek', 'first_attempt_bpress_off_ek',
+                                                                           'second_attempt_bpress_res_ek', 'second_attempt_bpress_off_ek', 'third_attempt_bpress_res_ek', 'third_attempt_bpress_off_ek', 'best_bpress_res_ek', 'best_sum_res_ek', 'competitor_translation', 'best_squat_res_ek', 'best_dlift_res_ek',
+                                                                           'first_attempt_squat_res_ek', 'first_attempt_squat_off_ek', 'second_attempt_squat_res_ek', 'second_attempt_squat_off_ek', 'third_attempt_squat_res_ek',
+                                                                            'third_attempt_squat_off_ek', 'first_attempt_dlift_res_ek', 'first_attempt_dlift_off_ek', 'second_attempt_dlift_res_ek', 'second_attempt_dlift_off_ek',
+                                                                            'third_attempt_dlift_res_ek', 'third_attempt_dlift_off_ek',)
+                    competitors_f_s += list(competitors_fr)
+                competitors = sorted(sorted(competitors_f_s, key=lambda x: (x['sorted_value'] is not None, x['sorted_value'])), key=lambda x: bool(x['sorted_value']), reverse=True)
+            elif cur_flow_competitors_st.filter(competitor__sports_type__title="Троеборье (экип.)", third_attempt_dlift_off_ek__isnull=True).exists():
+                competitors_s = cur_flow_competitors_st.filter(competitor__sports_type__title="Троеборье (экип.)").annotate(
+                    sorted_value=F('third_attempt_dlift_res_ek')).values('sorted_value', 'competitor__surname_comp', 'competitor__sports_type__title', 'competitor__name_comp', 'competitor_weight', 'first_attempt_squat_res_ek',
+                                                                        'first_attempt_squat_off_ek', 'second_attempt_squat_res_ek', 'second_attempt_squat_off_ek', 'third_attempt_squat_res_ek', 'third_attempt_squat_off_ek',
+                                                                        'first_attempt_bpress_res_ek', 'first_attempt_bpress_off_ek', 'second_attempt_bpress_res_ek', 'second_attempt_bpress_off_ek', 'third_attempt_bpress_res_ek',
+                                                                        'third_attempt_bpress_off_ek', 'first_attempt_dlift_res_ek', 'first_attempt_dlift_off_ek', 'second_attempt_dlift_res_ek', 'second_attempt_dlift_off_ek',
+                                                                        'third_attempt_dlift_res_ek', 'third_attempt_dlift_off_ek', 'best_squat_res_ek', 'best_bpress_res_ek', 'best_dlift_res_ek', 'best_sum_res_ek', 'competitor_translation')
+                competitors_f_s = list(competitors_s)
+                if "Жим лёжа (без экип.)" in competitors_stypes:
+                    competitors_t = cur_flow_competitors_st.filter(competitor__sports_type__title="Жим лёжа (без экип.)").annotate(
+                    sorted_value=F('third_attempt_dlift_res')).exclude(competitor__sports_type__title__in=["Троеборье классическое", "Троеборье (экип.)", "Жим лёжа (экип.)"]).values('sorted_value', 'competitor__surname_comp',
+                                                                        'competitor__name_comp', 'competitor__sports_type__title', 'first_attempt_squat_res', 'first_attempt_squat_off', 'second_attempt_squat_res',
+                                                                        'second_attempt_squat_off', 'third_attempt_squat_res', 'third_attempt_squat_off', 'competitor_weight', 'first_attempt_bpress_res',
+                                                                        'first_attempt_bpress_off', 'second_attempt_bpress_res', 'second_attempt_bpress_off', 'third_attempt_bpress_res', 'third_attempt_bpress_off', 'best_bpress_res', 'best_sum_res', 'competitor_translation', 'best_squat_res', 'best_dlift_res',
+                                                                        'first_attempt_dlift_res', 'first_attempt_dlift_off', 'second_attempt_dlift_res', 'second_attempt_dlift_off', 'third_attempt_dlift_res', 'third_attempt_dlift_off')
+                    competitors_f_s += list(competitors_t)
+                if "Жим лёжа (экип.)" in competitors_stypes:
+                    competitors_fr = cur_flow_competitors_st.filter(competitor__sports_type__title="Жим лёжа (экип.)").annotate(
+                    sorted_value=F('third_attempt_dlift_res_ek')).exclude(competitor__sports_type__title__in=["Троеборье классическое", "Троеборье (экип.)", "Жим лёжа (без экип.)"]).values('sorted_value', 'competitor__surname_comp',
+                                                                           'competitor__name_comp', 'competitor__sports_type__title', 'competitor_weight', 'first_attempt_bpress_res_ek', 'first_attempt_bpress_off_ek',
+                                                                           'second_attempt_bpress_res_ek', 'second_attempt_bpress_off_ek', 'third_attempt_bpress_res_ek', 'third_attempt_bpress_off_ek', 'best_bpress_res_ek', 'best_sum_res_ek', 'competitor_translation', 'best_squat_res_ek', 'best_dlift_res_ek',
+                                                                           'first_attempt_squat_res_ek', 'first_attempt_squat_off_ek', 'second_attempt_squat_res_ek', 'second_attempt_squat_off_ek', 'third_attempt_squat_res_ek',
+                                                                            'third_attempt_squat_off_ek', 'first_attempt_dlift_res_ek', 'first_attempt_dlift_off_ek', 'second_attempt_dlift_res_ek', 'second_attempt_dlift_off_ek',
+                                                                            'third_attempt_dlift_res_ek', 'third_attempt_dlift_off_ek',)
+                    competitors_f_s += list(competitors_fr)
+                competitors = sorted(sorted(competitors_f_s, key=lambda x: (x['sorted_value'] is not None, x['sorted_value'])), key=lambda x: bool(x['sorted_value']), reverse=True)
+            else:
+                competitors_s = cur_flow_competitors_st.filter(competitor__sports_type__title="Троеборье (экип.)").annotate(
+                    sorted_value=F('best_sum_res_ek')).values('sorted_value', 'competitor__surname_comp', 'competitor__sports_type__title', 'competitor__name_comp', 'competitor_weight', 'first_attempt_squat_res_ek',
+                                                                        'first_attempt_squat_off_ek', 'second_attempt_squat_res_ek', 'second_attempt_squat_off_ek', 'third_attempt_squat_res_ek', 'third_attempt_squat_off_ek',
+                                                                        'first_attempt_bpress_res_ek', 'first_attempt_bpress_off_ek', 'second_attempt_bpress_res_ek', 'second_attempt_bpress_off_ek', 'third_attempt_bpress_res_ek',
+                                                                        'third_attempt_bpress_off_ek', 'first_attempt_dlift_res_ek', 'first_attempt_dlift_off_ek', 'second_attempt_dlift_res_ek', 'second_attempt_dlift_off_ek',
+                                                                        'third_attempt_dlift_res_ek', 'third_attempt_dlift_off_ek', 'best_squat_res_ek', 'best_bpress_res_ek', 'best_dlift_res_ek', 'best_sum_res_ek', 'competitor_translation')
+                competitors_f_s = list(competitors_s)
+                if "Жим лёжа (без экип.)" in competitors_stypes:
+                    competitors_t = cur_flow_competitors_st.filter(competitor__sports_type__title="Жим лёжа (без экип.)").annotate(
+                    sorted_value=F('best_sum_res')).exclude(competitor__sports_type__title__in=["Троеборье классическое", "Троеборье (экип.)", "Жим лёжа (экип.)"]).values('sorted_value', 'competitor__surname_comp',
+                                                                        'competitor__name_comp', 'competitor__sports_type__title', 'first_attempt_squat_res', 'first_attempt_squat_off', 'second_attempt_squat_res',
+                                                                        'second_attempt_squat_off', 'third_attempt_squat_res', 'third_attempt_squat_off', 'competitor_weight', 'first_attempt_bpress_res',
+                                                                        'first_attempt_bpress_off', 'second_attempt_bpress_res', 'second_attempt_bpress_off', 'third_attempt_bpress_res', 'third_attempt_bpress_off', 'best_bpress_res', 'best_sum_res', 'competitor_translation', 'best_squat_res', 'best_dlift_res',
+                                                                        'first_attempt_dlift_res', 'first_attempt_dlift_off', 'second_attempt_dlift_res', 'second_attempt_dlift_off', 'third_attempt_dlift_res', 'third_attempt_dlift_off')
+                    competitors_f_s += list(competitors_t)
+                if "Жим лёжа (экип.)" in competitors_stypes:
+                    competitors_fr = cur_flow_competitors_st.filter(competitor__sports_type__title="Жим лёжа (экип.)").annotate(
+                    sorted_value=F('best_sum_res_ek')).exclude(competitor__sports_type__title__in=["Троеборье классическое", "Троеборье (экип.)", "Жим лёжа (без экип.)"]).values('sorted_value', 'competitor__surname_comp',
+                                                                           'competitor__name_comp', 'competitor__sports_type__title', 'competitor_weight', 'first_attempt_bpress_res_ek', 'first_attempt_bpress_off_ek',
+                                                                           'second_attempt_bpress_res_ek', 'second_attempt_bpress_off_ek', 'third_attempt_bpress_res_ek', 'third_attempt_bpress_off_ek', 'best_bpress_res_ek', 'best_sum_res_ek', 'competitor_translation', 'best_squat_res_ek', 'best_dlift_res_ek',
+                                                                           'first_attempt_squat_res_ek', 'first_attempt_squat_off_ek', 'second_attempt_squat_res_ek', 'second_attempt_squat_off_ek', 'third_attempt_squat_res_ek',
+                                                                            'third_attempt_squat_off_ek', 'first_attempt_dlift_res_ek', 'first_attempt_dlift_off_ek', 'second_attempt_dlift_res_ek', 'second_attempt_dlift_off_ek',
+                                                                            'third_attempt_dlift_res_ek', 'third_attempt_dlift_off_ek',)
+                    competitors_f_s += list(competitors_fr)
+                competitors = sorted(sorted(competitors_f_s, key=lambda x: (x['sorted_value'] is not None, x['sorted_value']), reverse=True), key=lambda x: bool(x['sorted_value']), reverse=True)
+        elif ("Жим лёжа (без экип.)" in competitors_stypes) and ("Жим лёжа (экип.)" in competitors_stypes):
+            if cur_flow_competitors_st.filter(competitor__sports_type__title="Жим лёжа (экип.)", first_attempt_bpress_off_ek__isnull=True).exclude(competitor__sports_type__title__in=["Жим лёжа (без экип.)"]).exists() or cur_flow_competitors_st.filter(competitor__sports_type__title="Жим лёжа (без экип.)", first_attempt_bpress_off__isnull=True).exclude(competitor__sports_type__title__in=["Жим лёжа (экип.)"]).exists():
+                competitors_t = cur_flow_competitors_st.filter(competitor__sports_type__title="Жим лёжа (без экип.)").annotate(
+                sorted_value=F('first_attempt_bpress_res')).exclude(competitor__sports_type__title__in=["Троеборье классическое", "Троеборье (экип.)", "Жим лёжа (экип.)"]).values('sorted_value', 'competitor__surname_comp',
+                                                                    'competitor__name_comp', 'competitor__sports_type__title', 'first_attempt_squat_res', 'first_attempt_squat_off', 'second_attempt_squat_res',
+                                                                    'second_attempt_squat_off', 'third_attempt_squat_res', 'third_attempt_squat_off', 'competitor_weight', 'first_attempt_bpress_res',
+                                                                    'first_attempt_bpress_off', 'second_attempt_bpress_res', 'second_attempt_bpress_off', 'third_attempt_bpress_res', 'third_attempt_bpress_off', 'best_bpress_res', 'best_sum_res', 'competitor_translation', 'best_squat_res', 'best_dlift_res',
+                                                                    'first_attempt_dlift_res', 'first_attempt_dlift_off', 'second_attempt_dlift_res', 'second_attempt_dlift_off', 'third_attempt_dlift_res', 'third_attempt_dlift_off')
+                competitors_fr = cur_flow_competitors_st.filter(competitor__sports_type__title="Жим лёжа (экип.)").annotate(
+                sorted_value=F('first_attempt_bpress_res_ek')).exclude(competitor__sports_type__title__in=["Троеборье классическое", "Троеборье (экип.)", "Жим лёжа (без экип.)"]).values('sorted_value', 'competitor__surname_comp',
+                                                                       'competitor__name_comp', 'competitor__sports_type__title', 'competitor_weight', 'first_attempt_bpress_res_ek', 'first_attempt_bpress_off_ek',
+                                                                       'second_attempt_bpress_res_ek', 'second_attempt_bpress_off_ek', 'third_attempt_bpress_res_ek', 'third_attempt_bpress_off_ek', 'best_bpress_res_ek', 'best_sum_res_ek', 'competitor_translation', 'best_squat_res_ek', 'best_dlift_res_ek',
+                                                                       'first_attempt_squat_res_ek', 'first_attempt_squat_off_ek', 'second_attempt_squat_res_ek', 'second_attempt_squat_off_ek', 'third_attempt_squat_res_ek',
+                                                                        'third_attempt_squat_off_ek', 'first_attempt_dlift_res_ek', 'first_attempt_dlift_off_ek', 'second_attempt_dlift_res_ek', 'second_attempt_dlift_off_ek',
+                                                                        'third_attempt_dlift_res_ek', 'third_attempt_dlift_off_ek',)
+                competitors_f_s = list(competitors_t) + list(competitors_fr)
+                competitors = sorted(sorted(competitors_f_s, key=lambda x: (x['sorted_value'] is not None, x['sorted_value'])), key=lambda x: bool(x['sorted_value']), reverse=True)
+            elif cur_flow_competitors_st.filter(competitor__sports_type__title="Жим лёжа (экип.)", second_attempt_bpress_off_ek__isnull=True).exclude(competitor__sports_type__title__in=["Жим лёжа (без экип.)"]).exists() or cur_flow_competitors_st.filter(competitor__sports_type__title="Жим лёжа (без экип.)", second_attempt_bpress_off__isnull=True).exclude(competitor__sports_type__title__in=["Жим лёжа (экип.)"]).exists():
+                competitors_t = cur_flow_competitors_st.filter(competitor__sports_type__title="Жим лёжа (без экип.)").annotate(
+                sorted_value=F('second_attempt_bpress_res')).exclude(competitor__sports_type__title__in=["Троеборье классическое", "Троеборье (экип.)", "Жим лёжа (экип.)"]).values('sorted_value', 'competitor__surname_comp',
+                                                                    'competitor__name_comp', 'competitor__sports_type__title', 'first_attempt_squat_res', 'first_attempt_squat_off', 'second_attempt_squat_res',
+                                                                    'second_attempt_squat_off', 'third_attempt_squat_res', 'third_attempt_squat_off', 'competitor_weight', 'first_attempt_bpress_res',
+                                                                    'first_attempt_bpress_off', 'second_attempt_bpress_res', 'second_attempt_bpress_off', 'third_attempt_bpress_res', 'third_attempt_bpress_off', 'best_bpress_res', 'best_sum_res', 'competitor_translation', 'best_squat_res', 'best_dlift_res',
+                                                                    'first_attempt_dlift_res', 'first_attempt_dlift_off', 'second_attempt_dlift_res', 'second_attempt_dlift_off', 'third_attempt_dlift_res', 'third_attempt_dlift_off')
+                competitors_fr = cur_flow_competitors_st.filter(competitor__sports_type__title="Жим лёжа (экип.)").annotate(
+                sorted_value=F('second_attempt_bpress_res_ek')).exclude(competitor__sports_type__title__in=["Троеборье классическое", "Троеборье (экип.)", "Жим лёжа (без экип.)"]).values('sorted_value', 'competitor__surname_comp',
+                                                                       'competitor__name_comp', 'competitor__sports_type__title', 'competitor_weight', 'first_attempt_bpress_res_ek', 'first_attempt_bpress_off_ek',
+                                                                       'second_attempt_bpress_res_ek', 'second_attempt_bpress_off_ek', 'third_attempt_bpress_res_ek', 'third_attempt_bpress_off_ek', 'best_bpress_res_ek', 'best_sum_res_ek', 'competitor_translation', 'best_squat_res_ek', 'best_dlift_res_ek',
+                                                                       'first_attempt_squat_res_ek', 'first_attempt_squat_off_ek', 'second_attempt_squat_res_ek', 'second_attempt_squat_off_ek', 'third_attempt_squat_res_ek',
+                                                                        'third_attempt_squat_off_ek', 'first_attempt_dlift_res_ek', 'first_attempt_dlift_off_ek', 'second_attempt_dlift_res_ek', 'second_attempt_dlift_off_ek',
+                                                                        'third_attempt_dlift_res_ek', 'third_attempt_dlift_off_ek',)
+                competitors_f_s = list(competitors_t) + list(competitors_fr)
+                competitors = sorted(sorted(competitors_f_s, key=lambda x: (x['sorted_value'] is not None, x['sorted_value'])), key=lambda x: bool(x['sorted_value']), reverse=True)
+            elif cur_flow_competitors_st.filter(competitor__sports_type__title="Жим лёжа (экип.)", third_attempt_bpress_off_ek__isnull=True).exclude(competitor__sports_type__title__in=["Жим лёжа (без экип.)"]).exists() or cur_flow_competitors_st.filter(competitor__sports_type__title="Жим лёжа (без экип.)", third_attempt_bpress_off__isnull=True).exclude(competitor__sports_type__title__in=["Жим лёжа (экип.)"]).exists():
+                competitors_t = cur_flow_competitors_st.filter(competitor__sports_type__title="Жим лёжа (без экип.)").annotate(
+                sorted_value=F('third_attempt_bpress_res')).exclude(competitor__sports_type__title__in=["Троеборье классическое", "Троеборье (экип.)", "Жим лёжа (экип.)"]).values('sorted_value', 'competitor__surname_comp',
+                                                                    'competitor__name_comp', 'competitor__sports_type__title', 'first_attempt_squat_res', 'first_attempt_squat_off', 'second_attempt_squat_res',
+                                                                    'second_attempt_squat_off', 'third_attempt_squat_res', 'third_attempt_squat_off', 'competitor_weight', 'first_attempt_bpress_res',
+                                                                    'first_attempt_bpress_off', 'second_attempt_bpress_res', 'second_attempt_bpress_off', 'third_attempt_bpress_res', 'third_attempt_bpress_off', 'best_bpress_res', 'best_sum_res', 'competitor_translation', 'best_squat_res', 'best_dlift_res',
+                                                                    'first_attempt_dlift_res', 'first_attempt_dlift_off', 'second_attempt_dlift_res', 'second_attempt_dlift_off', 'third_attempt_dlift_res', 'third_attempt_dlift_off')
+                competitors_fr = cur_flow_competitors_st.filter(competitor__sports_type__title="Жим лёжа (экип.)").annotate(
+                sorted_value=F('third_attempt_bpress_res_ek')).exclude(competitor__sports_type__title__in=["Троеборье классическое", "Троеборье (экип.)", "Жим лёжа (без экип.)"]).values('sorted_value', 'competitor__surname_comp',
+                                                                       'competitor__name_comp', 'competitor__sports_type__title', 'competitor_weight', 'first_attempt_bpress_res_ek', 'first_attempt_bpress_off_ek',
+                                                                       'second_attempt_bpress_res_ek', 'second_attempt_bpress_off_ek', 'third_attempt_bpress_res_ek', 'third_attempt_bpress_off_ek', 'best_bpress_res_ek', 'best_sum_res_ek', 'competitor_translation', 'best_squat_res_ek', 'best_dlift_res_ek',
+                                                                       'first_attempt_squat_res_ek', 'first_attempt_squat_off_ek', 'second_attempt_squat_res_ek', 'second_attempt_squat_off_ek', 'third_attempt_squat_res_ek',
+                                                                        'third_attempt_squat_off_ek', 'first_attempt_dlift_res_ek', 'first_attempt_dlift_off_ek', 'second_attempt_dlift_res_ek', 'second_attempt_dlift_off_ek',
+                                                                        'third_attempt_dlift_res_ek', 'third_attempt_dlift_off_ek',)
+                competitors_f_s = list(competitors_t) + list(competitors_fr)
+                competitors = sorted(sorted(competitors_f_s, key=lambda x: (x['sorted_value'] is not None, x['sorted_value'])), key=lambda x: bool(x['sorted_value']), reverse=True)
+            else:
+                competitors_t = cur_flow_competitors_st.filter(competitor__sports_type__title="Жим лёжа (без экип.)").annotate(
+                sorted_value=F('best_sum_res')).exclude(competitor__sports_type__title__in=["Троеборье классическое", "Троеборье (экип.)", "Жим лёжа (экип.)"]).values('sorted_value', 'competitor__surname_comp',
+                                                                    'competitor__name_comp', 'competitor__sports_type__title', 'first_attempt_squat_res', 'first_attempt_squat_off', 'second_attempt_squat_res',
+                                                                    'second_attempt_squat_off', 'third_attempt_squat_res', 'third_attempt_squat_off', 'competitor_weight', 'first_attempt_bpress_res',
+                                                                    'first_attempt_bpress_off', 'second_attempt_bpress_res', 'second_attempt_bpress_off', 'third_attempt_bpress_res', 'third_attempt_bpress_off', 'best_bpress_res', 'best_sum_res', 'competitor_translation', 'best_squat_res', 'best_dlift_res',
+                                                                    'first_attempt_dlift_res', 'first_attempt_dlift_off', 'second_attempt_dlift_res', 'second_attempt_dlift_off', 'third_attempt_dlift_res', 'third_attempt_dlift_off')
+                competitors_fr = cur_flow_competitors_st.filter(competitor__sports_type__title="Жим лёжа (экип.)").annotate(
+                sorted_value=F('best_sum_res_ek')).exclude(competitor__sports_type__title__in=["Троеборье классическое", "Троеборье (экип.)", "Жим лёжа (без экип.)"]).values('sorted_value', 'competitor__surname_comp',
+                                                                       'competitor__name_comp', 'competitor__sports_type__title', 'competitor_weight', 'first_attempt_bpress_res_ek', 'first_attempt_bpress_off_ek',
+                                                                       'second_attempt_bpress_res_ek', 'second_attempt_bpress_off_ek', 'third_attempt_bpress_res_ek', 'third_attempt_bpress_off_ek', 'best_bpress_res_ek', 'best_sum_res_ek', 'competitor_translation', 'best_squat_res_ek', 'best_dlift_res_ek',
+                                                                       'first_attempt_squat_res_ek', 'first_attempt_squat_off_ek', 'second_attempt_squat_res_ek', 'second_attempt_squat_off_ek', 'third_attempt_squat_res_ek',
+                                                                        'third_attempt_squat_off_ek', 'first_attempt_dlift_res_ek', 'first_attempt_dlift_off_ek', 'second_attempt_dlift_res_ek', 'second_attempt_dlift_off_ek',
+                                                                        'third_attempt_dlift_res_ek', 'third_attempt_dlift_off_ek',)
+                competitors_f_s = list(competitors_t) + list(competitors_fr)
+                competitors = sorted(sorted(competitors_f_s, key=lambda x: (x['sorted_value'] is not None, x['sorted_value']), reverse=True), key=lambda x: bool(x['sorted_value']), reverse=True)
         elif "Жим лёжа (без экип.)" in competitors_stypes:
-            cur_flow_competitors = cur_flow_competitors_st.order_by(F("first_attempt_bpress_res").asc(nulls_last=True))
+            if cur_flow_competitors_st.filter(competitor__sports_type__title="Жим лёжа (без экип.)", first_attempt_bpress_off__isnull=True).exists():
+                competitors_t = cur_flow_competitors_st.filter(competitor__sports_type__title="Жим лёжа (без экип.)").annotate(
+                sorted_value=F('first_attempt_bpress_res')).exclude(competitor__sports_type__title__in=["Троеборье классическое", "Троеборье (экип.)", "Жим лёжа (экип.)"]).values('sorted_value', 'competitor__surname_comp',
+                                                                    'competitor__name_comp', 'competitor__sports_type__title', 'first_attempt_squat_res', 'first_attempt_squat_off', 'second_attempt_squat_res',
+                                                                    'second_attempt_squat_off', 'third_attempt_squat_res', 'third_attempt_squat_off', 'competitor_weight', 'first_attempt_bpress_res',
+                                                                    'first_attempt_bpress_off', 'second_attempt_bpress_res', 'second_attempt_bpress_off', 'third_attempt_bpress_res', 'third_attempt_bpress_off', 'best_bpress_res', 'best_sum_res', 'competitor_translation', 'best_squat_res', 'best_dlift_res',
+                                                                    'first_attempt_dlift_res', 'first_attempt_dlift_off', 'second_attempt_dlift_res', 'second_attempt_dlift_off', 'third_attempt_dlift_res', 'third_attempt_dlift_off')
+                competitors_f_s = list(competitors_t)
+                competitors = sorted(sorted(competitors_f_s, key=lambda x: (x['sorted_value'] is not None, x['sorted_value'])), key=lambda x: bool(x['sorted_value']), reverse=True)
+            elif cur_flow_competitors_st.filter(competitor__sports_type__title="Жим лёжа (без экип.)", second_attempt_bpress_off__isnull=True).exists():
+                competitors_t = cur_flow_competitors_st.filter(competitor__sports_type__title="Жим лёжа (без экип.)").annotate(
+                sorted_value=F('second_attempt_bpress_res')).exclude(competitor__sports_type__title__in=["Троеборье классическое", "Троеборье (экип.)", "Жим лёжа (экип.)"]).values('sorted_value', 'competitor__surname_comp',
+                                                                    'competitor__name_comp', 'competitor__sports_type__title', 'first_attempt_squat_res', 'first_attempt_squat_off', 'second_attempt_squat_res',
+                                                                    'second_attempt_squat_off', 'third_attempt_squat_res', 'third_attempt_squat_off', 'competitor_weight', 'first_attempt_bpress_res',
+                                                                    'first_attempt_bpress_off', 'second_attempt_bpress_res', 'second_attempt_bpress_off', 'third_attempt_bpress_res', 'third_attempt_bpress_off', 'best_bpress_res', 'best_sum_res', 'competitor_translation', 'best_squat_res', 'best_dlift_res',
+                                                                    'first_attempt_dlift_res', 'first_attempt_dlift_off', 'second_attempt_dlift_res', 'second_attempt_dlift_off', 'third_attempt_dlift_res', 'third_attempt_dlift_off')
+                competitors_f_s = list(competitors_t)
+                competitors = sorted(sorted(competitors_f_s, key=lambda x: (x['sorted_value'] is not None, x['sorted_value'])), key=lambda x: bool(x['sorted_value']), reverse=True)
+            elif cur_flow_competitors_st.filter(competitor__sports_type__title="Жим лёжа (без экип.)", third_attempt_bpress_off__isnull=True).exists():
+                competitors_t = cur_flow_competitors_st.filter(competitor__sports_type__title="Жим лёжа (без экип.)").annotate(
+                sorted_value=F('third_attempt_bpress_res')).exclude(competitor__sports_type__title__in=["Троеборье классическое", "Троеборье (экип.)", "Жим лёжа (экип.)"]).values('sorted_value', 'competitor__surname_comp',
+                                                                    'competitor__name_comp', 'competitor__sports_type__title', 'first_attempt_squat_res', 'first_attempt_squat_off', 'second_attempt_squat_res',
+                                                                    'second_attempt_squat_off', 'third_attempt_squat_res', 'third_attempt_squat_off', 'competitor_weight', 'first_attempt_bpress_res',
+                                                                    'first_attempt_bpress_off', 'second_attempt_bpress_res', 'second_attempt_bpress_off', 'third_attempt_bpress_res', 'third_attempt_bpress_off', 'best_bpress_res', 'best_sum_res', 'competitor_translation', 'best_squat_res', 'best_dlift_res',
+                                                                    'first_attempt_dlift_res', 'first_attempt_dlift_off', 'second_attempt_dlift_res', 'second_attempt_dlift_off', 'third_attempt_dlift_res', 'third_attempt_dlift_off')
+                competitors_f_s = list(competitors_t)
+                competitors = sorted(sorted(competitors_f_s, key=lambda x: (x['sorted_value'] is not None, x['sorted_value'])), key=lambda x: bool(x['sorted_value']), reverse=True)
+            else:
+                competitors_t = cur_flow_competitors_st.filter(competitor__sports_type__title="Жим лёжа (без экип.)").annotate(
+                sorted_value=F('best_sum_res')).exclude(competitor__sports_type__title__in=["Троеборье классическое", "Троеборье (экип.)", "Жим лёжа (экип.)"]).values('sorted_value', 'competitor__surname_comp',
+                                                                    'competitor__name_comp', 'competitor__sports_type__title', 'first_attempt_squat_res', 'first_attempt_squat_off', 'second_attempt_squat_res',
+                                                                    'second_attempt_squat_off', 'third_attempt_squat_res', 'third_attempt_squat_off', 'competitor_weight', 'first_attempt_bpress_res',
+                                                                    'first_attempt_bpress_off', 'second_attempt_bpress_res', 'second_attempt_bpress_off', 'third_attempt_bpress_res', 'third_attempt_bpress_off', 'best_bpress_res', 'best_sum_res', 'competitor_translation', 'best_squat_res', 'best_dlift_res',
+                                                                    'first_attempt_dlift_res', 'first_attempt_dlift_off', 'second_attempt_dlift_res', 'second_attempt_dlift_off', 'third_attempt_dlift_res', 'third_attempt_dlift_off')
+                competitors_f_s = list(competitors_t)
+                competitors = sorted(sorted(competitors_f_s, key=lambda x: (x['sorted_value'] is not None, x['sorted_value']), reverse=True), key=lambda x: bool(x['sorted_value']), reverse=True)
         else:
-            cur_flow_competitors = cur_flow_competitors_st.order_by(F("first_attempt_bpress_res_ek").asc(nulls_last=True))
-        cur_flow_competitors_json = serializers.serialize("json", cur_flow_competitors, use_natural_foreign_keys=True)
-        return JsonResponse({"cur_flow_competitors_json": cur_flow_competitors_json, }, status=200)
+            if cur_flow_competitors_st.filter(competitor__sports_type__title="Жим лёжа (экип.)", first_attempt_bpress_off_ek__isnull=True).exists():
+                competitors_fr = cur_flow_competitors_st.filter(competitor__sports_type__title="Жим лёжа (экип.)").annotate(
+                sorted_value=F('first_attempt_bpress_res_ek')).exclude(competitor__sports_type__title__in=["Троеборье классическое", "Троеборье (экип.)", "Жим лёжа (без экип.)"]).values('sorted_value', 'competitor__surname_comp',
+                                                                       'competitor__name_comp', 'competitor__sports_type__title', 'competitor_weight', 'first_attempt_bpress_res_ek', 'first_attempt_bpress_off_ek',
+                                                                       'second_attempt_bpress_res_ek', 'second_attempt_bpress_off_ek', 'third_attempt_bpress_res_ek', 'third_attempt_bpress_off_ek', 'best_bpress_res_ek', 'best_sum_res_ek', 'competitor_translation', 'best_squat_res_ek', 'best_dlift_res_ek',
+                                                                       'first_attempt_squat_res_ek', 'first_attempt_squat_off_ek', 'second_attempt_squat_res_ek', 'second_attempt_squat_off_ek', 'third_attempt_squat_res_ek',
+                                                                        'third_attempt_squat_off_ek', 'first_attempt_dlift_res_ek', 'first_attempt_dlift_off_ek', 'second_attempt_dlift_res_ek', 'second_attempt_dlift_off_ek',
+                                                                        'third_attempt_dlift_res_ek', 'third_attempt_dlift_off_ek',)
+                competitors_f_s = list(competitors_fr)
+                competitors = sorted(sorted(competitors_f_s, key=lambda x: (x['sorted_value'] is not None, x['sorted_value'])), key=lambda x: bool(x['sorted_value']), reverse=True)
+            elif cur_flow_competitors_st.filter(competitor__sports_type__title="Жим лёжа (экип.)", second_attempt_bpress_off_ek__isnull=True).exists():
+                competitors_fr = cur_flow_competitors_st.filter(competitor__sports_type__title="Жим лёжа (экип.)").annotate(
+                sorted_value=F('second_attempt_bpress_res_ek')).exclude(competitor__sports_type__title__in=["Троеборье классическое", "Троеборье (экип.)", "Жим лёжа (без экип.)"]).values('sorted_value', 'competitor__surname_comp',
+                                                                       'competitor__name_comp', 'competitor__sports_type__title', 'competitor_weight', 'first_attempt_bpress_res_ek', 'first_attempt_bpress_off_ek',
+                                                                       'second_attempt_bpress_res_ek', 'second_attempt_bpress_off_ek', 'third_attempt_bpress_res_ek', 'third_attempt_bpress_off_ek', 'best_bpress_res_ek', 'best_sum_res_ek', 'competitor_translation', 'best_squat_res_ek', 'best_dlift_res_ek',
+                                                                       'first_attempt_squat_res_ek', 'first_attempt_squat_off_ek', 'second_attempt_squat_res_ek', 'second_attempt_squat_off_ek', 'third_attempt_squat_res_ek',
+                                                                        'third_attempt_squat_off_ek', 'first_attempt_dlift_res_ek', 'first_attempt_dlift_off_ek', 'second_attempt_dlift_res_ek', 'second_attempt_dlift_off_ek',
+                                                                        'third_attempt_dlift_res_ek', 'third_attempt_dlift_off_ek',)
+                competitors_f_s = list(competitors_fr)
+                competitors = sorted(sorted(competitors_f_s, key=lambda x: (x['sorted_value'] is not None, x['sorted_value'])), key=lambda x: bool(x['sorted_value']), reverse=True)
+            elif cur_flow_competitors_st.filter(competitor__sports_type__title="Жим лёжа (экип.)", third_attempt_bpress_off_ek__isnull=True).exists():
+                competitors_fr = cur_flow_competitors_st.filter(competitor__sports_type__title="Жим лёжа (экип.)").annotate(
+                sorted_value=F('third_attempt_bpress_res_ek')).exclude(competitor__sports_type__title__in=["Троеборье классическое", "Троеборье (экип.)", "Жим лёжа (без экип.)"]).values('sorted_value', 'competitor__surname_comp',
+                                                                       'competitor__name_comp', 'competitor__sports_type__title', 'competitor_weight', 'first_attempt_bpress_res_ek', 'first_attempt_bpress_off_ek',
+                                                                       'second_attempt_bpress_res_ek', 'second_attempt_bpress_off_ek', 'third_attempt_bpress_res_ek', 'third_attempt_bpress_off_ek', 'best_bpress_res_ek', 'best_sum_res_ek', 'competitor_translation', 'best_squat_res_ek', 'best_dlift_res_ek',
+                                                                       'first_attempt_squat_res_ek', 'first_attempt_squat_off_ek', 'second_attempt_squat_res_ek', 'second_attempt_squat_off_ek', 'third_attempt_squat_res_ek',
+                                                                        'third_attempt_squat_off_ek', 'first_attempt_dlift_res_ek', 'first_attempt_dlift_off_ek', 'second_attempt_dlift_res_ek', 'second_attempt_dlift_off_ek',
+                                                                        'third_attempt_dlift_res_ek', 'third_attempt_dlift_off_ek',)
+                competitors_f_s = list(competitors_fr)
+                competitors = sorted(sorted(competitors_f_s, key=lambda x: (x['sorted_value'] is not None, x['sorted_value'])), key=lambda x: bool(x['sorted_value']), reverse=True)
+            else:
+                competitors_fr = cur_flow_competitors_st.filter(competitor__sports_type__title="Жим лёжа (экип.)").annotate(
+                sorted_value=F('best_sum_res_ek')).exclude(competitor__sports_type__title__in=["Троеборье классическое", "Троеборье (экип.)", "Жим лёжа (без экип.)"]).values('sorted_value', 'competitor__surname_comp',
+                                                                       'competitor__name_comp', 'competitor__sports_type__title', 'competitor_weight', 'first_attempt_bpress_res_ek', 'first_attempt_bpress_off_ek',
+                                                                       'second_attempt_bpress_res_ek', 'second_attempt_bpress_off_ek', 'third_attempt_bpress_res_ek', 'third_attempt_bpress_off_ek', 'best_bpress_res_ek', 'best_sum_res_ek', 'competitor_translation', 'best_squat_res_ek', 'best_dlift_res_ek',
+                                                                       'first_attempt_squat_res_ek', 'first_attempt_squat_off_ek', 'second_attempt_squat_res_ek', 'second_attempt_squat_off_ek', 'third_attempt_squat_res_ek',
+                                                                        'third_attempt_squat_off_ek', 'first_attempt_dlift_res_ek', 'first_attempt_dlift_off_ek', 'second_attempt_dlift_res_ek', 'second_attempt_dlift_off_ek',
+                                                                        'third_attempt_dlift_res_ek', 'third_attempt_dlift_off_ek',)
+                competitors_f_s = list(competitors_fr)
+                competitors = sorted(sorted(competitors_f_s, key=lambda x: (x['sorted_value'] is not None, x['sorted_value']), reverse=True), key=lambda x: bool(x['sorted_value']), reverse=True)
+
+
+        # if "Троеборье классическое" in competitors_stypes:
+        #     cur_flow_competitors = cur_flow_competitors_st.order_by(F("first_attempt_squat_res").asc(nulls_last=True))
+        #     # if None not in cur_flow_competitors.filter(Q(competitor__sports_type__title="Троеборье классическое") & Q(competitor__sports_type__title="Троеборье (экип.)")).values_list('third_attempt_squat_off', flat=True):
+        #     if None not in cur_flow_competitors.filter(competitor__sports_type__title="Троеборье классическое").values_list('third_attempt_squat_off', flat=True):
+        #         cur_flow_competitors = cur_flow_competitors_st.order_by(F("first_attempt_bpress_res").asc(nulls_last=True))
+        #         # if None not in cur_flow_competitors.filter(Q(competitor__sports_type__title="Троеборье классическое") & Q(competitor__sports_type__title="Троеборье (экип.)")).values_list('third_attempt_bpress_off', flat=True):
+        #         if None not in cur_flow_competitors.filter(competitor__sports_type__title="Троеборье классическое").values_list('third_attempt_bpress_off', flat=True):
+        #             cur_flow_competitors = cur_flow_competitors_st.order_by(F("first_attempt_dlift_res").asc(nulls_last=True))
+        # elif "Троеборье (экип.)" in competitors_stypes:
+        #     cur_flow_competitors = cur_flow_competitors_st.order_by(F("first_attempt_squat_res_ek").asc(nulls_last=True))
+        #     if None not in cur_flow_competitors.filter(competitor__sports_type__title="Троеборье (экип.)").values_list('third_attempt_squat_off_ek', flat=True):
+        #         cur_flow_competitors = cur_flow_competitors_st.order_by(F("first_attempt_bpress_res_ek").asc(nulls_last=True))
+        #         if None not in cur_flow_competitors.filter(competitor__sports_type__title="Троеборье (экип.)").values_list('third_attempt_bpress_off_ek', flat=True):
+        #             cur_flow_competitors = cur_flow_competitors_st.order_by(F("first_attempt_dlift_res_ek").asc(nulls_last=True))
+        # elif "Жим лёжа (без экип.)" in competitors_stypes:
+        #     cur_flow_competitors = cur_flow_competitors_st.order_by(F("first_attempt_bpress_res").asc(nulls_last=True))
+        # else:
+        #     cur_flow_competitors = cur_flow_competitors_st.order_by(F("first_attempt_bpress_res_ek").asc(nulls_last=True))
+        # cur_flow_competitors_json = serializers.serialize("json", cur_flow_competitors, use_natural_foreign_keys=True)
+        # return JsonResponse({"cur_flow_competitors_json": cur_flow_competitors_json, }, status=200)
+
+        return JsonResponse({"cur_flow_competitors_json": competitors}, status=200)
     return render(request, 'pwrlftmain/scoreboard_comp_page.html', response_data)
 
 
@@ -3817,6 +7402,11 @@ def register_participant_page(request, competition_slug, pk):
             cur_protocol.first_attempt_dlift_off_ek = comp_fdl
         elif 'Жим лёжа (экип.)' in comp_stypes:
             cur_protocol.first_attempt_bpress_res_ek = comp_fbp
+        was_paid = request.POST.get('competition_entry-form_was_paid')
+        if was_paid == 'on':
+            cur_protocol.was_paid = True
+        else:
+            cur_protocol.was_paid = False
         cur_protocol.competitor = competitor
         cur_protocol.save()
         return redirect('register_participants', competition_slug=competition_slug)
@@ -3931,6 +7521,11 @@ def register_new_participant_page(request, competition_slug):
             cur_protocol.first_attempt_dlift_off_ek = comp_fdl
         elif 'Жим лёжа (экип.)' in comp_stypes:
             cur_protocol.first_attempt_bpress_res_ek = comp_fbp
+        was_paid = request.POST.get('competition_entry-form_was_paid')
+        if was_paid == 'on':
+            cur_protocol.was_paid = True
+        else:
+            cur_protocol.was_paid = False
         cur_protocol.competitor = competitor
         cur_protocol.save()
         return redirect('register_participants', competition_slug=competition_slug)

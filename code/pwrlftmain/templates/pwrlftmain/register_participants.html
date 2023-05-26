@@ -64,7 +64,7 @@
         </div>
         <div class="register_part_page-participants_block">
             {% for par in cur_participants %}
-                <a href="{% url 'register_participant' competition_slug par.id %}" target="_blank" class="register_part_page-participant_block">
+                <a href="{% url 'register_participant' competition_slug par.id %}" class="register_part_page-participant_block">
                     <p>{{ par.surname_comp }} {{ par.name_comp }} {{ par.patronymic_comp }} {{ par.birthday|date:"d.m.Y" }}</p>
                 </a>
             {% endfor %}

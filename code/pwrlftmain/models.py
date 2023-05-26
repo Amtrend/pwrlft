@@ -220,6 +220,7 @@ class CompetitionProtocols(models.Model):
     pillar_height_squat = models.PositiveIntegerField(verbose_name='Высота стоек для приседа', blank=True, null=True)
     pillar_height_bpress = models.PositiveIntegerField(verbose_name='Высота стоек для жима', blank=True, null=True)
     competitor_translation = models.CharField(max_length=20, verbose_name='Текущая трансляция', blank=True, null=True)
+    was_paid = models.BooleanField(default=False, verbose_name='Внёс стартовый взнос')
     register_date = models.DateTimeField(auto_now_add=True, verbose_name='Дата создания')
     updated_at = models.DateTimeField(auto_now=True, verbose_name='Дата изменении')
 
@@ -367,3 +368,15 @@ class CompetitionProtocols(models.Model):
         verbose_name = 'Результат соревнований участника'
         verbose_name_plural = 'Результаты соревнований участников'
         ordering = ['-register_date']
+
+
+class TimerScoreboard(models.Model):
+
+    timer_start = models.BooleanField(default=False, verbose_name='Таймер запущен')
+
+    def __str__(self):
+        return f"таймер {self.timer_start}"
+
+    class Meta:
+        verbose_name = 'Таймер'
+        verbose_name_plural = 'Таймер'
