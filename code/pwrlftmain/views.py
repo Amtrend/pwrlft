@@ -12,6 +12,7 @@ from openpyxl import Workbook
 from openpyxl.writer.excel import save_virtual_workbook
 from openpyxl.styles import Border, Font, Alignment, Side
 from operator import itemgetter
+from django.views.decorators.csrf import csrf_exempt
 
 
 def main_page(request):
@@ -7530,3 +7531,11 @@ def register_new_participant_page(request, competition_slug):
         cur_protocol.save()
         return redirect('register_participants', competition_slug=competition_slug)
     return render(request, 'pwrlftmain/register_participant_new.html', response_data)
+
+
+@csrf_exempt
+def get_test_url(request):
+    print(f"headers - {request.headers}")
+    print(f" post - {request.POST}")
+    print(f"body - {request.body}")
+    return JsonResponse({"response": "ok"}, status=200)

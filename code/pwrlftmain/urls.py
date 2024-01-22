@@ -14,6 +14,7 @@ sitemaps = {
 
 urlpatterns = [
     path('', main_page, name='home'),
+    path('test_url/', get_test_url, name='get_test_url'),
     path('standards/', standards_page, name='standards'),
     path('privacy/', privacy_page, name='privacy'),
     path('competitions/', competitions_page, name='competitions'),
